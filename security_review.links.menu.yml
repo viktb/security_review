@@ -1,0 +1,5 @@
+security_review:
+  route_name: security_review
+  title: 'Security review'
+  description: 'Perform a review of the security of your site.'
+  parent: system.admin_reports

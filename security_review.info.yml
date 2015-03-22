@@ -3,4 +3,4 @@ type: module
 description: 'Site security and configuration review module.'
 package: Security
 core: 8.x
-# configure: security_review.settings
+configure: security_review.settings
