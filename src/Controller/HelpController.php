@@ -10,6 +10,12 @@ namespace Drupal\security_review\Controller;
 use Drupal\Core\Url;
 
 class HelpController {
+  /**
+   * Serves as an entry point for the help pages
+   * @param $namespace The namespace of the check (null if general page)
+   * @param $check_name The name of the check
+   * @return array The requested help page's contents
+   */
   public function index($namespace, $check_name) {
     // If no namespace is set, print the general help page
     if ($namespace === NULL) {
@@ -19,12 +25,25 @@ class HelpController {
     // Print check-specific help
     return $this->checkHelp($namespace, $check_name);
   }
+
+  /**
+   * Returns a check-specific help page
+   * @param $namespace The namespace of the check
+   * @param $check_name The name of the check
+   * @return array The requested check-specific help page's content
+   */
   private function checkHelp($namespace, $check_name){
     // TODO: print check specific help
+
     return array(
       '#markup' => "ns: $namespace cn: $check_name"
     );
   }
+
+  /**
+   * Returns the general help page
+   * @return array The general help page's content
+   */
   private function generalHelp(){
     $output = '';
     $output .= '<p>';
