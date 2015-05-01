@@ -7,7 +7,7 @@ use Drupal\security_review\SecurityReview;
  * Implements hook_install().
  */
 function security_review_install() {
-  //Set default untrusted roles
+  // Set default untrusted roles.
   $settings = \Drupal::configFactory()->getEditable('security_review.settings');
   $settings->set('untrusted_roles', SecurityReview::defaultUntrustedRoles());
   $settings->save();
