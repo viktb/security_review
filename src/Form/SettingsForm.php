@@ -57,6 +57,22 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => array_keys(SecurityReview::untrustedRoles()),
     );
 
+    // TODO: Report inactive namespaces. Old: security_review.pages.inc:146.
+
+    $form['advanced'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Advanced'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+    );
+
+    $form['advanced']['logging'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Log checklist results and skips'),
+      '#description' => t('The result of each check and skip can be logged to watchdog for tracking.'),
+      '#default_value' => SecurityReview::logEnabled(),
+    );
+
     // Return the finished form.
     return $form;
   }
@@ -71,6 +87,9 @@ class SettingsForm extends ConfigFormBase {
     // Save the new untrusted roles.
     $untrusted_roles = array_filter($form_state->getValue('untrusted_roles'));
     $settings->set('untrusted_roles', $untrusted_roles);
+
+    // Save the new logging setting.
+    $settings->set('log', $form_state->getValue('logging') == 1);
 
     // Commit the settings.
     $settings->save();
