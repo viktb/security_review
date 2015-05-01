@@ -36,6 +36,7 @@ class HelpController {
     // TODO: print check specific help
 
     return array(
+      '#type' => 'markup',
       '#markup' => "ns: $namespace cn: $check_name"
     );
   }
@@ -65,6 +66,7 @@ class HelpController {
     // TODO: iterate through checklists and print their own links
 
     return array(
+      '#type' => 'markup',
       '#markup' => $output
     );
   }
