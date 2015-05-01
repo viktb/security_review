@@ -60,12 +60,12 @@ class SettingsForm extends ConfigFormBase {
     // TODO: Report inactive namespaces. Old: security_review.pages.inc:146.
 
     $form['advanced'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Advanced'),
-      '#collapsible' => TRUE,
-      '#collapsed' => FALSE,
+      '#open' => TRUE,
     );
 
+    // Show the logging setting.
     $form['advanced']['logging'] = array(
       '#type' => 'checkbox',
       '#title' => t('Log checklist results and skips'),
