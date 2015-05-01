@@ -1,0 +1,22 @@
+<?php
+
+use Drupal\Core\Url;
+use Drupal\security_review\SecurityReview;
+
+/**
+ * Implements hook_install().
+ */
+function security_review_install() {
+  //Set default untrusted roles
+  $settings = \Drupal::configFactory()->getEditable('security_review.settings');
+  $settings->set('untrusted_roles', SecurityReview::defaultUntrustedRoles());
+  $settings->save();
+
+  drupal_set_message(
+    t(
+      'Security Review module enabled. You should first set the module access permissions at !link. Be sure to grant permissions to trusted users only as this module can show sensitive site information.',
+      array('!link' => \Drupal::l('admin/people/permissions', Url::fromRoute('user.admin_permissions')))
+    )
+  );
+
+}
