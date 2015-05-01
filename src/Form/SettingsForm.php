@@ -34,6 +34,8 @@ class SettingsForm extends ConfigFormBase {
     // Start with the parent's form elements.
     $form = parent::buildForm($form, $form_state);
 
+    $check_settings = $this->config('security_review.checks');
+
     // Get the user roles.
     $roles = user_roles();
     $options = array();
@@ -57,7 +59,7 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => array_keys(SecurityReview::untrustedRoles()),
     );
 
-    // TODO: Report inactive namespaces. Old: security_review.pages.inc:146.
+    // TODO: Report inactive namespaces. Old: security_review.pages.inc:146-161.
 
     $form['advanced'] = array(
       '#type' => 'details',
@@ -73,6 +75,27 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => SecurityReview::logEnabled(),
     );
 
+    // TODO: Skipped checks. Old: security_review.pages.inc:177-197.
+
+    $form['advanced']['check_settings'] = array(
+      '#type' => 'details',
+      '#title' => t('Check-specific settings'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+    );
+
+    // TODO: this should be implemented inside the actual check.
+    $form['advanced']['check_settings']['base_url.method'] = array(
+      '#type' => 'radios',
+      '#title' => t('Base URL check method'),
+      '#description' => t('Detecting the $base_url in settings.php can be done via PHP tokenization (recommend) or including the file. Note that if you have custom functionality in your settings.php it will be executed if the file is included. Including the file can result in a more accurate $base_url check if you wrap the setting in conditional statements.'),
+      '#options' => array(
+        'token' => t('Tokenize settings.php (recommended)'),
+        'include' => t('Include settings.php'),
+      ),
+      '#default_value' => $check_settings->get('base_url.method'),
+    );
+
     // Return the finished form.
     return $form;
   }
@@ -83,6 +106,7 @@ class SettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Frequently used configuration items.
     $settings = $this->config('security_review.settings');
+    $check_settings = $this->config('security_review.checks');
 
     // Save the new untrusted roles.
     $untrusted_roles = array_filter($form_state->getValue('untrusted_roles'));
@@ -91,8 +115,14 @@ class SettingsForm extends ConfigFormBase {
     // Save the new logging setting.
     $settings->set('log', $form_state->getValue('logging') == 1);
 
+    // Save the check-specific settings.
+    foreach($form_state->getValue('check_settings') as $variableName => $value){
+      $check_settings->set($variableName, $value);
+    }
+
     // Commit the settings.
     $settings->save();
+    $check_settings->save();
 
     // Show the default 'The configuration options have been saved.' message.
     parent::submitForm($form, $form_state);
