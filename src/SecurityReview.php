@@ -6,6 +6,13 @@ use Drupal\Core\Session\AccountInterface;
 
 class SecurityReview {
   /**
+   * @return bool Returns whether the module has been configured.
+   */
+  public static function configured(){
+    return \Drupal::config('security_review.settings')->get('configured') === true;
+  }
+
+  /**
    * @return bool Returns whether logging is enabled.
    */
   public static function logEnabled(){
