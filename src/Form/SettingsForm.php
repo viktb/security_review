@@ -108,6 +108,9 @@ class SettingsForm extends ConfigFormBase {
     $settings = $this->config('security_review.settings');
     $check_settings = $this->config('security_review.checks');
 
+    // Save that the module has been configured
+    $settings->set('configured', true);
+
     // Save the new untrusted roles.
     $untrusted_roles = array_filter($form_state->getValue('untrusted_roles'));
     $settings->set('untrusted_roles', $untrusted_roles);
