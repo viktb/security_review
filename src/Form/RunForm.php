@@ -53,7 +53,7 @@ class RunForm extends FormBase {
     if (\Drupal::currentUser()->hasPermission('run security checks')) {
       // TODO: Run the checks.
     }else{
-      drupal_set_message('');
+      drupal_set_message('You don\'t have the permission to run security checks!', 'error');
     }
   }
 }
