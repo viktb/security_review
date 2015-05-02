@@ -18,5 +18,4 @@ function security_review_install() {
       array('!link' => \Drupal::l('admin/people/permissions', Url::fromRoute('user.admin_permissions')))
     )
   );
-
 }
