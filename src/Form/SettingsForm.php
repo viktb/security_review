@@ -31,9 +31,6 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    // Start with the parent's form elements.
-    $form = parent::buildForm($form, $form_state);
-
     $check_settings = $this->config('security_review.checks');
 
     // Get the user roles.
@@ -84,7 +81,7 @@ class SettingsForm extends ConfigFormBase {
       '#tree' => TRUE,
     );
 
-    // TODO: this should be implemented inside the actual check.
+    // TODO: this will be implemented inside the actual check.
     $form['advanced']['check_settings']['base_url.method'] = array(
       '#type' => 'radios',
       '#title' => t('Base URL check method'),
@@ -97,7 +94,7 @@ class SettingsForm extends ConfigFormBase {
     );
 
     // Return the finished form.
-    return $form;
+    return parent::buildForm($form, $form_state);
   }
 
   /**
@@ -108,7 +105,7 @@ class SettingsForm extends ConfigFormBase {
     $settings = $this->config('security_review.settings');
     $check_settings = $this->config('security_review.checks');
 
-    // Save that the module has been configured
+    // Save that the module has been configured.
     $settings->set('configured', true);
 
     // Save the new untrusted roles.
