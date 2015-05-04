@@ -20,7 +20,7 @@ class SecurityReview {
   }
 
   /**
-   * @return array Stored untrusted roles.
+   * @return array Stored untrusted roles' IDs.
    */
   public static function untrustedRoles(){
     // If the module hasn't been manually configured yet, return the untrusted
@@ -33,7 +33,22 @@ class SecurityReview {
   }
 
   /**
-   * @return array Default untrusted roles.
+   * @return array Trusted roles' IDs.
+   */
+  public static function trustedRoles(){
+    $untrusted_roles = static::untrustedRoles();
+
+    $trusted = array();
+    foreach(user_roles() as $role){
+      if(!in_array($role->id(), $untrusted_roles)){
+        $trusted[] = $role->id();
+      }
+    }
+    return $trusted;
+  }
+
+  /**
+   * @return array Default untrusted roles' IDs.
    */
   public static function defaultUntrustedRoles(){
     $roles = array(AccountInterface::ANONYMOUS_ROLE);
