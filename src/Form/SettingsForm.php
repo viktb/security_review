@@ -42,7 +42,7 @@ class SettingsForm extends ConfigFormBase {
 
     // Notify the user if anonymous users can create accounts.
     $message = '';
-    if (array_key_exists(AccountInterface::AUTHENTICATED_ROLE, SecurityReview::defaultUntrustedRoles())) {
+    if (in_array(AccountInterface::AUTHENTICATED_ROLE, SecurityReview::defaultUntrustedRoles())) {
       $message = 'You have allowed anonymous users to create accounts without approval so the authenticated role defaults to untrusted.';
     }
 
@@ -53,7 +53,7 @@ class SettingsForm extends ConfigFormBase {
       '#description' => t('Mark which roles are not trusted. The anonymous role defaults to untrusted. @message Read more about the idea behind trusted and untrusted roles on @DrupalScout. Most Security Review checks look for resources usable by untrusted roles.',
         array('@message' => $message, '@DrupalScout' => \Drupal::l('DrupalScout.com', Url::fromUri('http://drupalscout.com/knowledge-base/importance-user-roles-and-permissions-site-security')))),
       '#options' => $options,
-      '#default_value' => array_keys(SecurityReview::untrustedRoles()),
+      '#default_value' => SecurityReview::untrustedRoles(),
     );
 
     // TODO: Report inactive namespaces. Old: security_review.pages.inc:146-161.
@@ -109,7 +109,7 @@ class SettingsForm extends ConfigFormBase {
     $settings->set('configured', true);
 
     // Save the new untrusted roles.
-    $untrusted_roles = array_filter($form_state->getValue('untrusted_roles'));
+    $untrusted_roles = array_keys(array_filter($form_state->getValue('untrusted_roles')));
     $settings->set('untrusted_roles', $untrusted_roles);
 
     // Save the new logging setting.

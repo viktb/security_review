@@ -36,12 +36,12 @@ class SecurityReview {
    * @return array Default untrusted roles.
    */
   public static function defaultUntrustedRoles(){
-    $roles = array(AccountInterface::ANONYMOUS_ROLE => t('anonymous user'));
+    $roles = array(AccountInterface::ANONYMOUS_ROLE);
 
     $user_register = \Drupal::config('user.settings')->get('register');
     if ($user_register !== USER_REGISTER_ADMINISTRATORS_ONLY) {
       // If visitors are allowed to create accounts they are considered untrusted.
-      $roles[AccountInterface::AUTHENTICATED_ROLE] = t('authenticated user');
+      $roles[] = AccountInterface::AUTHENTICATED_ROLE;
     }
     return $roles;
   }
