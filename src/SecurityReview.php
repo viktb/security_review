@@ -23,6 +23,12 @@ class SecurityReview {
    * @return array Stored untrusted roles.
    */
   public static function untrustedRoles(){
+    // If the module hasn't been manually configured yet, return the untrusted
+    // roles depending on Drupal's actual configuration.
+    if(!static::configured())
+      return static::defaultUntrustedRoles();
+
+    // Else return the stored untrusted roles.
     return \Drupal::config('security_review.settings')->get('untrusted_roles');
   }
 
