@@ -1,0 +1,18 @@
+security_review.settings:
+  type: mapping
+  mapping:
+    configured:
+      type: boolean
+      label: 'Has been configured'
+    untrusted_roles:
+      type: sequence
+      label: 'Untrusted roles'
+      sequence:
+        type: string
+        label: 'Role ID'
+    log:
+      type: boolean
+      label: 'Logging enabled'
+    last_run:
+      type: integer
+      label: 'Last run'
