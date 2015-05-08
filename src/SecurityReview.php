@@ -130,8 +130,7 @@ class SecurityReview {
     if ($groupByRoleId) {
       // If the result should be grouped, we have nothing else to do.
       return $permissions_grouped;
-    }
-    else {
+    } else {
       // Merge the grouped permissions into $untrusted_permissions.
       $untrusted_permissions = array();
       foreach ($permissions_grouped as $rid => $permissions) {

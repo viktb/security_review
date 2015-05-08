@@ -31,8 +31,7 @@ class ChecklistController {
     $checks = array();
     if (!empty($checks)) {
       // TODO: If there are stored results, display them.
-    }
-    else {
+    } else {
       // If they haven't configured the site, prompt them to do so.
       if (!SecurityReview::configured()) {
         drupal_set_message(t('It appears this is your first time using the Security Review checklist. Before running the checklist please review the settings page at !link to set which roles are untrusted.',
