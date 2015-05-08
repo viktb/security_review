@@ -15,9 +15,7 @@ use Drupal\Core\Url;
 use Drupal\security_review\SecurityReview;
 
 /**
- * File test form class.
- *
- * @ingroup email_example
+ * Settings page for Security Review.
  */
 class SettingsForm extends ConfigFormBase {
   /**
@@ -51,7 +49,10 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'checkboxes',
       '#title' => t('Untrusted roles'),
       '#description' => t('Mark which roles are not trusted. The anonymous role defaults to untrusted. @message Read more about the idea behind trusted and untrusted roles on @DrupalScout. Most Security Review checks look for resources usable by untrusted roles.',
-        array('@message' => $message, '@DrupalScout' => \Drupal::l('DrupalScout.com', Url::fromUri('http://drupalscout.com/knowledge-base/importance-user-roles-and-permissions-site-security')))),
+        array(
+          '@message' => $message,
+          '@DrupalScout' => \Drupal::l('DrupalScout.com', Url::fromUri('http://drupalscout.com/knowledge-base/importance-user-roles-and-permissions-site-security'))
+        )),
       '#options' => $options,
       '#default_value' => SecurityReview::untrustedRoles(),
     );
@@ -106,7 +107,7 @@ class SettingsForm extends ConfigFormBase {
     $check_settings = $this->config('security_review.checks');
 
     // Save that the module has been configured.
-    $settings->set('configured', true);
+    $settings->set('configured', TRUE);
 
     // Save the new untrusted roles.
     $untrusted_roles = array_keys(array_filter($form_state->getValue('untrusted_roles')));
@@ -116,7 +117,7 @@ class SettingsForm extends ConfigFormBase {
     $settings->set('log', $form_state->getValue('logging') == 1);
 
     // Save the check-specific settings.
-    foreach($form_state->getValue('check_settings') as $variableName => $value){
+    foreach ($form_state->getValue('check_settings') as $variableName => $value) {
       $check_settings->set($variableName, $value);
     }
 
