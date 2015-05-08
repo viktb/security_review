@@ -29,8 +29,6 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $check_settings = $this->config('security_review.checks');
-
     // Get the user roles.
     $roles = user_roles();
     $options = array();
@@ -75,14 +73,19 @@ class SettingsForm extends ConfigFormBase {
 
     // TODO: Skipped checks. Old: security_review.pages.inc:177-197.
 
-    $form['advanced']['check_settings'] = array(
-      '#type' => 'details',
-      '#title' => t('Check-specific settings'),
-      '#open' => TRUE,
-      '#tree' => TRUE,
-    );
+    // TODO: Iterate through checklist and get check-specific setting pages.
+    $check_settings = array();
 
-    // TODO: Iterate through checklist and include check-specific setting pages.
+    if(!empty($check_settings)){
+      $form['advanced']['check_settings'] = array(
+        '#type' => 'details',
+        '#title' => t('Check-specific settings'),
+        '#open' => TRUE,
+        '#tree' => TRUE,
+      );
+
+      // TODO: Include check-specific setting pages.
+    }
 
     // Return the finished form.
     return parent::buildForm($form, $form_state);
