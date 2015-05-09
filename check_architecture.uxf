@@ -4,10 +4,10 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>364</x>
-      <y>189</y>
-      <w>217</w>
-      <h>147</h>
+      <x>455</x>
+      <y>126</y>
+      <w>245</w>
+      <h>112</h>
     </coordinates>
     <panel_attributes>&lt;&lt;interface&gt;&gt;
 CheckInterface
@@ -16,22 +16,18 @@ CheckInterface
 +getId() : string
 +getTitle() : string
 +settings() : CheckSettingsInterface
-+lastRun() : Date
-+lastResult() : CheckResult
-+enabled() : boolean
 +run() : CheckResult
-+enable() : void
-+disable() : void
-</panel_attributes>
++help()
++evaluate(CheckResult)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>364</x>
-      <y>378</y>
-      <w>217</w>
-      <h>105</h>
+      <x>455</x>
+      <y>266</y>
+      <w>245</w>
+      <h>126</h>
     </coordinates>
     <panel_attributes>/CheckBase/
 --
@@ -42,14 +38,16 @@ CheckInterface
 /+getNamespace() : string/
 /+getId() : string/
 /+getTitle() : string/
-/+run() : CheckResult/</panel_attributes>
+/+run() : CheckResult/
+/+help()/
++evaluate(CheckResult)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>665</x>
-      <y>189</y>
+      <x>763</x>
+      <y>126</y>
       <w>175</w>
       <h>84</h>
     </coordinates>
@@ -66,102 +64,186 @@ CheckSettingsInterface
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>462</x>
-      <y>329</y>
+      <x>553</x>
+      <y>231</y>
       <w>21</w>
-      <h>63</h>
+      <h>49</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>749</x>
-      <y>266</y>
-      <w>21</w>
-      <h>126</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;160.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>574</x>
+      <x>847</x>
       <y>203</y>
-      <w>105</w>
-      <h>196</h>
+      <w>21</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>693</x>
+      <y>140</y>
+      <w>84</w>
+      <h>147</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>130.0;10.0;70.0;10.0;70.0;260.0;10.0;260.0</additional_attributes>
+    <additional_attributes>100.0;10.0;50.0;10.0;50.0;190.0;10.0;190.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>574</x>
-      <y>196</y>
-      <w>105</w>
+      <x>693</x>
+      <y>126</y>
+      <w>84</w>
       <h>21</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>130.0;10.0;10.0;10.0</additional_attributes>
+    <additional_attributes>100.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>665</x>
-      <y>378</y>
+      <x>763</x>
+      <y>273</y>
       <w>175</w>
-      <h>49</h>
+      <h>91</h>
     </coordinates>
     <panel_attributes>/CheckSettingsBase/
 --
 #config : Config
 --
-+CheckSettingsBase(namespace, id)</panel_attributes>
++CheckSettingsBase(namespace, id)
++buildForm(form, form_state)
++submitForm(form, form_state)
++get(key)
++set(key, value)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>280</x>
-      <y>196</y>
-      <w>98</w>
+      <x>364</x>
+      <y>126</y>
+      <w>105</w>
       <h>21</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>10.0;10.0;120.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;130.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>98</x>
-      <y>189</y>
-      <w>189</w>
-      <h>105</h>
+      <x>140</x>
+      <y>126</y>
+      <w>231</w>
+      <h>126</h>
     </coordinates>
     <panel_attributes>CheckResult
 --
 -result
 -message
 -values
+-time
 --
-+CheckResult(result, message, values)
-+result()
-+message()
-+values()</panel_attributes>
++CheckResult(result, message, values, [time])
++result() : boolean
++message() : string
++values() : undefined
++time() : integer</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>574</x>
-      <y>385</y>
-      <w>105</w>
+      <x>693</x>
+      <y>273</y>
+      <w>84</w>
       <h>21</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>130.0;10.0;10.0;10.0</additional_attributes>
+    <additional_attributes>100.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>105</x>
+      <y>413</y>
+      <w>266</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>_Checklist_
+--
+#config : Config
+--
++checks() : Map(string, CheckInterface[])
++checks() : CheckInterface[]
++runChecks(CheckInterface[])
++getCheck(namespace : string, id : string) : CheckInterface
++getCheckState(CheckInterface) : CheckState
++enable(CheckInterface)
++skip(CheckInterface)
++storeResult(CheckInterface, CheckResult)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>455</x>
+      <y>413</y>
+      <w>245</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>CheckState
+--
+#lastResult : CheckResult
+#skipped : boolean
+#skippedBy : integer
+#skippedOn : integer
+--
++CheckState(CheckResult, boolean, integer, integer)
++lastResult() : CheckResult
++lastRun() : integer
++isSkipped() : boolean
++skippedBy() : integer
++skippedOn() : integer</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>364</x>
+      <y>413</y>
+      <w>105</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;130.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>364</x>
+      <y>140</y>
+      <w>105</w>
+      <h>294</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;</panel_attributes>
+    <additional_attributes>10.0;400.0;70.0;400.0;70.0;10.0;130.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>238</x>
+      <y>245</y>
+      <w>21</w>
+      <h>182</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;240.0</additional_attributes>
   </element>
 </diagram>
