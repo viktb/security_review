@@ -1,7 +1,6 @@
 <?php
 
 use Drupal\Core\Url;
-use Drupal\security_review\SecurityReview;
 
 /**
  * Implements hook_install().
