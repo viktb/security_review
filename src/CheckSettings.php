@@ -1,9 +1,18 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\security_review\CheckSettings.
+ */
+
 namespace Drupal\security_review;
 
 use Drupal\Core\Config\Config;
 
+/**
+ * Defines a default implementation of CheckSettingsInterface which will be
+ * enough for most checks.
+ */
 class CheckSettings implements CheckSettingsInterface {
   /**
    * @var \Drupal\Core\Config\Config $config
