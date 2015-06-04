@@ -14,7 +14,7 @@ use Drupal\user\Entity\User;
  */
 abstract class Check {
   /**
-   * @var \Drupal\security_review\CheckSettings $settings
+   * @var \Drupal\security_review\CheckSettingsInterface $settings
    */
   protected $settings;
 
