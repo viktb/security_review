@@ -1,3 +1,4 @@
+# The module's main settings.
 security_review.settings:
   type: mapping
   mapping:
@@ -16,3 +17,47 @@ security_review.settings:
     last_run:
       type: integer
       label: 'Last run'
+
+# Defines a security check's skip informations, last result and settings.
+security_review.check.*:
+  type: mapping
+  mapping:
+    namespace:
+      type: string
+      label: 'Namespace'
+    id:
+      type: string
+      label: 'Check ID'
+    skipped:
+      type: boolean
+      label: 'Is skipped'
+    skipped_by:
+      type: integer
+      label: 'Skipped by'
+    skipped_on:
+      type: integer
+      label: 'Skipped on'
+    last_result:
+      type: security_review.check_result
+      label: 'Last result'
+    settings:
+      # Checks that need storage for settings are advised to define their settings schema.
+      # This way type-strict per-check settings storage can be created.
+      type: security_review.check_settings.[%parent.namespace]-[%parent.id]
+
+# Defines a check result.
+security_review.check_result:
+  type: mapping
+  mapping:
+    result:
+      type: integer
+      label: 'Result value'
+    time:
+      type: integer
+      label: 'Check time'
+    findings:
+      type: sequence
+      label: 'Findings'
+      sequence:
+        type: undefined
+        label: 'Finding'
