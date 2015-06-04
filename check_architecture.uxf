@@ -5,13 +5,14 @@
     <id>UMLClass</id>
     <coordinates>
       <x>567</x>
-      <y>112</y>
+      <y>140</y>
       <w>245</w>
-      <h>273</h>
+      <h>301</h>
     </coordinates>
     <panel_attributes>/Check/
 --
 #settings : CheckSettingsInterface
+#config : Config
 --
 #Check()
 _+getInstance() : Check_
@@ -25,6 +26,7 @@ _+getInstance() : Check_
 /+help() : string[]/
 +evaluate(result : CheckResult) : string[]
 /+getMessage(resultConst : int) : string/
++getUniqueIdentifier() : string
 
 +lastResult() : CheckResult
 +lastRun() : integer
@@ -40,7 +42,7 @@ _+getInstance() : Check_
     <id>UMLClass</id>
     <coordinates>
       <x>896</x>
-      <y>112</y>
+      <y>140</y>
       <w>175</w>
       <h>84</h>
     </coordinates>
@@ -58,7 +60,7 @@ CheckSettingsInterface
     <id>Relation</id>
     <coordinates>
       <x>980</x>
-      <y>189</y>
+      <y>217</y>
       <w>21</w>
       <h>70</h>
     </coordinates>
@@ -69,7 +71,7 @@ CheckSettingsInterface
     <id>Relation</id>
     <coordinates>
       <x>805</x>
-      <y>105</y>
+      <y>133</y>
       <w>105</w>
       <h>28</h>
     </coordinates>
@@ -81,7 +83,7 @@ CheckSettingsInterface
     <id>UMLClass</id>
     <coordinates>
       <x>896</x>
-      <y>245</y>
+      <y>273</y>
       <w>175</w>
       <h>91</h>
     </coordinates>
@@ -89,7 +91,7 @@ CheckSettingsInterface
 --
 #config : Config
 --
-+CheckSettings(namespace, id)
++CheckSettings(config : Config)
 +buildForm(form, form_state)
 +submitForm(form, form_state)
 +get(key) : object
@@ -100,7 +102,7 @@ CheckSettingsInterface
     <id>UMLClass</id>
     <coordinates>
       <x>0</x>
-      <y>112</y>
+      <y>140</y>
       <w>231</w>
       <h>189</h>
     </coordinates>
@@ -116,8 +118,8 @@ INFO         : int
 -findings : undefined[]
 -time : integer
 --
-+CheckResult(old, fresh)
 +CheckResult(check, result, findings, [time])
+_+combine(old, fresh) : CheckResult_
 +check() : Check
 +result() : boolean
 +findings() : undefined[]
@@ -128,7 +130,7 @@ INFO         : int
     <id>UMLNote</id>
     <coordinates>
       <x>259</x>
-      <y>154</y>
+      <y>182</y>
       <w>266</w>
       <h>231</h>
     </coordinates>
@@ -152,7 +154,7 @@ Also provides easier integration with Site Audit module.</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>518</x>
-      <y>175</y>
+      <y>203</y>
       <w>63</w>
       <h>21</h>
     </coordinates>
@@ -163,7 +165,7 @@ Also provides easier integration with Site Audit module.</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>224</x>
-      <y>119</y>
+      <y>147</y>
       <w>357</w>
       <h>28</h>
     </coordinates>
@@ -175,7 +177,7 @@ Also provides easier integration with Site Audit module.</panel_attributes>
     <id>UMLNote</id>
     <coordinates>
       <x>0</x>
-      <y>35</y>
+      <y>63</y>
       <w>231</w>
       <h>56</h>
     </coordinates>
@@ -188,7 +190,7 @@ A constructor, that clones the old CheckResult then updates its findings with th
     <id>Relation</id>
     <coordinates>
       <x>7</x>
-      <y>84</y>
+      <y>112</y>
       <w>21</w>
       <h>42</h>
     </coordinates>
@@ -199,7 +201,7 @@ A constructor, that clones the old CheckResult then updates its findings with th
     <id>UMLClass</id>
     <coordinates>
       <x>0</x>
-      <y>315</y>
+      <y>343</y>
       <w>231</w>
       <h>91</h>
     </coordinates>
@@ -217,7 +219,7 @@ A constructor, that clones the old CheckResult then updates its findings with th
     <id>Relation</id>
     <coordinates>
       <x>224</x>
-      <y>105</y>
+      <y>133</y>
       <w>357</w>
       <h>28</h>
     </coordinates>
@@ -229,7 +231,7 @@ A constructor, that clones the old CheckResult then updates its findings with th
     <id>UMLClass</id>
     <coordinates>
       <x>0</x>
-      <y>427</y>
+      <y>455</y>
       <w>231</w>
       <h>133</h>
     </coordinates>
@@ -250,8 +252,8 @@ A constructor, that clones the old CheckResult then updates its findings with th
     <id>UMLClass</id>
     <coordinates>
       <x>259</x>
-      <y>427</y>
-      <w>266</w>
+      <y>455</y>
+      <w>301</w>
       <h>133</h>
     </coordinates>
     <panel_attributes>_Security_
@@ -259,6 +261,7 @@ A constructor, that clones the old CheckResult then updates its findings with th
 --
 +untrustedRoles() : string[]
 +defaultUntrustedRoles() : string[]
++rolePermissions(roles : string[], groupByRoleID : boolean) : mixed
 +untrustedPermissions(groupByRoleID : boolean) : mixed
 +trustedRoles() : string[]
 +trustedPermissions(groupByRoleID : boolean) : mixed
@@ -270,7 +273,7 @@ A constructor, that clones the old CheckResult then updates its findings with th
     <id>UMLNote</id>
     <coordinates>
       <x>266</x>
-      <y>525</y>
+      <y>553</y>
       <w>98</w>
       <h>21</h>
     </coordinates>
@@ -282,7 +285,7 @@ This list will grow.</panel_attributes>
     <id>UMLNote</id>
     <coordinates>
       <x>567</x>
-      <y>427</y>
+      <y>455</y>
       <w>259</w>
       <h>133</h>
     </coordinates>
