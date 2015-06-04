@@ -34,7 +34,7 @@ abstract class Check {
    */
   protected function __construct(){
     $this->config = \Drupal::configFactory()->getEditable('security_review.check.' . $this->getUniqueIdentifier());
-    $this->settings = new CheckSettings($this->config);
+    $this->settings = new CheckSettings($this->getUniqueIdentifier(), $this->config);
   }
 
   /**
