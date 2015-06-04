@@ -7,21 +7,29 @@
 
 namespace Drupal\security_review;
 
-use Drupal\Core\Session\AccountInterface;
-
 /**
- * A class containing static methods regarding configuration, and frequently
- * used data.
+ * A class containing static methods regarding the module's configuration.
  */
 class SecurityReview {
   /**
    * Private constructor for disabling instantiation of the static class.
    */
-  private function __construct(){
-    /*
-     * Note: This class might become singleton in the future, depending on the
-     * rest of the architecture.
-     */
+  private function __construct() {}
+
+  /**
+   * @var \Drupal\Core\Config\Config $config
+   */
+  private static $config = null;
+
+  /**
+   * @return \Drupal\Core\Config\Config
+   */
+  private static function config() {
+    if(static::$config == null){
+      static::$config = \Drupal::configFactory()->getEditable('security_review.settings');
+    }
+
+    return static::$config;
   }
 
   /**
@@ -31,9 +39,8 @@ class SecurityReview {
    * @return bool
    *   A boolean indicating whether the module has been configured.
    */
-  public static function configured() {
-    return \Drupal::config('security_review.settings')
-      ->get('configured') === TRUE;
+  public static function isConfigured() {
+    return static::config()->get('configured') === TRUE;
   }
 
   /**
@@ -42,104 +49,72 @@ class SecurityReview {
    * @return bool
    *   A boolean indicating whether logging is enabled.
    */
-  public static function logEnabled() {
-    return \Drupal::config('security_review.settings')->get('log') === TRUE;
+  public static function isLogging() {
+    return static::config()->get('log') === TRUE;
   }
 
   /**
-   * Returns the IDs of untrusted roles.
+   * Returns the last time Security Review has been run.
    *
-   * If the module hasn't been configured yet, it returns the default untrusted
-   * roles.
+   * @return int
+   *   The last time Security Review has been run.
+   */
+  public static function getLastRun() {
+    return static::config()->get('last_run');
+  }
+
+  /**
+   * Returns the IDs of the stored untrusted roles.
    *
    * @return array
    *   Stored untrusted roles' IDs.
    */
-  public static function untrustedRoles() {
-    // If the module hasn't been manually configured yet, return the untrusted
-    // roles depending on Drupal's actual configuration.
-    if (!static::configured()) {
-      return static::defaultUntrustedRoles();
-    }
-
-    // Else return the stored untrusted roles.
-    return \Drupal::config('security_review.settings')->get('untrusted_roles');
+  public static function getUntrustedRoles() {
+    return static::config()->get('untrusted_roles');
   }
 
   /**
-   * Returns the trusted roles depending on the stored/default untrusted roles.
+   * Sets the 'configured' flag.
    *
-   * @return array
-   *   Trusted roles' IDs.
+   * @param bool $configured
+   *   The new value of the 'configured' setting.
    */
-  public static function trustedRoles() {
-    // Get the stored/default untrusted roles.
-    $untrusted_roles = static::untrustedRoles();
-
-    // Iterate through all the roles, and store which are not untrusted.
-    $trusted = array();
-    foreach (user_roles() as $role) {
-      if (!in_array($role->id(), $untrusted_roles)) {
-        $trusted[] = $role->id();
-      }
-    }
-
-    // Return the trusted roles.
-    return $trusted;
+  public static function setConfigured($configured) {
+    static::config()->set('configured', $configured);
+    static::config()->save();
   }
 
   /**
-   * Returns the default untrusted roles.
+   * Sets the 'logging' flag.
    *
-   * The default untrusted roles are:
-   *   Anonymous      : always
-   *   Authenticated  : if visitors are allowed to create accounts.
-   *
-   * @return array
-   *   Default untrusted roles' IDs.
+   * @param bool $logging
+   *   The new value of the 'logging' setting.
    */
-  public static function defaultUntrustedRoles() {
-    // Add the Anonymous role to the output array.
-    $roles = array(AccountInterface::ANONYMOUS_ROLE);
-
-    // Check whether visitors can create accounts.
-    $user_register = \Drupal::config('user.settings')->get('register');
-    if ($user_register !== USER_REGISTER_ADMINISTRATORS_ONLY) {
-      // If visitors are allowed to create accounts they are considered untrusted.
-      $roles[] = AccountInterface::AUTHENTICATED_ROLE;
-    }
-
-    // Return the untrusted roles.
-    return $roles;
+  public static function setLogging($logging) {
+    static::config()->set('log', $logging);
+    static::config()->save();
   }
 
   /**
-   * Returns the permission strings that untrusted roles have.
+   * Sets the 'last_run' value.
    *
-   * @param bool $groupByRoleId
-   *   Choose whether to group permissions by role ID.
-   * @return array
-   *   An array of the permissions untrusted roles have. If $groupByRoleId is
-   *   true, the array key is the role ID, the value is the array of permissions
-   *   the role has.
+   * @param int $lastRun
+   *   The new value for 'last_run'.
    */
-  public static function untrustedPermissions($groupByRoleId = FALSE) {
-    // Get the permissions untrusted roles have, grouped by roles.
-    $permissions_grouped = user_role_permissions(static::untrustedRoles());
-
-    if ($groupByRoleId) {
-      // If the result should be grouped, we have nothing else to do.
-      return $permissions_grouped;
-    } else {
-      // Merge the grouped permissions into $untrusted_permissions.
-      $untrusted_permissions = array();
-      foreach ($permissions_grouped as $rid => $permissions) {
-        $untrusted_permissions = array_merge($untrusted_permissions, $permissions);
-      }
-
-      // Remove duplicate elements and fix indexes.
-      $untrusted_permissions = array_values(array_unique($untrusted_permissions));
-      return $untrusted_permissions;
-    }
+  public static function setLastRun($lastRun) {
+    static::config()->set('last_run', $lastRun);
+    static::config()->save();
   }
+
+  /**
+   * Stores the given 'untrusted_roles' setting.
+   *
+   * @param array $untrustedRoles
+   *   The new untrusted roles' IDs.
+   */
+  public static function setUntrustedRoles(array $untrustedRoles) {
+    static::config()->set('untrusted_roles', $untrustedRoles);
+    static::config()->save();
+  }
+
 }

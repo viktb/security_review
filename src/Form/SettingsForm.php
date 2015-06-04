@@ -13,6 +13,7 @@ use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\security_review\SecurityReview;
+use Drupal\security_review\Security;
 
 /**
  * Settings page for Security Review.
@@ -38,7 +39,7 @@ class SettingsForm extends ConfigFormBase {
 
     // Notify the user if anonymous users can create accounts.
     $message = '';
-    if (in_array(AccountInterface::AUTHENTICATED_ROLE, SecurityReview::defaultUntrustedRoles())) {
+    if (in_array(AccountInterface::AUTHENTICATED_ROLE, Security::defaultUntrustedRoles())) {
       $message = 'You have allowed anonymous users to create accounts without approval so the authenticated role defaults to untrusted.';
     }
 
@@ -52,7 +53,7 @@ class SettingsForm extends ConfigFormBase {
           '@DrupalScout' => \Drupal::l('DrupalScout.com', Url::fromUri('http://drupalscout.com/knowledge-base/importance-user-roles-and-permissions-site-security'))
         )),
       '#options' => $options,
-      '#default_value' => SecurityReview::untrustedRoles(),
+      '#default_value' => Security::untrustedRoles(),
     );
 
     // TODO: Report inactive namespaces. Old: security_review.pages.inc:146-161.
@@ -68,7 +69,7 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'checkbox',
       '#title' => t('Log checklist results and skips'),
       '#description' => t('The result of each check and skip can be logged to watchdog for tracking.'),
-      '#default_value' => SecurityReview::logEnabled(),
+      '#default_value' => SecurityReview::isLogging(),
     );
 
     // TODO: Skipped checks. Old: security_review.pages.inc:177-197.
@@ -96,23 +97,22 @@ class SettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Frequently used configuration items.
-    $settings = $this->config('security_review.settings');
     $check_settings = $this->config('security_review.checks');
 
     // Save that the module has been configured.
-    $settings->set('configured', TRUE);
+    SecurityReview::setConfigured(TRUE);
 
     // Save the new untrusted roles.
     $untrusted_roles = array_keys(array_filter($form_state->getValue('untrusted_roles')));
-    $settings->set('untrusted_roles', $untrusted_roles);
+    SecurityReview::setUntrustedRoles($untrusted_roles);
 
     // Save the new logging setting.
-    $settings->set('log', $form_state->getValue('logging') == 1);
+    $logging = $form_state->getValue('logging') == 1;
+    SecurityReview::setLogging($logging);
 
     // TODO: Save the check-specific settings.
 
     // Commit the settings.
-    $settings->save();
     $check_settings->save();
 
     // Show the default 'The configuration options have been saved.' message.
@@ -123,6 +123,6 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return ['security_review.settings', 'security_review.checks'];
+    return ['security_review.checks'];
   }
 }

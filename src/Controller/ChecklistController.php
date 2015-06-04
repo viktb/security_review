@@ -33,7 +33,7 @@ class ChecklistController {
       // TODO: If there are stored results, display them.
     } else {
       // If they haven't configured the site, prompt them to do so.
-      if (!SecurityReview::configured()) {
+      if (!SecurityReview::isConfigured()) {
         drupal_set_message(t('It appears this is your first time using the Security Review checklist. Before running the checklist please review the settings page at !link to set which roles are untrusted.',
           array('!link' => \Drupal::l('admin/reports/security-review/settings', Url::fromRoute('security_review.settings')))
         ), 'warning');
