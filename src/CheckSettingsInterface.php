@@ -12,8 +12,6 @@ namespace Drupal\security_review;
  * that can alter these settings.
  */
 interface CheckSettingsInterface {
-  // TODO: A sensible way of generating a subform.
-
   /**
    * Gets a check-specific setting value identified by $key.
    *
@@ -37,4 +35,32 @@ interface CheckSettingsInterface {
    *   Returns itself.
    */
   public function set($key, $value);
+
+  /**
+   * Form constructor.
+   *
+   * @return array
+   *   The form structure.
+   */
+  public function buildForm();
+
+  /**
+   * Form validation handler.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param array $values
+   *   The current values of the form.
+   */
+  public function validateForm(array &$form, $values);
+
+  /**
+   * Form submission handler.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param array $values
+   *   The current values of the form.
+   */
+  public function submitForm(array &$form, $values);
 }

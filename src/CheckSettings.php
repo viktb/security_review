@@ -39,4 +39,25 @@ class CheckSettings implements CheckSettingsInterface {
     $this->config->save();
     return $this;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm() {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, $values) {
+    // Validation is optional.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, $values) {
+    // Handle submission.
+  }
 }
