@@ -19,14 +19,21 @@ class BaseUrl extends Check {
    * {@inheritdoc}
    */
   public function getNamespace() {
-    return t('Security Review');
+    return 'Security Review';
   }
 
   /**
    * {@inheritdoc}
    */
   public function getTitle() {
-    return t('Base URL');
+    return 'Drupal base URL';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMachineTitle() {
+    return 'base_url_set';
   }
 
   /**
@@ -40,6 +47,6 @@ class BaseUrl extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    return "Base URL help page contents";
+    // TODO: Implement help() method.
   }
 }
