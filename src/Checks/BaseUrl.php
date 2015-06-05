@@ -3,6 +3,7 @@
 namespace Drupal\security_review\Checks;
 
 use Drupal\security_review\Check;
+use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckSettings\BaseUrlSettings;
 use Drupal\security_review\CheckResult;
 
@@ -41,6 +42,7 @@ class BaseUrl extends Check {
    */
   public function run() {
     // TODO: Implement run() method.
+    return new CheckResult($this, CheckResult::SUCCESS, array());
   }
 
   /**
@@ -48,5 +50,19 @@ class BaseUrl extends Check {
    */
   public function help() {
     // TODO: Implement help() method.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMessage($resultConst) {
+    switch($resultConst){
+      case CheckResult::SUCCESS:
+        return t('Base URL is set in settings.php.');
+      case CheckResult::FAIL:
+        return t('Base URL is not set in settings.php.');
+      default:
+        return "";
+    }
   }
 }

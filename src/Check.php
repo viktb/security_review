@@ -200,16 +200,7 @@ abstract class Check {
    * @return string
    *   The human-readable result message.
    */
-  public function getMessage($resultConst){
-    switch($resultConst){
-      case CheckResult::SUCCESS:
-        return "The check was successful.";
-      case CheckResult::FAIL:
-        return "The check failed.";
-      default:
-        return "The check returned an unexpected result";
-    }
-  }
+  public abstract function getMessage($resultConst);
 
   /**
    * Returns the last stored result of the check or null if no results have been
