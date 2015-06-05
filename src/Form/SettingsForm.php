@@ -14,6 +14,8 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\security_review\SecurityReview;
 use Drupal\security_review\Security;
+use Drupal\security_review\Checklist;
+use Drupal\security_review\Check;
 
 /**
  * Settings page for Security Review.
@@ -30,6 +32,9 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    // Get the list of checks.
+    $checks = Checklist::checks();
+
     // Get the user roles.
     $roles = user_roles();
     $options = array();
@@ -74,22 +79,58 @@ class SettingsForm extends ConfigFormBase {
 
     // TODO: Skipped checks. Old: security_review.pages.inc:177-197.
 
-    // TODO: Iterate through checklist and get check-specific setting pages.
-    $check_settings = array();
+    // Iterate through checklist and get check-specific setting pages.
+    $checksWithForms = array();
+    foreach($checks as $check){
+      /** @var Check $check */
 
-    if(!empty($check_settings)){
-      $form['advanced']['check_settings'] = array(
+      $checkForm = $check->settings()->buildForm();
+
+      if(!empty($checkForm)){
+        $checksWithForms[] = $check;
+      }
+    }
+
+    if(!empty($checksWithForms)){
+      $form['advanced']['check_specific'] = array(
         '#type' => 'details',
         '#title' => t('Check-specific settings'),
         '#open' => TRUE,
         '#tree' => TRUE,
       );
 
-      // TODO: Include check-specific setting pages.
+      foreach($checksWithForms as $check){
+        $checkNamespaceForm = &$form['advanced']['check_specific'][$check->getMachineNamespace()];
+        if(!isset($checkNamespaceForm)){
+          $checkNamespaceForm = array(
+            '#type' => 'details',
+            '#title' => t($check->getNamespace()),
+            '#open' => TRUE,
+            '#tree' => TRUE,
+          );
+        }
+        $checkNamespaceForm[$check->getMachineTitle()] = $check->settings()->buildForm();
+      }
     }
 
     // Return the finished form.
     return parent::buildForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    if(isset($form['advanced']['check_specific'])){
+      $checkSpecificValues = $form_state->getValue('check_specific');
+      foreach(Checklist::checks() as $check){
+        /** @var Check $check */
+        $checkForm = &$form['advanced']['check_specific'][$check->getMachineNamespace()][$check->getMachineTitle()];
+        if(isset($checkForm)){
+          $check->settings()->validateForm($checkForm, $checkSpecificValues[$check->getMachineNamespace()][$check->getMachineTitle()]);
+        }
+      }
+    }
   }
 
   /**
@@ -110,7 +151,17 @@ class SettingsForm extends ConfigFormBase {
     $logging = $form_state->getValue('logging') == 1;
     SecurityReview::setLogging($logging);
 
-    // TODO: Save the check-specific settings.
+    // Save the check-specific settings.
+    if(isset($form['advanced']['check_specific'])){
+      $checkSpecificValues = $form_state->getValue('check_specific');
+      foreach(Checklist::checks() as $check){
+        /** @var Check $check */
+        $checkForm = &$form['advanced']['check_specific'][$check->getMachineNamespace()][$check->getMachineTitle()];
+        if(isset($checkForm)){
+          $check->settings()->submitForm($checkForm, $checkSpecificValues[$check->getMachineNamespace()][$check->getMachineTitle()]);
+        }
+      }
+    }
 
     // Commit the settings.
     $check_settings->save();
