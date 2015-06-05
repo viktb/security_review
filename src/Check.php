@@ -34,7 +34,7 @@ abstract class Check {
    */
   protected function __construct(){
     $this->config = \Drupal::configFactory()->getEditable('security_review.check.' . $this->getUniqueIdentifier());
-    $this->settings = new CheckSettings($this->getUniqueIdentifier(), $this->config);
+    $this->settings = new CheckSettings($this, $this->config);
 
     // Set namespace and id in config.
     if($this->config->get('namespace') != $this->getNamespace()
@@ -141,7 +141,9 @@ abstract class Check {
    * @return boolean
    *   Boolean indicating whether findings will be stored.
    */
-  public abstract function storesFindings();
+  public function storesFindings(){
+    return true;
+  }
 
   /**
    * @return \Drupal\security_review\CheckSettingsInterface
