@@ -33,7 +33,7 @@ class SettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Get the list of checks.
-    $checks = Checklist::checks();
+    $checks = Checklist::getChecks();
 
     // Get the user roles.
     $roles = user_roles();
@@ -77,7 +77,28 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => SecurityReview::isLogging(),
     );
 
-    // TODO: Skipped checks. Old: security_review.pages.inc:177-197.
+    // Skipped checks.
+    $values = array();
+    $options = array();
+    foreach ($checks as $check) {
+      /** @var Check $check */
+      // Determine if check is being skipped.
+      if ($check->isSkipped()) {
+        $values[] = $check->getUniqueIdentifier();
+        $label = t('!name <em>skipped by UID !uid on !date</em>', array('!name' => $check->getTitle(), '!uid' => $check->skippedBy()->id(), '!date' => format_date($check->skippedOn())));
+      }
+      else {
+        $label = $check->getTitle();
+      }
+      $options[$check->getUniqueIdentifier()] = $label;
+    }
+    $form['advanced']['skip'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Checks to skip'),
+      '#description' => t('Skip running certain checks. This can also be set on the <em>Run & review</em> page. It is recommended that you do not skip any checks unless you know the result is wrong or the process times out while running.'),
+      '#options' => $options,
+      '#default_value' => $values,
+    );
 
     // Iterate through checklist and get check-specific setting pages.
     $checksWithForms = array();
@@ -103,10 +124,11 @@ class SettingsForm extends ConfigFormBase {
         $checkNamespaceForm = &$form['advanced']['check_specific'][$check->getMachineNamespace()];
         if(!isset($checkNamespaceForm)){
           $checkNamespaceForm = array(
-            '#type' => 'details',
+            /*'#type' => 'details',
             '#title' => t($check->getNamespace()),
             '#open' => TRUE,
-            '#tree' => TRUE,
+            '#tree' => TRUE,*/
+            // Disabled because of too deep nesting.
           );
         }
         $checkNamespaceForm[$check->getMachineTitle()] = $check->settings()->buildForm();
@@ -123,7 +145,7 @@ class SettingsForm extends ConfigFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     if(isset($form['advanced']['check_specific'])){
       $checkSpecificValues = $form_state->getValue('check_specific');
-      foreach(Checklist::checks() as $check){
+      foreach(Checklist::getChecks() as $check){
         /** @var Check $check */
         $checkForm = &$form['advanced']['check_specific'][$check->getMachineNamespace()][$check->getMachineTitle()];
         if(isset($checkForm)){
@@ -151,10 +173,21 @@ class SettingsForm extends ConfigFormBase {
     $logging = $form_state->getValue('logging') == 1;
     SecurityReview::setLogging($logging);
 
+    // Skip selected checks.
+    $skipped = array_keys(array_filter($form_state->getValue('skip')));
+    foreach(Checklist::getChecks() as $check){
+      /** @var Check $check */
+      if(in_array($check->getUniqueIdentifier(), $skipped)){
+        $check->skip();
+      }else{
+        $check->enable();
+      }
+    }
+
     // Save the check-specific settings.
     if(isset($form['advanced']['check_specific'])){
       $checkSpecificValues = $form_state->getValue('check_specific');
-      foreach(Checklist::checks() as $check){
+      foreach(Checklist::getChecks() as $check){
         /** @var Check $check */
         $checkForm = &$form['advanced']['check_specific'][$check->getMachineNamespace()][$check->getMachineTitle()];
         if(isset($checkForm)){
