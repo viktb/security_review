@@ -66,20 +66,35 @@ abstract class Check {
    * Returns the namespace of the check. Usually it's the same as the module's
    * name.
    *
-   * Naming conventions:
+   * Naming rules (if overridden):
    *   - All characters should be lowerspace.
    *   - Use characters only from the english alphabet.
    *   - Don't use spaces (use "_" instead).
    *
    * @return string
-   *   Namespace of check.
+   *   Machine namespace of the check.
+   */
+  public function getMachineNamespace(){
+    $namespace = strtolower($this->getNamespace());
+    $namespace = preg_replace("/[^a-z0-9 ]/", '', $namespace);
+    $namespace = str_replace(' ', '_', $namespace);
+
+    return $namespace;
+  }
+
+  /**
+   * Returns the namespace of the check. Usually it's the same as the module's
+   * name.
+   *
+   * @return string
+   *   Human-readable namespace of the check.
    */
   public abstract function getNamespace();
 
   /**
    * Returns the machine name of the check.
    *
-   * Naming conventions:
+   * Naming rules (if overridden):
    *   - All characters should be lowerspace.
    *   - Use characters only from the english alphabet.
    *   - Don't use spaces (use "_" instead).
@@ -87,16 +102,12 @@ abstract class Check {
    * @return string
    *   ID of check.
    */
-  public abstract function getId();
+  public function getMachineTitle(){
+    $title = strtolower($this->getTitle());
+    $title = preg_replace("/[^a-z0-9 ]/", '', $title);
+    $title = str_replace(' ', '_', $title);
 
-  /**
-   * Returns the unique identifier constructed using the namespace, id pair.
-   *
-   * @return string
-   *   Unique identifier of the check.
-   */
-  public final function getUniqueIdentifier(){
-    return strtolower($this->getNamespace() . '-' . $this->getId());
+    return $title;
   }
 
   /**
@@ -106,6 +117,16 @@ abstract class Check {
    *   Title of check.
    */
   public abstract function getTitle();
+
+  /**
+   * Returns the unique identifier constructed using the namespace, id pair.
+   *
+   * @return string
+   *   Unique identifier of the check.
+   */
+  public final function getUniqueIdentifier(){
+    return $this->getMachineNamespace() . '-' . $this->getMachineTitle();
+  }
 
   /**
    * Returns whether Security Review should store the findings or reproduce them
