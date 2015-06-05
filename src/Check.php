@@ -309,8 +309,10 @@ abstract class Check {
    * Enables the check. Has no effect if the check was not skipped.
    */
   public function enable() {
-    $this->config->set('skipped', false);
-    $this->config->save();
+    if($this->isSkipped()){
+      $this->config->set('skipped', false);
+      $this->config->save();
+    }
   }
 
   /**
@@ -318,10 +320,12 @@ abstract class Check {
    * skipped on the Run & Review page.
    */
   public function skip() {
-    $this->config->set('skipped', true);
-    $this->config->set('skipped_by', \Drupal::currentUser()->id());
-    $this->config->set('skipped_on', time());
-    $this->config->save();
+    if(!$this->isSkipped()){
+      $this->config->set('skipped', true);
+      $this->config->set('skipped_by', \Drupal::currentUser()->id());
+      $this->config->set('skipped_on', time());
+      $this->config->save();
+    }
   }
 
   /**
