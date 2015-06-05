@@ -107,11 +107,10 @@ class HelpController {
     $output .= '<p>' . t("Details and help on the security review checks. Checks are not always perfectly correct in their procedure and result. Refer to drupal.org handbook documentation if you are unsure how to make the recommended alterations to your configuration or consult the module's README.txt for support.") . '</p>';
 
     // Iterate through checklists and print their links.
-    $checks = Checklist::groupChecksByNamespace(Checklist::checks());
+    $checks = Checklist::groupChecksByNamespace(Checklist::getChecks());
     foreach($checks as $checkNamespace){
-      $output .= '<details open="open">';
-      $output .= '<summary>' . t($checkNamespace[0]->getNamespace()) . '</summary>';
-      $output .= '<div class="details-wrapper">';
+      $output .= '<h4>' . t($checkNamespace[0]->getNamespace()) . '</h4>';
+      $output .= '<div class="details-wrapper"><ul>';
       foreach($checkNamespace as $check){
         /** @var Check $check */
         $url = Url::fromRoute('security_review.help', array(
@@ -119,10 +118,9 @@ class HelpController {
           'check_name' => $check->getMachineTitle(),
         ));
         $link = \Drupal::l(t($check->getTitle()), $url);
-        $output .= "<p>$link</p>";
+        $output .= "<li>$link</li>";
       }
-      $output .= '</div>';
-      $output .= '</details>';
+      $output .= '</ul></div>';
     }
 
     return array(
