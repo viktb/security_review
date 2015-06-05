@@ -20,24 +20,29 @@ class CheckSettings implements CheckSettingsInterface {
   protected $config;
 
   /**
-   * @var string $uniqueIdentifier
+   * @var \Drupal\security_review\Check
    */
-  protected $uniqueIdentifier;
+  protected $check;
 
   /**
-   * @param string $uniqueIdentifier
+   * @param Check $check
    * @param \Drupal\Core\Config\Config $config
    */
-  public function __construct($uniqueIdentifier, Config &$config){
-    $this->uniqueIdentifier = $uniqueIdentifier;
+  public function __construct(Check $check, Config &$config){
+    $this->check = $check;
     $this->config = $config;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function get($key) {
-    return $this->config->get('settings.' . $key);
+  public function get($key, $defaultValue = null) {
+    $value = $this->config->get('settings.' . $key);
+
+    if($value == null){
+      return $defaultValue;
+    }
+    return $value;
   }
 
   /**
