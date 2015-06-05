@@ -53,7 +53,8 @@ class Checklist {
     $output = array();
 
     foreach($checks as $check){
-      $output[$check->getNamespace()][] = $check;
+      /** @var Check $check */
+      $output[$check->getMachineNamespace()][] = $check;
     }
 
     return $output;
@@ -70,6 +71,7 @@ class Checklist {
     $results = array();
 
     foreach($checks as $check){
+      /** @var Check $check */
       $results[] = $check->run();
     }
 
@@ -82,22 +84,24 @@ class Checklist {
    */
   public static function storeResults(array $results) {
     foreach($results as $result){
+      /** @var CheckResult $result */
       $result->check()->storeResult($result);
     }
   }
 
   /**
    * @param $namespace
-   *   The namespace of the requested check.
-   * @param $id
-   *   The ID of the requested check.
+   *   The machine namespace of the requested check.
+   * @param $title
+   *   The machine title of the requested check.
    *
    * @return null|Check
    *   The Check or null if it doesn't exist.
    */
-  public static function getCheck($namespace, $id) {
+  public static function getCheck($namespace, $title) {
     foreach(static::checks($namespace) as $check){
-      if($check->getId() == $id){
+      /** @var Check $check */
+      if($check->getMachineTitle() == $title){
         return $check;
       }
     }
