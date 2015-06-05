@@ -40,6 +40,6 @@ class BaseUrl extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    // TODO: Implement help() method.
+    return "Base URL help page contents";
   }
 }

@@ -8,6 +8,10 @@
 namespace Drupal\security_review\Controller;
 
 use Drupal\Core\Url;
+use Drupal\security_review\Checklist;
+use Drupal\security_review\Check;
+use Drupal\security_review\CheckResult;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * The class of the Help pages' controller.
@@ -40,16 +44,38 @@ class HelpController {
    *   The namespace of the check.
    * @param $check_name
    *   The name of the check.
+   *
    * @return array
-   *   The requested check-specific help page's content.
+   *
+   * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
   private function checkHelp($namespace, $check_name) {
-    // TODO: Print check specific help.
-    // TODO: Decide what to do if only namespace is set.
+    // Get the requested check.
+    $check = Checklist::getCheck($namespace, $check_name);
 
+    // If the check doesn't exist, throw 404.
+    if($check == null){
+      throw new NotFoundHttpException();
+    }
+
+    // Print the help page.
+    $output = '';
+    $output .= '<div>';
+    $output .= $check->help();
+    $output .= '</div>';
+
+    // Evaluate last result, if any.
+    $lastResult = $check->lastResult();
+    if($lastResult instanceof CheckResult){
+      $output .= '<div>';
+      $output .= $check->evaluate($lastResult);
+      $output .= '</div>';
+    }
+
+    // Return the completed page.
     return array(
       '#type' => 'markup',
-      '#markup' => "ns: $namespace cn: $check_name"
+      '#markup' => $output
     );
   }
 
@@ -80,7 +106,24 @@ class HelpController {
     $output .= '<h3>' . t('Check-specfic help') . '</h3>';
     $output .= '<p>' . t("Details and help on the security review checks. Checks are not always perfectly correct in their procedure and result. Refer to drupal.org handbook documentation if you are unsure how to make the recommended alterations to your configuration or consult the module's README.txt for support.") . '</p>';
 
-    // TODO: iterate through checklists and print their own links
+    // Iterate through checklists and print their links.
+    $checks = Checklist::groupChecksByNamespace(Checklist::checks());
+    foreach($checks as $checkNamespace){
+      $output .= '<details open="open">';
+      $output .= '<summary>' . t($checkNamespace[0]->getNamespace()) . '</summary>';
+      $output .= '<div class="details-wrapper">';
+      foreach($checkNamespace as $check){
+        /** @var Check $check */
+        $url = Url::fromRoute('security_review.help', array(
+          'namespace' => $check->getMachineNamespace(),
+          'check_name' => $check->getMachineTitle(),
+        ));
+        $link = \Drupal::l(t($check->getTitle()), $url);
+        $output .= "<p>$link</p>";
+      }
+      $output .= '</div>';
+      $output .= '</details>';
+    }
 
     return array(
       '#type' => 'markup',
