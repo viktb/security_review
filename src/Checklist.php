@@ -33,7 +33,7 @@ class Checklist {
     $checks = array();
     foreach($raw_checks as $raw_check){
       if($raw_check instanceof Check){
-        if($namespace == null || $raw_check->getNamespace() == $namespace){
+        if($namespace == null || $raw_check->getMachineNamespace() == $namespace){
           $checks[] = $raw_check;
         }
       }
