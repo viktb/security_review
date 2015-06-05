@@ -37,9 +37,9 @@ abstract class Check {
     $this->settings = new CheckSettings($this, $this->config);
 
     // Set namespace and id in config.
-    if($this->config->get('namespace') != $this->getNamespace()
+    if($this->config->get('namespace') != $this->getMachineNamespace()
     || $this->config->get('title') != $this->getMachineTitle()){
-      $this->config->set('namespace', $this->getNamespace());
+      $this->config->set('namespace', $this->getMachineNamespace());
       $this->config->set('title', $this->getMachineTitle());
       $this->config->save();
     }
