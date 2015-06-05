@@ -19,13 +19,17 @@ class Checklist {
   /**
    * Returns the checks that are returned by hook_security_review_checks.
    *
-   * @param string $namespace
-   *   The namespace to filter checks by.
-   *
    * @return array
    *   Array of Checks.
    */
-  public static function checks($namespace = null) {
+  public static function getChecks() {
+    // Cache checks.
+    static $checks = array();
+
+    if(!empty($checks)){
+      return $checks;
+    }
+
     // Get checks.
     $raw_checks = \Drupal::moduleHandler()->invokeAll('security_review_checks');
 
@@ -33,9 +37,7 @@ class Checklist {
     $checks = array();
     foreach($raw_checks as $raw_check){
       if($raw_check instanceof Check){
-        if($namespace == null || $raw_check->getMachineNamespace() == $namespace){
-          $checks[] = $raw_check;
-        }
+        $checks[] = $raw_check;
       }
     }
 
@@ -90,18 +92,37 @@ class Checklist {
   }
 
   /**
-   * @param $namespace
+   * @param string $namespace
    *   The machine namespace of the requested check.
-   * @param $title
+   * @param string $title
    *   The machine title of the requested check.
    *
    * @return null|Check
    *   The Check or null if it doesn't exist.
    */
   public static function getCheck($namespace, $title) {
-    foreach(static::checks($namespace) as $check){
+    foreach(static::getChecks() as $check){
       /** @var Check $check */
-      if($check->getMachineTitle() == $title){
+      if($check->getMachineNamespace() == $namespace
+        && $check->getMachineTitle() == $title){
+        return $check;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * @param string $uniqueIdentifier
+   *   The machine namespace of the requested check.
+   *
+   * @return null|Check
+   *   The Check or null if it doesn't exist.
+   */
+  public static function getCheckByIdentifier($uniqueIdentifier){
+    foreach(static::getChecks() as $check){
+      /** @var Check $check */
+      if($check->getUniqueIdentifier() == $uniqueIdentifier){
         return $check;
       }
     }
