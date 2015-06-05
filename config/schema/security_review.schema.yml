@@ -25,7 +25,7 @@ security_review.check.*:
     namespace:
       type: string
       label: 'Namespace'
-    id:
+    title:
       type: string
       label: 'Check ID'
     skipped:
@@ -43,7 +43,7 @@ security_review.check.*:
     settings:
       # Checks that need storage for settings are advised to define their settings schema.
       # This way type-strict per-check settings storage can be created.
-      type: security_review.check_settings.[%parent.namespace]-[%parent.id]
+      type: security_review.check_settings.[%parent.namespace]-[%parent.title]
 
 # Defines a check result.
 security_review.check_result:
