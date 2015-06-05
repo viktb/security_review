@@ -35,6 +35,14 @@ abstract class Check {
   protected function __construct(){
     $this->config = \Drupal::configFactory()->getEditable('security_review.check.' . $this->getUniqueIdentifier());
     $this->settings = new CheckSettings($this->getUniqueIdentifier(), $this->config);
+
+    // Set namespace and id in config.
+    if($this->config->get('namespace') != $this->getNamespace()
+    || $this->config->get('id') != $this->getId()){
+      $this->config->set('namespace', $this->getNamespace());
+      $this->config->set('id', $this->getId());
+      $this->config->save();
+    }
   }
 
   /**
@@ -58,7 +66,7 @@ abstract class Check {
    * Returns the namespace of the check. Usually it's the same as the module's
    * name.
    *
-   * Naming rules:
+   * Naming conventions:
    *   - All characters should be lowerspace.
    *   - Use characters only from the english alphabet.
    *   - Don't use spaces (use "_" instead).
@@ -71,7 +79,7 @@ abstract class Check {
   /**
    * Returns the machine name of the check.
    *
-   * Naming rules:
+   * Naming conventions:
    *   - All characters should be lowerspace.
    *   - Use characters only from the english alphabet.
    *   - Don't use spaces (use "_" instead).
@@ -188,22 +196,27 @@ abstract class Check {
    *   The last stored result (or null).
    */
   public function lastResult() {
-    if($this->lastRun() > 0){
-      $lastResult = new CheckResult(
-        $this,
-        $this->config->get('last_result.result'),
-        $this->config->get('last_result.findings'),
-        $this->config->get('last_result.time')
-      );
+    $result = $this->config->get('last_result.result');
+    $findings = $this->config->get('last_result.findings');
+    $time = $this->config->get('last_result.time');
 
-      if($this->storesFindings()){
-        return $lastResult;
-      }else{
-        return CheckResult::combine($lastResult, $this->run($lastResult));
-      }
+    $validResult = is_int($result)
+      && $result >= CheckResult::SUCCESS
+      && $result <= CheckResult::INFO;
+    $validFindings = is_array($findings);
+    $validTime = is_int($time) && $time > 0;
+
+    if(!$validResult || !$validFindings || !$validTime){
+      return null;
     }
 
-    return null;
+    $lastResult = new CheckResult($this, $result, $findings, $time);
+
+    if($this->storesFindings()){
+      return $lastResult;
+    }else{
+      return CheckResult::combine($lastResult, $this->run($lastResult));
+    }
   }
 
   /**
@@ -216,7 +229,7 @@ abstract class Check {
   public function lastRun() {
     $lastResultTime = $this->config->get('last_result.time');
 
-    if($lastResultTime == null){
+    if(!is_int($lastResultTime)){
       return 0;
     }
     return $lastResultTime;
@@ -231,7 +244,7 @@ abstract class Check {
   public function isSkipped() {
     $isSkipped = $this->config->get('skipped');
 
-    if($isSkipped == null){
+    if(!is_bool($isSkipped)){
       return false;
     }
     return $isSkipped;
@@ -247,7 +260,7 @@ abstract class Check {
   public function skippedBy() {
     $skippedBy = $this->config->get('skipped_by');
 
-    if($skippedBy == null){
+    if(!is_int($skippedBy)){
       return null;
     }
     return User::load($skippedBy);
@@ -263,7 +276,7 @@ abstract class Check {
   public function skippedOn() {
     $skippedOn = $this->config->get('skipped_on');
 
-    if($skippedOn == null){
+    if(!is_int($skippedOn)){
       return 0;
     }
     return $skippedOn;

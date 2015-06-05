@@ -61,7 +61,7 @@ class CheckResult {
     $this->findings = $findings;
 
     // Set the timestamp.
-    if($time == null){
+    if(!is_int($time)){
       $this->time = time();
     }else{
       $this->time = intval($time);
