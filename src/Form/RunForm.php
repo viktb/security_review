@@ -9,6 +9,7 @@ namespace Drupal\security_review\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
+use Drupal\security_review\SecurityReview;
 
 /**
  * 'Run' form class.
@@ -46,10 +47,6 @@ class RunForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    if (\Drupal::currentUser()->hasPermission('run security checks')) {
-      // TODO: Run the checks.
-    } else {
-      drupal_set_message('You don\'t have the permission to run security checks!', 'error');
-    }
+    SecurityReview::runChecklist();
   }
 }
