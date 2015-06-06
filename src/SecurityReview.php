@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\security_review;
+use Drupal\Core\Access\AccessException;
 
 /**
  * A class containing static methods regarding the module's configuration.
@@ -117,4 +118,17 @@ class SecurityReview {
     static::config()->save();
   }
 
+  /**
+   * Runs enabled checks and stores their results.
+   */
+  public static function runChecklist(){
+    if (\Drupal::currentUser()->hasPermission('run security checks')) {
+      $checks = Checklist::getEnabledChecks();
+      $results = Checklist::runChecks($checks);
+      Checklist::storeResults($results);
+      SecurityReview::setLastRun(time());
+    } else {
+      throw new AccessException();
+    }
+  }
 }
