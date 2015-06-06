@@ -3,7 +3,6 @@
 namespace Drupal\security_review\Checks;
 
 use Drupal\security_review\Check;
-use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckSettings\BaseUrlSettings;
 use Drupal\security_review\CheckResult;
 
@@ -62,7 +61,7 @@ class BaseUrl extends Check {
       case CheckResult::FAIL:
         return t('Base URL is not set in settings.php.');
       default:
-        return "";
+        return "Unexpected result.";
     }
   }
 }
