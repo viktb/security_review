@@ -45,6 +45,25 @@ class Checklist {
   }
 
   /**
+   * Returns the enabled checks that are returned by hook_security_review_checks.
+   *
+   * @return array
+   *   Array of enabled Checks.
+   */
+  public static function getEnabledChecks(){
+    $enabled = array();
+
+    foreach(static::getChecks() as $check){
+      /** @var Check $check */
+      if(!$check->isSkipped()){
+        $enabled[] = $check;
+      }
+    }
+
+    return $enabled;
+  }
+
+  /**
    * @param array $checks
    *   The array of Checks to group.
    *
