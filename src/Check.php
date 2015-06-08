@@ -180,10 +180,15 @@ abstract class Check {
    *   The contents of the evaluation page.
    */
   public function evaluate(CheckResult $result){
+    $findings = $result->findings();
+    if(empty($findings)){
+      return '';
+    }
+
     $output = '';
     $output .= '<strong>' . t('Findings') . '</strong><br />';
     $output .= '<ul>';
-    foreach($result->findings() as $finding){
+    foreach($findings as $finding){
       $output .= '<li>' . $finding . '</li>';
     }
     $output .= '</ul>';
