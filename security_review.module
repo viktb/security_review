@@ -1,6 +1,7 @@
 <?php
 
 use Drupal\security_review\Checks;
+use Drupal\security_review\CheckResult;
 
 /**
  * Implements hook_security_review_checks().
@@ -9,4 +10,36 @@ function security_review_security_review_checks(){
   return array(
     Checks\BaseUrl::getInstance(),
   );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function security_review_theme($existing, $type, $theme, $path) {
+  return array(
+    // Template for list of bingo participants.
+    'results' => array(
+      'template' => 'results',
+      'variables' => array(
+        'date' => array(),
+        'checks' => array()
+      ),
+    ),
+  );
+}
+
+function template_preprocess_results(&$variables){
+  $variables['date'] = format_date($variables['date']);
+  foreach($variables['checks'] as &$check){
+    switch($check['result']){
+      case CheckResult::SUCCESS:
+        $check['result'] = 'success';
+        break;
+      case CheckResult::FAIL:
+        $check['result'] = 'error';
+        break;
+      default:
+        $check['result'] = 'warning';
+    }
+  }
 }

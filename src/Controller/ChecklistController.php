@@ -8,6 +8,9 @@
 namespace Drupal\security_review\Controller;
 
 use Drupal\Core\Url;
+use Drupal\security_review\Checklist;
+use Drupal\security_review\Check;
+use Drupal\security_review\CheckResult;
 use Drupal\security_review\SecurityReview;
 
 /**
@@ -26,11 +29,39 @@ class ChecklistController {
     if (\Drupal::currentUser()->hasPermission('run security checks')) {
       $run_form = \Drupal::formBuilder()
         ->getForm('Drupal\security_review\Form\RunForm');
+      if(SecurityReview::getLastRun() > 0){
+        $run_form['run_form']['#open'] = FALSE;
+      }
     }
 
-    $checks = array();
-    if (!empty($checks)) {
-      // TODO: If there are stored results, display them.
+    if (SecurityReview::getLastRun() > 0) {
+      $checks = array();
+      foreach(Checklist::getChecks() as $check){
+        /** @var Check $check */
+        $checkInfo = array(
+          'result' => CheckResult::SKIPPED,
+          'message' => 'The check hasn\'t been run yet.'
+        );
+        $lastResult = $check->lastResult();
+        if($lastResult != null){
+          $checkInfo['result'] = $check->isSkipped() ? CheckResult::SKIPPED : $lastResult->result();
+          $checkInfo['message'] = $check->getMessage($lastResult->result());
+        }
+        $checkInfo['help_url'] = Url::fromRoute('security_review.help',
+          array(
+            'namespace' => $check->getMachineNamespace(),
+            'check_name' => $check->getMachineTitle()
+          )
+        );
+        // TODO: Skip buttons.
+
+        $checks[] = $checkInfo;
+      }
+      $stored_results = array(
+        '#theme' => 'results',
+        '#date' => SecurityReview::getLastRun(),
+        '#checks' => $checks
+      );
     } else {
       // If they haven't configured the site, prompt them to do so.
       if (!SecurityReview::isConfigured()) {

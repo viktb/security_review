@@ -30,7 +30,6 @@ class RunForm extends FormBase {
       '#type' => 'details',
       '#title' => t('Run'),
       '#description' => t('Click the button below to run the security checklist and review the results.'),
-      // TODO: If there are stored check results, set #open to FALSE.
       '#open' => TRUE,
     );
 
