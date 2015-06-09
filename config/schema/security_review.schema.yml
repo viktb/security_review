@@ -61,3 +61,11 @@ security_review.check_result:
       sequence:
         type: undefined
         label: 'Finding'
+
+# Setting storage for Base URL check.
+security_review.check_settings.security_review-base_url_set:
+  type: mapping
+  mapping:
+    method:
+      type: string
+      label: 'Base URL identification method'

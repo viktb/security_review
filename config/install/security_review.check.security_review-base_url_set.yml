@@ -1,0 +1,4 @@
+namespace: 'security_review'
+title: 'base_url_set'
+settings:
+  method: 'token'
