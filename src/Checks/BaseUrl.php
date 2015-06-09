@@ -3,8 +3,8 @@
 namespace Drupal\security_review\Checks;
 
 use Drupal\security_review\Check;
-use Drupal\security_review\CheckSettings\BaseUrlSettings;
 use Drupal\security_review\CheckResult;
+use Drupal\security_review\CheckSettings\BaseUrlSettings;
 
 class BaseUrl extends Check {
   /**

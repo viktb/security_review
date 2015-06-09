@@ -8,8 +8,8 @@
 namespace Drupal\security_review\Controller;
 
 use Drupal\Core\Url;
-use Drupal\security_review\Checklist;
 use Drupal\security_review\Check;
+use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckResult;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

@@ -1,7 +1,7 @@
 <?php
 
-use Drupal\security_review\Checks;
 use Drupal\security_review\CheckResult;
+use Drupal\security_review\Checks;
 
 /**
  * Implements hook_security_review_checks().

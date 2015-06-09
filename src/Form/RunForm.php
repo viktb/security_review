@@ -7,8 +7,8 @@
 
 namespace Drupal\security_review\Form;
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\security_review\SecurityReview;
 
 /**
