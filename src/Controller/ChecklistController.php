@@ -27,8 +27,11 @@ class ChecklistController {
 
     // If the user has the required permissions, show the RunForm.
     if (\Drupal::currentUser()->hasPermission('run security checks')) {
+      // Get the Run form.
       $run_form = \Drupal::formBuilder()
         ->getForm('Drupal\security_review\Form\RunForm');
+
+      // Close the Run form if there are results.
       if(SecurityReview::getLastRun() > 0){
         $run_form['run_form']['#open'] = FALSE;
       }
@@ -38,30 +41,49 @@ class ChecklistController {
       $checks = array();
       foreach(Checklist::getChecks() as $check){
         /** @var Check $check */
+
         $checkInfo = array(
           'result' => CheckResult::SKIPPED,
           'message' => 'The check hasn\'t been run yet.'
         );
+
         $lastResult = $check->lastResult();
+
         if($lastResult != null){
           $checkInfo['result'] = $check->isSkipped() ? CheckResult::SKIPPED : $lastResult->result();
           $checkInfo['message'] = $check->getMessage($lastResult->result());
         }
-        $checkInfo['help_url'] = Url::fromRoute('security_review.help',
+
+        $checkInfo['help_link'] = \Drupal::l('Details', Url::fromRoute('security_review.help',
           array(
             'namespace' => $check->getMachineNamespace(),
             'check_name' => $check->getMachineTitle()
           )
-        );
-        // TODO: Skip buttons.
+        ));
+
+        $toggle_text = $check->isSkipped() ? 'Enable' : 'Skip';
+        $checkInfo['toggle_link'] = \Drupal::l($toggle_text, Url::fromRoute('security_review.toggle',
+          array(
+            'js' => 'nojs',
+            'check_id' => $check->getUniqueIdentifier()
+          ),
+          array('query' => array(
+            'token' => \Drupal::csrfToken()->get($check->getUniqueIdentifier())
+          ))
+        ));
 
         $checks[] = $checkInfo;
       }
+
       $stored_results = array(
-        '#theme' => 'results',
+        '#theme' => 'run_and_review',
         '#date' => SecurityReview::getLastRun(),
-        '#checks' => $checks
+        '#checks' => $checks,
+        '#attached' => array(
+          'library' => array('security_review/run_and_review'),
+        )
       );
+
     } else {
       // If they haven't configured the site, prompt them to do so.
       if (!SecurityReview::isConfigured()) {
