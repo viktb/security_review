@@ -86,46 +86,49 @@ class HelpController {
    *   The general help page's content.
    */
   private function generalHelp() {
-    $output = '';
-    $output .= '<p>';
-    $output .= t('You should take the security of your site very seriously.
+    $paragraphs = array();
+
+    $paragraphs[] = t('You should take the security of your site very seriously.
       Fortunately, Drupal is fairly secure by default.
       The Security Review module automates many of the easy-to-make mistakes that render your site insecure, however it does not automatically make your site impenetrable.
       You should give care to what modules you install and how you configure your site and server.
       Be mindful of who visits your site and what features you expose for their use.');
-    $output .= '</p>';
-    $output .= '<p>';
-    $output .= t('You can read more about securing your site in the <a href="!do">drupal.org handbooks</a> and on <a href="!cd">CrackingDrupal.com</a>.
+    $paragraphs[] = t('You can read more about securing your site in the !drupal_org and on !cracking_drupal.
       There are also additional modules you can install to secure or protect your site. Be aware though that the more modules you have running on your site the greater (usually) attack area you expose.',
       array(
-        '!do' => 'http://drupal.org/security/secure-configuration',
-        '!cd' => 'http://crackingdrupal.com'
+        '!drupal_org' => \Drupal::l('drupal.org handbooks', Url::fromUri('http://drupal.org/security/secure-configuration')),
+        '!cracking_drupal' => \Drupal::l('CrackingDrupal.com', Url::fromUri('http://crackingdrupal.com')),
       ));
-    $output .= '</p>';
-    $output .= '<p>' . \Drupal::l(t('Drupal.org Handbook: Introduction to security-related contrib modules'), Url::fromUri('http://drupal.org/node/382752')) . '</p>';
-    $output .= '<h3>' . t('Check-specfic help') . '</h3>';
-    $output .= '<p>' . t("Details and help on the security review checks. Checks are not always perfectly correct in their procedure and result. Refer to drupal.org handbook documentation if you are unsure how to make the recommended alterations to your configuration or consult the module's README.txt for support.") . '</p>';
+    $paragraphs[] = \Drupal::l(t('Drupal.org Handbook: Introduction to security-related contrib modules'), Url::fromUri('http://drupal.org/node/382752'));
 
-    // Iterate through checklists and print their links.
-    $checks = Checklist::groupChecksByNamespace(Checklist::getChecks());
-    foreach($checks as $checkNamespace){
-      $output .= '<h4>' . t($checkNamespace[0]->getNamespace()) . '</h4>';
-      $output .= '<div class="details-wrapper"><ul>';
-      foreach($checkNamespace as $check){
-        /** @var Check $check */
-        $url = Url::fromRoute('security_review.help', array(
-          'namespace' => $check->getMachineNamespace(),
-          'check_name' => $check->getMachineTitle(),
-        ));
-        $link = \Drupal::l(t($check->getTitle()), $url);
-        $output .= "<li>$link</li>";
+    $checks = array();
+
+    foreach(Checklist::getChecks() as $check){
+      /** @var Check $check */
+
+      // Get the namespace array.
+      $check_namespace = &$checks[$check->getMachineNamespace()];
+
+      // Set up the namespace array if not set.
+      if(!isset($check_namespace)){
+        $check_namespace['namespace'] = $check->getNamespace();
+        $check_namespace['check_links'] = array();
       }
-      $output .= '</ul></div>';
+
+      // Add the link pointing to the check-specific help.
+      $check_namespace['check_links'][] = \Drupal::l(
+        t($check->getTitle()),
+        Url::fromRoute('security_review.help', array(
+          'namespace' => $check->getMachineNamespace(),
+          'check_name' => $check->getMachineTitle()
+        ))
+      );
     }
 
     return array(
-      '#type' => 'markup',
-      '#markup' => $output
+      '#theme' => 'general_help',
+      '#paragraphs' => $paragraphs,
+      '#checks' => $checks
     );
   }
 }

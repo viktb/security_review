@@ -17,17 +17,26 @@ function security_review_security_review_checks(){
  */
 function security_review_theme($existing, $type, $theme, $path) {
   return array(
-    // Template for list of bingo participants.
     'run_and_review' => array(
       'template' => 'run_and_review',
       'variables' => array(
         'date' => array(),
         'checks' => array()
-      ),
+      )
     ),
+    'general_help' => array(
+      'template' => 'general_help',
+      'variables' => array(
+        'paragraphs' => array(),
+        'checks' => array()
+      )
+    )
   );
 }
 
+/**
+ * Preprocesses variables for template 'run_and_review'.
+ */
 function template_preprocess_run_and_review(&$variables){
   $variables['date'] = format_date($variables['date']);
   foreach($variables['checks'] as &$check){
