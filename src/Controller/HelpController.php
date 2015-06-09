@@ -22,19 +22,19 @@ class HelpController {
    *
    * @param $namespace
    *   The namespace of the check (null if general page).
-   * @param $check_name
+   * @param $title
    *   The name of the check.
    * @return array
    *   The requested help page's contents.
    */
-  public function index($namespace, $check_name) {
+  public function index($namespace, $title) {
     // If no namespace is set, print the general help page
     if ($namespace === NULL) {
       return $this->generalHelp();
     }
 
     // Print check-specific help
-    return $this->checkHelp($namespace, $check_name);
+    return $this->checkHelp($namespace, $title);
   }
 
   /**
@@ -42,16 +42,16 @@ class HelpController {
    *
    * @param $namespace
    *   The namespace of the check.
-   * @param $check_name
+   * @param $title
    *   The name of the check.
    *
    * @return array
    *
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
-  private function checkHelp($namespace, $check_name) {
+  private function checkHelp($namespace, $title) {
     // Get the requested check.
-    $check = Checklist::getCheck($namespace, $check_name);
+    $check = Checklist::getCheck($namespace, $title);
 
     // If the check doesn't exist, throw 404.
     if($check == null){
@@ -120,7 +120,7 @@ class HelpController {
         t($check->getTitle()),
         Url::fromRoute('security_review.help', array(
           'namespace' => $check->getMachineNamespace(),
-          'check_name' => $check->getMachineTitle()
+          'title' => $check->getMachineTitle()
         ))
       );
     }

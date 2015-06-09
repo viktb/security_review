@@ -6,11 +6,11 @@ security_review:
     _permission: 'access security review list'
 
 security_review.help:
-  path: 'admin/reports/security-review/help/{namespace}/{check_name}'
+  path: 'admin/reports/security-review/help/{namespace}/{title}'
   defaults:
     _controller: '\Drupal\security_review\Controller\HelpController::index'
     namespace: ~
-    check_name: ~
+    title: ~
   requirements:
     _permission: 'access security review list'
 

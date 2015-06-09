@@ -57,7 +57,7 @@ class ChecklistController {
         $checkInfo['help_link'] = \Drupal::l('Details', Url::fromRoute('security_review.help',
           array(
             'namespace' => $check->getMachineNamespace(),
-            'check_name' => $check->getMachineTitle()
+            'title' => $check->getMachineTitle()
           )
         ));
 
