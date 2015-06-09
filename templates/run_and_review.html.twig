@@ -1,11 +1,13 @@
 <h3>Review results from last run {{ date }}</h3>
 <p>Here you can review the results from the last run of the checklist. Checks are not always perfectly correct in their procedure and result. You can keep a check from running by clicking the 'Skip' link beside it. You can run the checklist again by expanding the fieldset above.</p>
-<table>
+<table class="security-review-run-and-review__table">
+    <tbody>
     {% for check in checks %}
-    <tr>
-        <td>{{ check.message }}</td>
-        <td>{{ check.help_link }}</td>
-        <td>{{ check.toggle_link }}</td>
-    </tr>
+        <tr class="security-review-run-and-review__entry {{ check.result_string }}">
+            <td>{{ check.message }}</td>
+            <td>{{ check.help_link }}</td>
+            <td>{{ check.toggle_link }}</td>
+        </tr>
     {% endfor %}
+    </tbody>
 </table>
