@@ -17,8 +17,10 @@ class ToggleController extends ControllerBase {
       if($check != null){
         if($check->isSkipped()){
           $check->enable();
+          drupal_set_message(t($check->getTitle() . ' check no longer skipped.'));
         }else{
           $check->skip();
+          drupal_set_message(t($check->getTitle() . ' check skipped.'));
         }
       }
     }
