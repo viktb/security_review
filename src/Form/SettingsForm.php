@@ -85,9 +85,12 @@ class SettingsForm extends ConfigFormBase {
       // Determine if check is being skipped.
       if ($check->isSkipped()) {
         $values[] = $check->getUniqueIdentifier();
-        $label = t('!name <em>skipped by UID !uid on !date</em>', array('!name' => $check->getTitle(), '!uid' => $check->skippedBy()->id(), '!date' => format_date($check->skippedOn())));
-      }
-      else {
+        $label = t('!name <em>skipped by UID !uid on !date</em>', array(
+          '!name' => $check->getTitle(),
+          '!uid' => $check->skippedBy()->id(),
+          '!date' => format_date($check->skippedOn())
+        ));
+      } else {
         $label = $check->getTitle();
       }
       $options[$check->getUniqueIdentifier()] = $label;
@@ -101,37 +104,39 @@ class SettingsForm extends ConfigFormBase {
     );
 
     // Iterate through checklist and get check-specific setting pages.
-    $checksWithForms = array();
-    foreach($checks as $check){
+    foreach ($checks as $check) {
       /** @var Check $check */
 
+      // Get the check's setting form.
       $checkForm = $check->settings()->buildForm();
 
-      if(!empty($checkForm)){
-        $checksWithForms[] = $check;
-      }
-    }
-
-    if(!empty($checksWithForms)){
-      $form['advanced']['check_specific'] = array(
-        '#type' => 'details',
-        '#title' => t('Check-specific settings'),
-        '#open' => TRUE,
-        '#tree' => TRUE,
-      );
-
-      foreach($checksWithForms as $check){
-        $checkNamespaceForm = &$form['advanced']['check_specific'][$check->getMachineNamespace()];
-        if(!isset($checkNamespaceForm)){
-          $checkNamespaceForm = array(
-            /*'#type' => 'details',
-            '#title' => t($check->getNamespace()),
+      // If not empty, add it to the form.
+      if (!empty($checkForm)) {
+        // If this is the first non-empty setting page initialize the 'details'
+        if (!isset($form['advanced']['check_specific'])) {
+          $form['advanced']['check_specific'] = array(
+            '#type' => 'details',
+            '#title' => t('Check-specific settings'),
             '#open' => TRUE,
-            '#tree' => TRUE,*/
-            // Disabled because of too deep nesting.
+            '#tree' => TRUE,
           );
         }
-        $checkNamespaceForm[$check->getMachineTitle()] = $check->settings()->buildForm();
+
+        // Add the form.
+        $subForm = &$form['advanced']['check_specific'][$check->getUniqueIdentifier()];
+
+        $title = $check->getTitle();
+        // If it's an external check, tell the user its namespace.
+        if ($check->getMachineNamespace() != 'security_review') {
+          $title .= ' <em>(' . $check->getNamespace() . ')</em>';
+        }
+        $subForm = array(
+          '#type' => 'details',
+          '#title' => t($title),
+          '#open' => TRUE,
+          '#tree' => TRUE,
+          'form' => $checkForm
+        );
       }
     }
 
@@ -143,13 +148,13 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    if(isset($form['advanced']['check_specific'])){
+    if (isset($form['advanced']['check_specific'])) {
       $checkSpecificValues = $form_state->getValue('check_specific');
-      foreach(Checklist::getChecks() as $check){
+      foreach (Checklist::getChecks() as $check) {
         /** @var Check $check */
-        $checkForm = &$form['advanced']['check_specific'][$check->getMachineNamespace()][$check->getMachineTitle()];
-        if(isset($checkForm)){
-          $check->settings()->validateForm($checkForm, $checkSpecificValues[$check->getMachineNamespace()][$check->getMachineTitle()]);
+        $checkForm = &$form['advanced']['check_specific'][$check->getUniqueIdentifier()];
+        if (isset($checkForm)) {
+          $check->settings()->validateForm($checkForm, $checkSpecificValues[$check->getUniqueIdentifier()]);
         }
       }
     }
@@ -175,31 +180,35 @@ class SettingsForm extends ConfigFormBase {
 
     // Skip selected checks.
     $skipped = array_keys(array_filter($form_state->getValue('skip')));
-    foreach(Checklist::getChecks() as $check){
+    foreach (Checklist::getChecks() as $check) {
       /** @var Check $check */
-      if(in_array($check->getUniqueIdentifier(), $skipped)){
+      if (in_array($check->getUniqueIdentifier(), $skipped)) {
         $check->skip();
-      }else{
+      } else {
         $check->enable();
       }
     }
 
     // Save the check-specific settings.
-    if(isset($form['advanced']['check_specific'])){
+    if (isset($form['advanced']['check_specific'])) {
       $checkSpecificValues = $form_state->getValue('check_specific');
-      foreach(Checklist::getChecks() as $check){
-        /** @var Check $check */
-        $checkForm = &$form['advanced']['check_specific'][$check->getMachineNamespace()][$check->getMachineTitle()];
-        if(isset($checkForm)){
-          $check->settings()->submitForm($checkForm, $checkSpecificValues[$check->getMachineNamespace()][$check->getMachineTitle()]);
-        }
+      foreach ($checkSpecificValues as $checkIdentifier => $values) {
+        // Get corresponding Check.
+        $check = Checklist::getCheckByIdentifier($checkIdentifier);
+
+        // Submit parameters.
+        $checkForm = &$form['advanced']['check_specific'][$checkIdentifier]['form'];
+        $checkFormValues = $checkSpecificValues[$checkIdentifier]['form'];
+
+        // Submit.
+        $check->settings()->submitForm($checkForm, $checkFormValues);
       }
     }
 
     // Commit the settings.
     $check_settings->save();
 
-    // Show the default 'The configuration options have been saved.' message.
+    // Finish submitting the form.
     parent::submitForm($form, $form_state);
   }
 
