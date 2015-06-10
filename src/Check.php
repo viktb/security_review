@@ -222,7 +222,22 @@ abstract class Check {
     if ($this->storesFindings()) {
       return $lastResult;
     } else {
-      return CheckResult::combine($lastResult, $this->run($lastResult));
+      // Run the check to get the findings.
+      $freshResult = $this->run();
+
+      // If it malfunctioned return the last known good result.
+      if(!($freshResult instanceof CheckResult)){
+        return $lastResult;
+      }
+
+      if($freshResult->result() != $lastResult->result()){
+        // If the result is not the same store the new result and return it.
+        $this->storeResult($freshResult);
+        return $freshResult;
+      }else{
+        // Else return the old result with the fresh one's findings.
+        return CheckResult::combine($lastResult, $this->run());
+      }
     }
   }
 
