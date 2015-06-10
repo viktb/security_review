@@ -163,38 +163,25 @@ abstract class Check {
   public abstract function run();
 
   /**
-   * Returns the HTML contents of the check-specific help page.
+   * Returns the check-specific help page.
    *
-   * @return string
-   *   The contents of the check's help page.
+   * @return array
+   *   The render array of the check's help page.
    */
   public abstract function help();
 
   /**
-   * Returns the HTML evaluation page of a result. Usually this is a list of the
+   * Returns the evaluation page of a result. Usually this is a list of the
    * findings and an explanation.
    *
    * @param \Drupal\security_review\CheckResult $result
    *   The check result to evaluate.
    *
-   * @return string
-   *   The contents of the evaluation page.
+   * @return array
+   *   The render array of the evaluation page.
    */
   public function evaluate(CheckResult $result) {
-    $findings = $result->findings();
-    if (empty($findings)) {
-      return '';
-    }
-
-    $output = '';
-    $output .= '<strong>' . t('Findings') . '</strong><br />';
-    $output .= '<ul>';
-    foreach ($findings as $finding) {
-      $output .= '<li>' . $finding . '</li>';
-    }
-    $output .= '</ul>';
-
-    return $output;
+    return array();
   }
 
   /**

@@ -38,48 +38,6 @@ class HelpController {
   }
 
   /**
-   * Returns a check-specific help page.
-   *
-   * @param $namespace
-   *   The namespace of the check.
-   * @param $title
-   *   The name of the check.
-   *
-   * @return array
-   *
-   * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-   */
-  private function checkHelp($namespace, $title) {
-    // Get the requested check.
-    $check = Checklist::getCheck($namespace, $title);
-
-    // If the check doesn't exist, throw 404.
-    if($check == null){
-      throw new NotFoundHttpException();
-    }
-
-    // Print the help page.
-    $output = '';
-    $output .= '<div>';
-    $output .= $check->help();
-    $output .= '</div>';
-
-    // Evaluate last result, if any.
-    $lastResult = $check->lastResult();
-    if($lastResult instanceof CheckResult){
-      $output .= '<div>';
-      $output .= $check->evaluate($lastResult);
-      $output .= '</div>';
-    }
-
-    // Return the completed page.
-    return array(
-      '#type' => 'markup',
-      '#markup' => $output
-    );
-  }
-
-  /**
    * Returns the general help page.
    *
    * @return array
@@ -102,15 +60,14 @@ class HelpController {
     $paragraphs[] = \Drupal::l(t('Drupal.org Handbook: Introduction to security-related contrib modules'), Url::fromUri('http://drupal.org/node/382752'));
 
     $checks = array();
-
-    foreach(Checklist::getChecks() as $check){
+    foreach (Checklist::getChecks() as $check) {
       /** @var Check $check */
 
-      // Get the namespace array.
+      // Get the namespace array's reference.
       $check_namespace = &$checks[$check->getMachineNamespace()];
 
       // Set up the namespace array if not set.
-      if(!isset($check_namespace)){
+      if (!isset($check_namespace)) {
         $check_namespace['namespace'] = $check->getNamespace();
         $check_namespace['check_links'] = array();
       }
@@ -130,5 +87,47 @@ class HelpController {
       '#paragraphs' => $paragraphs,
       '#checks' => $checks
     );
+  }
+
+  /**
+   * Returns a check-specific help page.
+   *
+   * @param $namespace
+   *   The namespace of the check.
+   * @param $title
+   *   The name of the check.
+   *
+   * @return array
+   *
+   * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+   */
+  private function checkHelp($namespace, $title) {
+    // Get the requested check.
+    $check = Checklist::getCheck($namespace, $title);
+
+    // If the check doesn't exist, throw 404.
+    if ($check == NULL) {
+      throw new NotFoundHttpException();
+    }
+
+    // Print the help page.
+    $output = array();
+    $output[] = $check->help();
+
+    // Evaluate last result, if any.
+    $lastResult = $check->lastResult();
+    if ($lastResult instanceof CheckResult) {
+      // Separator.
+      $output[] = array(
+        '#type' => 'markup',
+        '#markup' => '<div />'
+      );
+
+      // Evaluation page.
+      $output[] = $check->evaluate($lastResult);
+    }
+
+    // Return the completed page.
+    return $output;
   }
 }
