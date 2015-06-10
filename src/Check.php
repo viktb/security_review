@@ -350,7 +350,16 @@ abstract class Check {
    * @param \Drupal\security_review\CheckResult $result
    *   The result to store.
    */
-  public function storeResult(CheckResult $result) {
+  public function storeResult(CheckResult $result = null) {
+    if ($result == null) {
+      $context = array(
+        '!reviewcheck' => $this->getTitle(),
+        '!namespace' => $this->getNamespace()
+      );
+      SecurityReview::log($this, 'Unable to store check !reviewcheck for !namespace', $context, RfcLogLevel::CRITICAL);
+      return;
+    }
+
     $this->config->set('last_result.result', $result->result());
     $this->config->set('last_result.time', $result->time());
     if ($this->storesFindings()) {
