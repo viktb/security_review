@@ -112,6 +112,10 @@ class HelpController {
 
     // Print the help page.
     $output = array();
+    $output[] = array(
+      '#type' => 'markup',
+      '#markup' => '<h3>' . t($check->getTitle()) . '</h3>'
+    );
     $output[] = $check->help();
 
     // Evaluate last result, if any.
