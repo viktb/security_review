@@ -235,6 +235,7 @@ abstract class Check {
       if ($freshResult->result() != $lastResult->result()) {
         // If the result is not the same store the new result and return it.
         $this->storeResult($freshResult);
+        SecurityReview::logCheckResult($freshResult);
         return $freshResult;
       }
       else {

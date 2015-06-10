@@ -95,7 +95,10 @@ class Checklist {
 
     foreach ($checks as $check) {
       /** @var Check $check */
-      $results[] = $check->run();
+
+      $result = $check->run();
+      SecurityReview::logCheckResult($result);
+      $results[] = $result;
     }
 
     return $results;
