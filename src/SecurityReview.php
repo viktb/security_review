@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\security_review;
+
 use Drupal\Core\Access\AccessException;
 
 /**
@@ -20,14 +21,15 @@ class SecurityReview {
   /**
    * @var \Drupal\Core\Config\Config $config
    */
-  private static $config = null;
+  private static $config = NULL;
 
   /**
    * @return \Drupal\Core\Config\Config
    */
   private static function config() {
-    if(static::$config == null){
-      static::$config = \Drupal::configFactory()->getEditable('security_review.settings');
+    if (static::$config == NULL) {
+      static::$config = \Drupal::configFactory()
+        ->getEditable('security_review.settings');
     }
 
     return static::$config;
@@ -121,7 +123,7 @@ class SecurityReview {
   /**
    * Runs enabled checks and stores their results.
    */
-  public static function runChecklist(){
+  public static function runChecklist() {
     if (\Drupal::currentUser()->hasPermission('run security checks')) {
       $checks = Checklist::getEnabledChecks();
       $results = Checklist::runChecks($checks);

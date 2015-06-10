@@ -28,7 +28,7 @@ class CheckSettings implements CheckSettingsInterface {
    * @param Check $check
    * @param \Drupal\Core\Config\Config $config
    */
-  public function __construct(Check $check, Config &$config){
+  public function __construct(Check $check, Config &$config) {
     $this->check = $check;
     $this->config = $config;
   }
@@ -36,10 +36,10 @@ class CheckSettings implements CheckSettingsInterface {
   /**
    * {@inheritdoc}
    */
-  public function get($key, $defaultValue = null) {
+  public function get($key, $defaultValue = NULL) {
     $value = $this->config->get('settings.' . $key);
 
-    if($value == null){
+    if ($value == NULL) {
       return $defaultValue;
     }
     return $value;

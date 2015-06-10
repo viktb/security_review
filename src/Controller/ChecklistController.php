@@ -57,7 +57,7 @@ class ChecklistController {
    * @return array
    *   The render array for the result table.
    */
-  private function results(){
+  private function results() {
     // If there are no results return.
     if (SecurityReview::getLastRun() <= 0) {
       return array();

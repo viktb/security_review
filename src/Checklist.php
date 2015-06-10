@@ -26,7 +26,7 @@ class Checklist {
     // Cache checks.
     static $checks = array();
 
-    if(!empty($checks)){
+    if (!empty($checks)) {
       return $checks;
     }
 
@@ -35,8 +35,8 @@ class Checklist {
 
     // Filter invalid checks.
     $checks = array();
-    foreach($raw_checks as $raw_check){
-      if($raw_check instanceof Check){
+    foreach ($raw_checks as $raw_check) {
+      if ($raw_check instanceof Check) {
         $checks[] = $raw_check;
       }
     }
@@ -50,12 +50,12 @@ class Checklist {
    * @return array
    *   Array of enabled Checks.
    */
-  public static function getEnabledChecks(){
+  public static function getEnabledChecks() {
     $enabled = array();
 
-    foreach(static::getChecks() as $check){
+    foreach (static::getChecks() as $check) {
       /** @var Check $check */
-      if(!$check->isSkipped()){
+      if (!$check->isSkipped()) {
         $enabled[] = $check;
       }
     }
@@ -70,10 +70,10 @@ class Checklist {
    * @return array
    *   Array containing Checks grouped by their namespaces.
    */
-  public static function groupChecksByNamespace(array $checks){
+  public static function groupChecksByNamespace(array $checks) {
     $output = array();
 
-    foreach($checks as $check){
+    foreach ($checks as $check) {
       /** @var Check $check */
       $output[$check->getMachineNamespace()][] = $check;
     }
@@ -91,7 +91,7 @@ class Checklist {
   public static function runChecks(array $checks) {
     $results = array();
 
-    foreach($checks as $check){
+    foreach ($checks as $check) {
       /** @var Check $check */
       $results[] = $check->run();
     }
@@ -104,7 +104,7 @@ class Checklist {
    *   The CheckResults to store.
    */
   public static function storeResults(array $results) {
-    foreach($results as $result){
+    foreach ($results as $result) {
       /** @var CheckResult $result */
       $result->check()->storeResult($result);
     }
@@ -120,15 +120,15 @@ class Checklist {
    *   The Check or null if it doesn't exist.
    */
   public static function getCheck($namespace, $title) {
-    foreach(static::getChecks() as $check){
+    foreach (static::getChecks() as $check) {
       /** @var Check $check */
-      if($check->getMachineNamespace() == $namespace
-        && $check->getMachineTitle() == $title){
+      if ($check->getMachineNamespace() == $namespace
+        && $check->getMachineTitle() == $title) {
         return $check;
       }
     }
 
-    return null;
+    return NULL;
   }
 
   /**
@@ -138,14 +138,14 @@ class Checklist {
    * @return null|Check
    *   The Check or null if it doesn't exist.
    */
-  public static function getCheckByIdentifier($uniqueIdentifier){
-    foreach(static::getChecks() as $check){
+  public static function getCheckByIdentifier($uniqueIdentifier) {
+    foreach (static::getChecks() as $check) {
       /** @var Check $check */
-      if($check->getUniqueIdentifier() == $uniqueIdentifier){
+      if ($check->getUniqueIdentifier() == $uniqueIdentifier) {
         return $check;
       }
     }
 
-    return null;
+    return NULL;
   }
 }

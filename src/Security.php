@@ -76,7 +76,7 @@ class Security {
    *   true, the array key is the role ID, the value is the array of permissions
    *   the role has.
    */
-  public static function rolePermissions(array $roleIDs, $groupByRoleId = FALSE){
+  public static function rolePermissions(array $roleIDs, $groupByRoleId = FALSE) {
     // Get the permissions the given roles have, grouped by roles.
     $permissions_grouped = user_role_permissions($roleIDs);
 

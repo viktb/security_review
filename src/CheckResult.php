@@ -47,13 +47,13 @@ class CheckResult {
    * @param null $time
    *   The time the test was run.
    */
-  public function __construct(Check $check, $result, array $findings, $time = null){
+  public function __construct(Check $check, $result, array $findings, $time = NULL) {
     // Set the parent check.
     $this->check = $check;
 
     // Set the result value.
     $result = intval($result);
-    if($result < self::SUCCESS || $result > self::INFO){
+    if ($result < self::SUCCESS || $result > self::INFO) {
       $result = self::INFO;
     }
     $this->result = $result;
@@ -62,9 +62,9 @@ class CheckResult {
     $this->findings = $findings;
 
     // Set the timestamp.
-    if(!is_int($time)){
+    if (!is_int($time)) {
       $this->time = time();
-    }else{
+    } else {
       $this->time = intval($time);
     }
   }
@@ -81,7 +81,7 @@ class CheckResult {
    * @return \Drupal\security_review\CheckResult
    *   The combined result.
    */
-  public static function combine(CheckResult $old, CheckResult $fresh){
+  public static function combine(CheckResult $old, CheckResult $fresh) {
     return new CheckResult($old->check, $old->result, $fresh->findings, $old->time);
   }
 
@@ -89,7 +89,7 @@ class CheckResult {
    * @return \Drupal\security_review\Check
    *   The Check that created this result.
    */
-  public function check(){
+  public function check() {
     return $this->check;
   }
 
@@ -97,7 +97,7 @@ class CheckResult {
    * @return int
    *   The result integer.
    */
-  public function result(){
+  public function result() {
     return $this->result;
   }
 
@@ -105,7 +105,7 @@ class CheckResult {
    * @return array
    *   The findings. Contents of this depends on the actual check.
    */
-  public function findings(){
+  public function findings() {
     return $this->findings;
   }
 
@@ -113,7 +113,7 @@ class CheckResult {
    * @return int
    *   The time the result was generated.
    */
-  public function time(){
+  public function time() {
     return $this->time;
   }
 }
