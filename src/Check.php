@@ -8,6 +8,7 @@
 namespace Drupal\security_review;
 
 use Drupal;
+use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\user\Entity\User;
 
 /**
@@ -315,6 +316,12 @@ abstract class Check {
     if ($this->isSkipped()) {
       $this->config->set('skipped', FALSE);
       $this->config->save();
+
+      // Log.
+      $context = array(
+        'name' => $this->getTitle()
+      );
+      SecurityReview::log($this, '!name check no longer skipped', $context, RfcLogLevel::NOTICE);
     }
   }
 
@@ -328,6 +335,12 @@ abstract class Check {
       $this->config->set('skipped_by', Drupal::currentUser()->id());
       $this->config->set('skipped_on', time());
       $this->config->save();
+
+      // Log.
+      $context = array(
+        'name' => $this->getTitle()
+      );
+      SecurityReview::log($this, '!name check skipped', $context, RfcLogLevel::NOTICE);
     }
   }
 
