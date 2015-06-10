@@ -169,8 +169,18 @@ class SecurityReview {
    * @param \Drupal\security_review\CheckResult $result
    *   The result to log.
    */
-  public static function logCheckResult(CheckResult $result) {
+  public static function logCheckResult(CheckResult $result = null) {
     if(SecurityReview::isLogging()) {
+      if ($result == null) {
+        $check = $result->check();
+        $context = array(
+          '!reviewcheck' => $check->getTitle(),
+          '!namespace' => $check->getNamespace()
+        );
+        SecurityReview::log($check, '!reviewcheck of !namespace produced a null result', $context, RfcLogLevel::CRITICAL);
+        return;
+      }
+
       $check = $result->check();
       $level = RfcLogLevel::NOTICE;
       $message = '!name check invalid result';
