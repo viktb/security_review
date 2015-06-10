@@ -135,4 +135,28 @@ class SecurityReview {
       throw new AccessException();
     }
   }
+
+  /**
+   * Logs an event.
+   *
+   * @param \Drupal\security_review\Check $check
+   *   The Check the message is about.
+   * @param string $message
+   *   The message.
+   * @param array $context
+   *   The context of the message.
+   * @param int $level
+   *   Severity (RfcLogLevel).
+   */
+  public static function log(Check $check, $message, array $context, $level) {
+    Drupal::moduleHandler()->invokeAll(
+      'security_review_log',
+      array(
+        'check' => $check,
+        'message' => $message,
+        'context' => $context,
+        'level' => $level
+      )
+    );
+  }
 }

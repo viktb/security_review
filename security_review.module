@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 use Drupal\security_review\Checks;
 
@@ -10,6 +11,13 @@ function security_review_security_review_checks() {
   return array(
     Checks\BaseUrl::getInstance(),
   );
+}
+
+/**
+ * Implements hook_security_review_log().
+ */
+function security_review_security_review_log(Check $check, $message, array $context, $level) {
+  Drupal::logger('security_review')->log($level, $message, $context);
 }
 
 /**
