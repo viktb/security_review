@@ -9,6 +9,7 @@ namespace Drupal\security_review;
 
 use Drupal;
 use Drupal\Core\Access\AccessException;
+use Drupal\Core\Logger\RfcLogLevel;
 
 /**
  * A class containing static methods regarding the module's configuration.
@@ -149,14 +150,54 @@ class SecurityReview {
    *   Severity (RfcLogLevel).
    */
   public static function log(Check $check, $message, array $context, $level) {
-    Drupal::moduleHandler()->invokeAll(
-      'security_review_log',
-      array(
-        'check' => $check,
-        'message' => $message,
-        'context' => $context,
-        'level' => $level
-      )
-    );
+    if(static::isLogging()) {
+      Drupal::moduleHandler()->invokeAll(
+        'security_review_log',
+        array(
+          'check' => $check,
+          'message' => $message,
+          'context' => $context,
+          'level' => $level
+        )
+      );
+    }
+  }
+
+  /**
+   * Logs a check result.
+   *
+   * @param \Drupal\security_review\CheckResult $result
+   *   The result to log.
+   */
+  public static function logCheckResult(CheckResult $result) {
+    if(SecurityReview::isLogging()) {
+      $check = $result->check();
+      $level = RfcLogLevel::NOTICE;
+      $message = '!name check invalid result';
+
+      switch($result->result()){
+        case CheckResult::SUCCESS:
+          $level = RfcLogLevel::INFO;
+          $message = '!name check success';
+          break;
+        case CheckResult::FAIL:
+          $level = RfcLogLevel::ERROR;
+          $message = '!name check failure';
+          break;
+        case CheckResult::WARN:
+          $level = RfcLogLevel::WARNING;
+          $message = '!name check warning';
+          break;
+        case CheckResult::INFO:
+          $level = RfcLogLevel::INFO;
+          $message = '!name check info';
+          break;
+      }
+
+      $context = array(
+        '!name' => $check->getTitle()
+      );
+      static::log($check, $message, $context, $level);
+    }
   }
 }
