@@ -88,10 +88,10 @@ class BaseUrl extends Check {
         );
       }
 
-      return new CheckResult($this, $result, $findings);
+      return $this->createResult($result, $findings);
     }
     else {
-      return new CheckResult($this, CheckResult::INFO, array(t("Couldn't determine settings.php's path.")));
+      return $this->createResult(CheckResult::INFO, array(t("Couldn't determine settings.php's path.")));
     }
   }
 

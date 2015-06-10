@@ -347,4 +347,21 @@ abstract class Check {
     }
     $this->config->save();
   }
+
+  /**
+   * Creates a new CheckResult for this Check.
+   *
+   * @param $result
+   *   The result integer (see the constants defined in CheckResult).
+   * @param array $findings
+   *   The findings.
+   * @param null $time
+   *   The time the test was run.
+   *
+   * @return \Drupal\security_review\CheckResult
+   *   The created CheckResult.
+   */
+  public function createResult($result, array $findings = array(), $time = NULL) {
+    return new CheckResult($this, $result, $findings, $time);
+  }
 }
