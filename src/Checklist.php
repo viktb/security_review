@@ -7,6 +7,8 @@
 
 namespace Drupal\security_review;
 
+use Drupal;
+
 /**
  * Contains static functions for handling checks throughout all modules.
  */
@@ -31,7 +33,7 @@ class Checklist {
     }
 
     // Get checks.
-    $raw_checks = \Drupal::moduleHandler()->invokeAll('security_review_checks');
+    $raw_checks = Drupal::moduleHandler()->invokeAll('security_review_checks');
 
     // Filter invalid checks.
     $checks = array();

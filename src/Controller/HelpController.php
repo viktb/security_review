@@ -7,6 +7,7 @@
 
 namespace Drupal\security_review\Controller;
 
+use Drupal;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\Checklist;
@@ -54,10 +55,10 @@ class HelpController {
     $paragraphs[] = t('You can read more about securing your site in the !drupal_org and on !cracking_drupal.
       There are also additional modules you can install to secure or protect your site. Be aware though that the more modules you have running on your site the greater (usually) attack area you expose.',
       array(
-        '!drupal_org' => \Drupal::l('drupal.org handbooks', Url::fromUri('http://drupal.org/security/secure-configuration')),
-        '!cracking_drupal' => \Drupal::l('CrackingDrupal.com', Url::fromUri('http://crackingdrupal.com')),
+        '!drupal_org' => Drupal::l('drupal.org handbooks', Url::fromUri('http://drupal.org/security/secure-configuration')),
+        '!cracking_drupal' => Drupal::l('CrackingDrupal.com', Url::fromUri('http://crackingdrupal.com')),
       ));
-    $paragraphs[] = \Drupal::l(t('Drupal.org Handbook: Introduction to security-related contrib modules'), Url::fromUri('http://drupal.org/node/382752'));
+    $paragraphs[] = Drupal::l(t('Drupal.org Handbook: Introduction to security-related contrib modules'), Url::fromUri('http://drupal.org/node/382752'));
 
     $checks = array();
     foreach (Checklist::getChecks() as $check) {
@@ -73,7 +74,7 @@ class HelpController {
       }
 
       // Add the link pointing to the check-specific help.
-      $check_namespace['check_links'][] = \Drupal::l(
+      $check_namespace['check_links'][] = Drupal::l(
         t($check->getTitle()),
         Url::fromRoute('security_review.help', array(
           'namespace' => $check->getMachineNamespace(),

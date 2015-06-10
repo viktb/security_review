@@ -7,6 +7,7 @@
 
 namespace Drupal\security_review\Form;
 
+use Drupal;
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -55,7 +56,7 @@ class SettingsForm extends ConfigFormBase {
       '#description' => t('Mark which roles are not trusted. The anonymous role defaults to untrusted. @message Read more about the idea behind trusted and untrusted roles on @DrupalScout. Most Security Review checks look for resources usable by untrusted roles.',
         array(
           '@message' => $message,
-          '@DrupalScout' => \Drupal::l('DrupalScout.com', Url::fromUri('http://drupalscout.com/knowledge-base/importance-user-roles-and-permissions-site-security'))
+          '@DrupalScout' => Drupal::l('DrupalScout.com', Url::fromUri('http://drupalscout.com/knowledge-base/importance-user-roles-and-permissions-site-security'))
         )),
       '#options' => $options,
       '#default_value' => Security::untrustedRoles(),

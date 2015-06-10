@@ -7,6 +7,7 @@
 
 namespace Drupal\security_review;
 
+use Drupal;
 use Drupal\user\Entity\User;
 
 /**
@@ -33,7 +34,7 @@ abstract class Check {
    * settings interface.
    */
   protected function __construct() {
-    $this->config = \Drupal::configFactory()
+    $this->config = Drupal::configFactory()
       ->getEditable('security_review.check.' . $this->getUniqueIdentifier());
     $this->settings = new CheckSettings($this, $this->config);
 
@@ -323,7 +324,7 @@ abstract class Check {
   public function skip() {
     if (!$this->isSkipped()) {
       $this->config->set('skipped', TRUE);
-      $this->config->set('skipped_by', \Drupal::currentUser()->id());
+      $this->config->set('skipped_by', Drupal::currentUser()->id());
       $this->config->set('skipped_on', time());
       $this->config->save();
     }

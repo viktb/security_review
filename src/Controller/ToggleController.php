@@ -7,6 +7,7 @@
 
 namespace Drupal\security_review\Controller;
 
+use Drupal;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\security_review\Checklist;
 
@@ -19,8 +20,8 @@ class ToggleController extends ControllerBase {
     $ajax = $js != 'nojs';
 
     // Validate token.
-    $token = \Drupal::request()->query->get('token');
-    if (\Drupal::csrfToken()->validate($token, $check_id)) {
+    $token = Drupal::request()->query->get('token');
+    if (Drupal::csrfToken()->validate($token, $check_id)) {
       $check = Checklist::getCheckByIdentifier($check_id);
       if ($check != NULL) {
         if ($check->isSkipped()) {

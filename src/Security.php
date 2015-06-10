@@ -7,6 +7,7 @@
 
 namespace Drupal\security_review;
 
+use Drupal;
 use Drupal\Core\Session\AccountInterface;
 
 /**
@@ -54,7 +55,7 @@ class Security {
     $roles = array(AccountInterface::ANONYMOUS_ROLE);
 
     // Check whether visitors can create accounts.
-    $user_register = \Drupal::config('user.settings')->get('register');
+    $user_register = Drupal::config('user.settings')->get('register');
     if ($user_register !== USER_REGISTER_ADMINISTRATORS_ONLY) {
       // If visitors are allowed to create accounts they are considered untrusted.
       $roles[] = AccountInterface::AUTHENTICATED_ROLE;
