@@ -319,7 +319,7 @@ abstract class Check {
 
       // Log.
       $context = array(
-        'name' => $this->getTitle()
+        '!name' => $this->getTitle()
       );
       SecurityReview::log($this, '!name check no longer skipped', $context, RfcLogLevel::NOTICE);
     }
@@ -338,7 +338,7 @@ abstract class Check {
 
       // Log.
       $context = array(
-        'name' => $this->getTitle()
+        '!name' => $this->getTitle()
       );
       SecurityReview::log($this, '!name check skipped', $context, RfcLogLevel::NOTICE);
     }
