@@ -32,13 +32,15 @@ abstract class Check {
    * Constructs the check by initializing the configuration storage and the
    * settings interface.
    */
-  protected function __construct(){
-    $this->config = \Drupal::configFactory()->getEditable('security_review.check.' . $this->getUniqueIdentifier());
+  protected function __construct() {
+    $this->config = \Drupal::configFactory()
+      ->getEditable('security_review.check.' . $this->getUniqueIdentifier());
     $this->settings = new CheckSettings($this, $this->config);
 
     // Set namespace and id in config.
-    if($this->config->get('namespace') != $this->getMachineNamespace()
-    || $this->config->get('title') != $this->getMachineTitle()){
+    if ($this->config->get('namespace') != $this->getMachineNamespace()
+      || $this->config->get('title') != $this->getMachineTitle()
+    ) {
       $this->config->set('namespace', $this->getMachineNamespace());
       $this->config->set('title', $this->getMachineTitle());
       $this->config->save();
@@ -51,11 +53,10 @@ abstract class Check {
    * @return Check
    *   The instance of the check.
    */
-  public static final function getInstance(){
+  public static final function getInstance() {
     $calledClass = get_called_class();
 
-    if (!isset(static::$instances[$calledClass]))
-    {
+    if (!isset(static::$instances[$calledClass])) {
       static::$instances[$calledClass] = new $calledClass();
     }
 
@@ -74,7 +75,7 @@ abstract class Check {
    * @return string
    *   Machine namespace of the check.
    */
-  public function getMachineNamespace(){
+  public function getMachineNamespace() {
     $namespace = strtolower($this->getNamespace());
     $namespace = preg_replace("/[^a-z0-9 ]/", '', $namespace);
     $namespace = str_replace(' ', '_', $namespace);
@@ -102,7 +103,7 @@ abstract class Check {
    * @return string
    *   ID of check.
    */
-  public function getMachineTitle(){
+  public function getMachineTitle() {
     $title = strtolower($this->getTitle());
     $title = preg_replace("/[^a-z0-9 ]/", '', $title);
     $title = str_replace(' ', '_', $title);
@@ -124,7 +125,7 @@ abstract class Check {
    * @return string
    *   Unique identifier of the check.
    */
-  public final function getUniqueIdentifier(){
+  public final function getUniqueIdentifier() {
     return $this->getMachineNamespace() . '-' . $this->getMachineTitle();
   }
 
@@ -141,15 +142,15 @@ abstract class Check {
    * @return boolean
    *   Boolean indicating whether findings will be stored.
    */
-  public function storesFindings(){
-    return true;
+  public function storesFindings() {
+    return TRUE;
   }
 
   /**
    * @return \Drupal\security_review\CheckSettingsInterface
    *   The settings interface of the check.
    */
-  public function settings(){
+  public function settings() {
     return $this->settings;
   }
 
@@ -179,16 +180,16 @@ abstract class Check {
    * @return string
    *   The contents of the evaluation page.
    */
-  public function evaluate(CheckResult $result){
+  public function evaluate(CheckResult $result) {
     $findings = $result->findings();
-    if(empty($findings)){
+    if (empty($findings)) {
       return '';
     }
 
     $output = '';
     $output .= '<strong>' . t('Findings') . '</strong><br />';
     $output .= '<ul>';
-    foreach($findings as $finding){
+    foreach ($findings as $finding) {
       $output .= '<li>' . $finding . '</li>';
     }
     $output .= '</ul>';
@@ -225,15 +226,15 @@ abstract class Check {
     $validFindings = is_array($findings);
     $validTime = is_int($time) && $time > 0;
 
-    if(!$validResult || !$validFindings || !$validTime){
-      return null;
+    if (!$validResult || !$validFindings || !$validTime) {
+      return NULL;
     }
 
     $lastResult = new CheckResult($this, $result, $findings, $time);
 
-    if($this->storesFindings()){
+    if ($this->storesFindings()) {
       return $lastResult;
-    }else{
+    } else {
       return CheckResult::combine($lastResult, $this->run($lastResult));
     }
   }
@@ -248,7 +249,7 @@ abstract class Check {
   public function lastRun() {
     $lastResultTime = $this->config->get('last_result.time');
 
-    if(!is_int($lastResultTime)){
+    if (!is_int($lastResultTime)) {
       return 0;
     }
     return $lastResultTime;
@@ -263,8 +264,8 @@ abstract class Check {
   public function isSkipped() {
     $isSkipped = $this->config->get('skipped');
 
-    if(!is_bool($isSkipped)){
-      return false;
+    if (!is_bool($isSkipped)) {
+      return FALSE;
     }
     return $isSkipped;
   }
@@ -279,8 +280,8 @@ abstract class Check {
   public function skippedBy() {
     $skippedBy = $this->config->get('skipped_by');
 
-    if(!is_int($skippedBy)){
-      return null;
+    if (!is_int($skippedBy)) {
+      return NULL;
     }
     return User::load($skippedBy);
   }
@@ -295,7 +296,7 @@ abstract class Check {
   public function skippedOn() {
     $skippedOn = $this->config->get('skipped_on');
 
-    if(!is_int($skippedOn)){
+    if (!is_int($skippedOn)) {
       return 0;
     }
     return $skippedOn;
@@ -305,8 +306,8 @@ abstract class Check {
    * Enables the check. Has no effect if the check was not skipped.
    */
   public function enable() {
-    if($this->isSkipped()){
-      $this->config->set('skipped', false);
+    if ($this->isSkipped()) {
+      $this->config->set('skipped', FALSE);
       $this->config->save();
     }
   }
@@ -316,8 +317,8 @@ abstract class Check {
    * skipped on the Run & Review page.
    */
   public function skip() {
-    if(!$this->isSkipped()){
-      $this->config->set('skipped', true);
+    if (!$this->isSkipped()) {
+      $this->config->set('skipped', TRUE);
       $this->config->set('skipped_by', \Drupal::currentUser()->id());
       $this->config->set('skipped_on', time());
       $this->config->save();
@@ -333,9 +334,9 @@ abstract class Check {
   public function storeResult(CheckResult $result) {
     $this->config->set('last_result.result', $result->result());
     $this->config->set('last_result.time', $result->time());
-    if($this->storesFindings()){
+    if ($this->storesFindings()) {
       $this->config->set('last_result.findings', $result->findings());
-    }else{
+    } else {
       $this->config->set('last_result.findings', array());
     }
     $this->config->save();
