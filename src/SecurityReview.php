@@ -129,7 +129,8 @@ class SecurityReview {
       $results = Checklist::runChecks($checks);
       Checklist::storeResults($results);
       SecurityReview::setLastRun(time());
-    } else {
+    }
+    else {
       throw new AccessException();
     }
   }

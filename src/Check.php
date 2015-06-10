@@ -221,20 +221,22 @@ abstract class Check {
 
     if ($this->storesFindings()) {
       return $lastResult;
-    } else {
+    }
+    else {
       // Run the check to get the findings.
       $freshResult = $this->run();
 
       // If it malfunctioned return the last known good result.
-      if(!($freshResult instanceof CheckResult)){
+      if (!($freshResult instanceof CheckResult)) {
         return $lastResult;
       }
 
-      if($freshResult->result() != $lastResult->result()){
+      if ($freshResult->result() != $lastResult->result()) {
         // If the result is not the same store the new result and return it.
         $this->storeResult($freshResult);
         return $freshResult;
-      }else{
+      }
+      else {
         // Else return the old result with the fresh one's findings.
         return CheckResult::combine($lastResult, $this->run());
       }
@@ -338,7 +340,8 @@ abstract class Check {
     $this->config->set('last_result.time', $result->time());
     if ($this->storesFindings()) {
       $this->config->set('last_result.findings', $result->findings());
-    } else {
+    }
+    else {
       $this->config->set('last_result.findings', array());
     }
     $this->config->save();

@@ -26,7 +26,8 @@ class ToggleController extends ControllerBase {
         if ($check->isSkipped()) {
           $check->enable();
           drupal_set_message(t($check->getTitle() . ' check no longer skipped.'));
-        } else {
+        }
+        else {
           $check->skip();
           drupal_set_message(t($check->getTitle() . ' check skipped.'));
         }
@@ -36,7 +37,8 @@ class ToggleController extends ControllerBase {
     // Output.
     if ($ajax) {
       // TODO: Print json output.
-    } else {
+    }
+    else {
       // Redirect back to Run & Review.
       return $this->redirect('security_review');
     }

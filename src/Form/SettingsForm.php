@@ -90,7 +90,8 @@ class SettingsForm extends ConfigFormBase {
           '!uid' => $check->skippedBy()->id(),
           '!date' => format_date($check->skippedOn())
         ));
-      } else {
+      }
+      else {
         $label = $check->getTitle();
       }
       $options[$check->getUniqueIdentifier()] = $label;
@@ -184,7 +185,8 @@ class SettingsForm extends ConfigFormBase {
       /** @var Check $check */
       if (in_array($check->getUniqueIdentifier(), $skipped)) {
         $check->skip();
-      } else {
+      }
+      else {
         $check->enable();
       }
     }

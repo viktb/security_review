@@ -64,7 +64,8 @@ class CheckResult {
     // Set the timestamp.
     if (!is_int($time)) {
       $this->time = time();
-    } else {
+    }
+    else {
       $this->time = intval($time);
     }
   }
