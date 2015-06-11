@@ -45,7 +45,12 @@ class CheckWebTest extends WebTestBase {
 
     // Login.
     $this->user = $this->drupalCreateUser(
-      array()
+      array(
+        'run security checks',
+        'access security review list',
+        'access administration pages',
+        'administer site configuration',
+      )
     );
     $this->drupalLogin($this->user);
 
