@@ -2,14 +2,14 @@
 
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
-use Drupal\security_review\Checks;
+use Drupal\security_review\Checks\BaseUrl;
 
 /**
  * Implements hook_security_review_checks().
  */
 function security_review_security_review_checks() {
   return array(
-    Checks\BaseUrl::getInstance(),
+    new BaseUrl()
   );
 }
 

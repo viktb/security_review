@@ -26,15 +26,10 @@ abstract class Check {
   protected $config;
 
   /**
-   * @var array $instances
-   */
-  protected static $instances = array();
-
-  /**
    * Constructs the check by initializing the configuration storage and the
    * settings interface.
    */
-  protected function __construct() {
+  public function __construct() {
     $this->config = Drupal::configFactory()
       ->getEditable('security_review.check.' . $this->getUniqueIdentifier());
     $this->settings = new CheckSettings($this, $this->config);
@@ -47,22 +42,6 @@ abstract class Check {
       $this->config->set('title', $this->getMachineTitle());
       $this->config->save();
     }
-  }
-
-  /**
-   * Returns the instance of the extending check.
-   *
-   * @return Check
-   *   The instance of the check.
-   */
-  public static final function getInstance() {
-    $calledClass = get_called_class();
-
-    if (!isset(static::$instances[$calledClass])) {
-      static::$instances[$calledClass] = new $calledClass();
-    }
-
-    return static::$instances[$calledClass];
   }
 
   /**
