@@ -59,7 +59,7 @@ security_review.check_result:
       type: sequence
       label: 'Findings'
       sequence:
-        type: undefined
+        type: string
         label: 'Finding'
 
 # Setting storage for Base URL check.
