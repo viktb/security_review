@@ -146,7 +146,7 @@ class Checklist {
   public static function getCheckByIdentifier($uniqueIdentifier) {
     foreach (static::getChecks() as $check) {
       /** @var Check $check */
-      if ($check->getUniqueIdentifier() == $uniqueIdentifier) {
+      if ($check->id() == $uniqueIdentifier) {
         return $check;
       }
     }

@@ -85,7 +85,7 @@ class SettingsForm extends ConfigFormBase {
       /** @var Check $check */
       // Determine if check is being skipped.
       if ($check->isSkipped()) {
-        $values[] = $check->getUniqueIdentifier();
+        $values[] = $check->id();
         $label = t('!name <em>skipped by UID !uid on !date</em>', array(
           '!name' => $check->getTitle(),
           '!uid' => $check->skippedBy()->id(),
@@ -95,7 +95,7 @@ class SettingsForm extends ConfigFormBase {
       else {
         $label = $check->getTitle();
       }
-      $options[$check->getUniqueIdentifier()] = $label;
+      $options[$check->id()] = $label;
     }
     $form['advanced']['skip'] = array(
       '#type' => 'checkboxes',
@@ -125,7 +125,7 @@ class SettingsForm extends ConfigFormBase {
         }
 
         // Add the form.
-        $subForm = &$form['advanced']['check_specific'][$check->getUniqueIdentifier()];
+        $subForm = &$form['advanced']['check_specific'][$check->id()];
 
         $title = $check->getTitle();
         // If it's an external check, tell the user its namespace.
@@ -154,9 +154,9 @@ class SettingsForm extends ConfigFormBase {
       $checkSpecificValues = $form_state->getValue('check_specific');
       foreach (Checklist::getChecks() as $check) {
         /** @var Check $check */
-        $checkForm = &$form['advanced']['check_specific'][$check->getUniqueIdentifier()];
+        $checkForm = &$form['advanced']['check_specific'][$check->id()];
         if (isset($checkForm)) {
-          $check->settings()->validateForm($checkForm, $checkSpecificValues[$check->getUniqueIdentifier()]);
+          $check->settings()->validateForm($checkForm, $checkSpecificValues[$check->id()]);
         }
       }
     }
@@ -184,7 +184,7 @@ class SettingsForm extends ConfigFormBase {
     $skipped = array_keys(array_filter($form_state->getValue('skip')));
     foreach (Checklist::getChecks() as $check) {
       /** @var Check $check */
-      if (in_array($check->getUniqueIdentifier(), $skipped)) {
+      if (in_array($check->id(), $skipped)) {
         $check->skip();
       }
       else {

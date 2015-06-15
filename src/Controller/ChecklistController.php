@@ -94,12 +94,12 @@ class ChecklistController {
       $checkInfo['toggle_link'] = Drupal::l($toggle_text, Url::fromRoute('security_review.toggle',
         array(
           'js' => 'nojs',
-          'check_id' => $check->getUniqueIdentifier()
+          'check_id' => $check->id()
         ),
         array(
           'query' => array(
             'token' => Drupal::csrfToken()
-              ->get($check->getUniqueIdentifier())
+              ->get($check->id())
           )
         )
       ));

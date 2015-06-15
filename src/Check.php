@@ -31,7 +31,7 @@ abstract class Check {
    */
   public function __construct() {
     $this->config = Drupal::configFactory()
-      ->getEditable('security_review.check.' . $this->getUniqueIdentifier());
+      ->getEditable('security_review.check.' . $this->id());
     $this->settings = new CheckSettings($this, $this->config);
 
     // Set namespace and id in config.
@@ -106,7 +106,7 @@ abstract class Check {
    * @return string
    *   Unique identifier of the check.
    */
-  public final function getUniqueIdentifier() {
+  public final function id() {
     return $this->getMachineNamespace() . '-' . $this->getMachineTitle();
   }
 
