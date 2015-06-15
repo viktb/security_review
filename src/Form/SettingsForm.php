@@ -119,7 +119,7 @@ class SettingsForm extends ConfigFormBase {
           $form['advanced']['check_specific'] = array(
             '#type' => 'details',
             '#title' => t('Check-specific settings'),
-            '#open' => TRUE,
+            '#open' => FALSE,
             '#tree' => TRUE,
           );
         }
