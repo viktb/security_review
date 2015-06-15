@@ -24,6 +24,14 @@ class SecurityReviewTest extends KernelTestBase {
   public static $modules = array('security_review');
 
   /**
+   * Sets up the testing environment.
+   */
+  protected function setUp() {
+    parent::setUp();
+    $this->installConfig(static::$modules);
+  }
+
+  /**
    * Tests the 'logging' setting.
    */
   public function testConfigLogging() {
@@ -45,8 +53,7 @@ class SecurityReviewTest extends KernelTestBase {
    * Tests the 'untrusted_roles' setting.
    */
   public function testConfigUntrustedRoles() {
-    SecurityReview::setUntrustedRoles(array());
-    $this->assertEqual(SecurityReview::getUntrustedRoles(), array(), 'untrusted_roles emptied.');
+    $this->assertEqual(SecurityReview::getUntrustedRoles(), array(), 'untrusted_roles empty by default.');
 
     $roles = array(0, 1, 2, 3, 4);
     SecurityReview::setUntrustedRoles($roles);
@@ -57,8 +64,7 @@ class SecurityReviewTest extends KernelTestBase {
    * Tests the 'last_run' setting.
    */
   public function testConfigLastRun() {
-    SecurityReview::setLastRun(0);
-    $this->assertEqual(0, SecurityReview::getLastRun(), 'last_run set to 0.');
+    $this->assertEqual(0, SecurityReview::getLastRun(), 'last_run is 0 by default.');
     $time = time();
     SecurityReview::setLastRun($time);
     $this->assertEqual($time, SecurityReview::getLastRun(), 'last_run set to now.');
