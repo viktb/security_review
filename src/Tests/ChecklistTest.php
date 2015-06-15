@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\security_review\Tests\CheckWebTest
+ * Contains \Drupal\security_review\Tests\ChecklistTest
  */
 
 namespace Drupal\security_review\Tests;
