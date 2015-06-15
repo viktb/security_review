@@ -34,7 +34,7 @@ abstract class Check {
       ->getEditable('security_review.check.' . $this->id());
     $this->settings = new CheckSettings($this, $this->config);
 
-    // Set namespace and id in config.
+    // Set check ID in config.
     if ($this->config->get('id') != $this->id()) {
       $this->config->set('id', $this->id());
       $this->config->save();
