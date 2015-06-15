@@ -21,20 +21,10 @@ class SecurityReview {
   private function __construct() {}
 
   /**
-   * @var \Drupal\Core\Config\Config $config
-   */
-  private static $config = NULL;
-
-  /**
    * @return \Drupal\Core\Config\Config
    */
   private static function config() {
-    if (static::$config == NULL) {
-      static::$config = Drupal::configFactory()
-        ->getEditable('security_review.settings');
-    }
-
-    return static::$config;
+      return Drupal::configFactory()->getEditable('security_review.settings');
   }
 
   /**
