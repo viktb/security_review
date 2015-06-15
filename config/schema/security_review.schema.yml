@@ -56,11 +56,8 @@ security_review.check_result:
       type: integer
       label: 'Check time'
     findings:
-      type: sequence
+      type: security_review.check_findings.[%parent.%parent.namespace]-[%parent.%parent.title]
       label: 'Findings'
-      sequence:
-        type: string
-        label: 'Finding'
 
 # Setting storage for Base URL check.
 security_review.check_settings.security_review-base_url_set:
@@ -69,3 +66,10 @@ security_review.check_settings.security_review-base_url_set:
     method:
       type: string
       label: 'Base URL identification method'
+
+# Findings storage for Base URL check.
+security_review.check_findings.security_review-base_url_set:
+  type: sequence
+  sequence:
+    type: string
+    label: 'Paragraph'
