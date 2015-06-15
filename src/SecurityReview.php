@@ -24,7 +24,7 @@ class SecurityReview {
    * @return \Drupal\Core\Config\Config
    */
   private static function config() {
-      return Drupal::configFactory()->getEditable('security_review.settings');
+    return Drupal::configFactory()->getEditable('security_review.settings');
   }
 
   /**
@@ -75,8 +75,9 @@ class SecurityReview {
    *   The new value of the 'configured' setting.
    */
   public static function setConfigured($configured) {
-    static::config()->set('configured', $configured);
-    static::config()->save();
+    $config = static::config();
+    $config->set('configured', $configured);
+    $config->save();
   }
 
   /**
@@ -86,8 +87,9 @@ class SecurityReview {
    *   The new value of the 'logging' setting.
    */
   public static function setLogging($logging) {
-    static::config()->set('log', $logging);
-    static::config()->save();
+    $config = static::config();
+    $config->set('log', $logging);
+    $config->save();
   }
 
   /**
@@ -97,8 +99,9 @@ class SecurityReview {
    *   The new value for 'last_run'.
    */
   public static function setLastRun($lastRun) {
-    static::config()->set('last_run', $lastRun);
-    static::config()->save();
+    $config = static::config();
+    $config->set('last_run', $lastRun);
+    $config->save();
   }
 
   /**
@@ -108,8 +111,9 @@ class SecurityReview {
    *   The new untrusted roles' IDs.
    */
   public static function setUntrustedRoles(array $untrustedRoles) {
-    static::config()->set('untrusted_roles', $untrustedRoles);
-    static::config()->save();
+    $config = static::config();
+    $config->set('untrusted_roles', $untrustedRoles);
+    $config->save();
   }
 
   /**
