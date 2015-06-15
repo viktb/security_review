@@ -26,6 +26,11 @@ abstract class Check {
   protected $config;
 
   /**
+   * @var string
+   */
+  protected $statePrefix;
+
+  /**
    * Constructs the check by initializing the configuration storage and the
    * settings interface.
    */
@@ -33,6 +38,7 @@ abstract class Check {
     $this->config = Drupal::configFactory()
       ->getEditable('security_review.check.' . $this->id());
     $this->settings = new CheckSettings($this, $this->config);
+    $this->statePrefix = 'security_review.check.' . $this->id() . '.';
 
     // Set check ID in config.
     if ($this->config->get('id') != $this->id()) {
@@ -181,9 +187,10 @@ abstract class Check {
    *   The last stored result (or null).
    */
   public function lastResult() {
-    $result = $this->config->get('last_result.result');
-    $findings = $this->config->get('last_result.findings');
-    $time = $this->config->get('last_result.time');
+    $statePrefix = $this->statePrefix . 'last_result.';
+    $result = Drupal::state()->get($statePrefix . 'result');
+    $findings = Drupal::state()->get($statePrefix . 'findings');
+    $time = Drupal::state()->get($statePrefix . 'time');
 
     $validResult = is_int($result)
       && $result >= CheckResult::SUCCESS
@@ -230,7 +237,7 @@ abstract class Check {
    *   The timestamp of the last stored result.
    */
   public function lastRun() {
-    $lastResultTime = $this->config->get('last_result.time');
+    $lastResultTime = Drupal::state()->get($this->statePrefix . 'last_result.time');
 
     if (!is_int($lastResultTime)) {
       return 0;
@@ -321,7 +328,7 @@ abstract class Check {
   }
 
   /**
-   * Stores a result in the configuration system.
+   * Stores a result in the state system.
    *
    * @param \Drupal\security_review\CheckResult $result
    *   The result to store.
@@ -336,15 +343,12 @@ abstract class Check {
       return;
     }
 
-    $this->config->set('last_result.result', $result->result());
-    $this->config->set('last_result.time', $result->time());
-    if ($this->storesFindings()) {
-      $this->config->set('last_result.findings', $result->findings());
-    }
-    else {
-      $this->config->set('last_result.findings', array());
-    }
-    $this->config->save();
+    $findings = $this->storesFindings() ? $result->findings() : array();
+    Drupal::state()->setMultiple(array(
+      $this->statePrefix . 'last_result.result' => $result->result(),
+      $this->statePrefix . 'last_result.time' => $result->time(),
+      $this->statePrefix . 'last_result.findings' => $findings,
+    ));
   }
 
   /**

@@ -34,27 +34,10 @@ security_review.check.*:
     skipped_on:
       type: integer
       label: 'Skipped on'
-    last_result:
-      type: security_review.check_result
-      label: 'Last result'
     settings:
       # Checks that need storage for settings are advised to define their settings schema.
       # This way type-strict per-check settings storage can be created.
       type: security_review.check_settings.[%parent.id]
-
-# Defines a check result.
-security_review.check_result:
-  type: mapping
-  mapping:
-    result:
-      type: integer
-      label: 'Result value'
-    time:
-      type: integer
-      label: 'Check time'
-    findings:
-      type: security_review.check_findings.[%parent.%parent.id]
-      label: 'Findings'
 
 # Setting storage for Base URL check.
 security_review.check_settings.security_review-base_url_set:
@@ -63,10 +46,3 @@ security_review.check_settings.security_review-base_url_set:
     method:
       type: string
       label: 'Base URL identification method'
-
-# Findings storage for Base URL check.
-security_review.check_findings.security_review-base_url_set:
-  type: sequence
-  sequence:
-    type: string
-    label: 'Paragraph'
