@@ -5,10 +5,10 @@
 <table class="security-review-run-and-review__table">
     <tbody>
     {% for check in checks %}
-        <tr class="security-review-run-and-review__entry {{ check.result_string }}">
+        <tr class="security-review-run-and-review__entry{{ check.style }}">
             <td>{{ check.message }}</td>
             <td>{{ check.help_link }}</td>
-            <td>{{ check.toggle_link }}</td>
+            <td class="security-review-toggle-link">{{ check.toggle_link }}</td>
         </tr>
     {% endfor %}
     </tbody>

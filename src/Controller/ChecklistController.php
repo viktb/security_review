@@ -58,7 +58,7 @@ class ChecklistController {
    * @return array
    *   The render array for the result table.
    */
-  private function results() {
+  public function results() {
     // If there are no results return.
     if (SecurityReview::getLastRun() <= 0) {
       return array();
@@ -71,13 +71,14 @@ class ChecklistController {
       // Initialize with defaults.
       $checkInfo = array(
         'result' => CheckResult::SKIPPED,
-        'message' => 'The check hasn\'t been run yet.'
+        'message' => 'The check hasn\'t been run yet.',
+        'skipped' => $check->isSkipped()
       );
 
       // Get last result.
       $lastResult = $check->lastResult();
       if ($lastResult != NULL) {
-        $checkInfo['result'] = $check->isSkipped() ? CheckResult::SKIPPED : $lastResult->result();
+        $checkInfo['result'] = $lastResult->result();
         $checkInfo['message'] = $check->getMessage($lastResult->result());
       }
 
@@ -93,7 +94,6 @@ class ChecklistController {
       $toggle_text = $check->isSkipped() ? 'Enable' : 'Skip';
       $checkInfo['toggle_link'] = Drupal::l($toggle_text, Url::fromRoute('security_review.toggle',
         array(
-          'js' => 'nojs',
           'check_id' => $check->id()
         ),
         array(

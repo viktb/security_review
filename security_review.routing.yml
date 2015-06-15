@@ -22,7 +22,7 @@ security_review.settings:
     _permission: 'access security review list'
 
 security_review.toggle:
-  path: 'admin/reports/security-review/toggle/{js}/{check_id}'
+  path: 'admin/reports/security-review/toggle/{check_id}'
   defaults:
     _controller: '\Drupal\security_review\Controller\ToggleController::index'
   requirements:

@@ -57,21 +57,22 @@ function security_review_theme($existing, $type, $theme, $path) {
 function template_preprocess_run_and_review(&$variables) {
   $variables['date'] = format_date($variables['date']);
   foreach ($variables['checks'] as &$check) {
+    $check['style'] = '';
+    if($check['skipped']) {
+      $check['style'] .= ' skipped';
+    }
     switch ($check['result']) {
-      case CheckResult::SKIPPED:
-        $check['result_string'] = 'skipped';
-        break;
       case CheckResult::SUCCESS:
-        $check['result_string'] = 'success';
+        $check['style'] .= ' success';
         break;
       case CheckResult::FAIL:
-        $check['result_string'] = 'fail';
+        $check['style'] .= ' fail';
         break;
       case CheckResult::WARN:
-        $check['result_string'] = 'warning';
+        $check['style'] .= ' warning';
         break;
       case CheckResult::INFO:
-        $check['result_string'] = 'info';
+        $check['style'] .= ' info';
         break;
     }
   }
