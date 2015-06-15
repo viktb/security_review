@@ -19,19 +19,28 @@ class Checklist {
   private function __construct() {}
 
   /**
-   * Returns the checks that are returned by hook_security_review_checks.
+   * Array of cached Checks.
    *
-   * @param bool $useCache
-   *   If set to true the checks will be returned from cache.
+   * @var array
+   */
+  private static $cachedChecks = array();
+
+  /**
+   * Clears the cached checks.
+   */
+  public static function clearCache() {
+    static::$cachedChecks = array();
+  }
+
+  /**
+   * Returns the checks that are returned by hook_security_review_checks.
    *
    * @return array
    *   Array of Checks.
    */
-  public static function getChecks($useCache = TRUE) {
-    // Cache checks.
-    static $checks = array();
-
-    if ($useCache && !empty($checks)) {
+  public static function getChecks() {
+    $checks = &static::$cachedChecks;
+    if (!empty($checks)) {
       return $checks;
     }
 
