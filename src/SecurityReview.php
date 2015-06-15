@@ -210,4 +210,27 @@ class SecurityReview {
       static::log($check, $message, $context, $level);
     }
   }
+
+  /**
+   * Deletes orphaned check data.
+   */
+  public static function cleanStorage() {
+    // Get list of check configuration names.
+    $orphaned = Drupal::configFactory()->listAll('security_review.check.');
+
+    // Remove items that are used by the checks.
+    foreach(Checklist::getChecks() as $check) {
+      /** @var Check $check */
+      $key = array_search('security_review.check.' . $check->id(), $orphaned);
+      if($key !== FALSE) {
+        unset($orphaned[$key]);
+      }
+    }
+
+    // Delete orphaned configuration data.
+    foreach($orphaned as $configName) {
+      $config = Drupal::configFactory()->getEditable($configName);
+      $config->delete();
+    }
+  }
 }
