@@ -21,14 +21,17 @@ class Checklist {
   /**
    * Returns the checks that are returned by hook_security_review_checks.
    *
+   * @param bool $useCache
+   *   If set to true the checks will be returned from cache.
+   *
    * @return array
    *   Array of Checks.
    */
-  public static function getChecks() {
+  public static function getChecks($useCache = TRUE) {
     // Cache checks.
     static $checks = array();
 
-    if (!empty($checks)) {
+    if ($useCache && !empty($checks)) {
       return $checks;
     }
 
