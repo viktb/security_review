@@ -31,15 +31,13 @@ abstract class Check {
    */
   public function __construct() {
     $this->config = Drupal::configFactory()
-      ->getEditable('security_review.check.' . $this->id());
+      ->getEditable('security_review.checks');
     $this->settings = new CheckSettings($this, $this->config);
 
     // Set namespace and id in config.
-    if ($this->config->get('namespace') != $this->getMachineNamespace()
-      || $this->config->get('title') != $this->getMachineTitle()
-    ) {
-      $this->config->set('namespace', $this->getMachineNamespace());
-      $this->config->set('title', $this->getMachineTitle());
+    if ($this->config->get($this->id()) == NULL) {
+      $this->config->set($this->id() . '.namespace', $this->getMachineNamespace());
+      $this->config->set($this->id() . '.title', $this->getMachineTitle());
       $this->config->save();
     }
   }
@@ -184,9 +182,9 @@ abstract class Check {
    *   The last stored result (or null).
    */
   public function lastResult() {
-    $result = $this->config->get('last_result.result');
-    $findings = $this->config->get('last_result.findings');
-    $time = $this->config->get('last_result.time');
+    $result = $this->config->get($this->id() . '.last_result.result');
+    $findings = $this->config->get($this->id() . '.last_result.findings');
+    $time = $this->config->get($this->id() . '.last_result.time');
 
     $validResult = is_int($result)
       && $result >= CheckResult::SUCCESS
@@ -233,7 +231,7 @@ abstract class Check {
    *   The timestamp of the last stored result.
    */
   public function lastRun() {
-    $lastResultTime = $this->config->get('last_result.time');
+    $lastResultTime = $this->config->get($this->id() . '.last_result.time');
 
     if (!is_int($lastResultTime)) {
       return 0;
@@ -248,7 +246,7 @@ abstract class Check {
    *   Boolean indicating whether the check is skipped.
    */
   public function isSkipped() {
-    $isSkipped = $this->config->get('skipped');
+    $isSkipped = $this->config->get($this->id() . '.skipped');
 
     if (!is_bool($isSkipped)) {
       return FALSE;
@@ -264,7 +262,7 @@ abstract class Check {
    *   The user the check was last skipped by (or null).
    */
   public function skippedBy() {
-    $skippedBy = $this->config->get('skipped_by');
+    $skippedBy = $this->config->get($this->id() . '.skipped_by');
 
     if (!is_int($skippedBy)) {
       return NULL;
@@ -280,7 +278,7 @@ abstract class Check {
    *   The UNIX timestamp the check was last skipped on (or 0).
    */
   public function skippedOn() {
-    $skippedOn = $this->config->get('skipped_on');
+    $skippedOn = $this->config->get($this->id() . '.skipped_on');
 
     if (!is_int($skippedOn)) {
       return 0;
@@ -293,7 +291,7 @@ abstract class Check {
    */
   public function enable() {
     if ($this->isSkipped()) {
-      $this->config->set('skipped', FALSE);
+      $this->config->set($this->id() . '.skipped', FALSE);
       $this->config->save();
 
       // Log.
@@ -310,9 +308,9 @@ abstract class Check {
    */
   public function skip() {
     if (!$this->isSkipped()) {
-      $this->config->set('skipped', TRUE);
-      $this->config->set('skipped_by', Drupal::currentUser()->id());
-      $this->config->set('skipped_on', time());
+      $this->config->set($this->id() . '.skipped', TRUE);
+      $this->config->set($this->id() . '.skipped_by', Drupal::currentUser()->id());
+      $this->config->set($this->id() . '.skipped_on', time());
       $this->config->save();
 
       // Log.
@@ -339,13 +337,13 @@ abstract class Check {
       return;
     }
 
-    $this->config->set('last_result.result', $result->result());
-    $this->config->set('last_result.time', $result->time());
+    $this->config->set($this->id() . '.last_result.result', $result->result());
+    $this->config->set($this->id() . '.last_result.time', $result->time());
     if ($this->storesFindings()) {
-      $this->config->set('last_result.findings', $result->findings());
+      $this->config->set($this->id() . '.last_result.findings', $result->findings());
     }
     else {
-      $this->config->set('last_result.findings', array());
+      $this->config->set($this->id() . '.last_result.findings', array());
     }
     $this->config->save();
   }

@@ -18,8 +18,15 @@ security_review.settings:
       type: integer
       label: 'Last run'
 
+# Storage for check data.
+security_review.checks:
+  type: sequence
+  sequence:
+    type: security_review.check
+    label: 'Security check data'
+
 # Defines a security check's skip informations, last result and settings.
-security_review.check.*:
+security_review.check:
   type: mapping
   mapping:
     namespace:
