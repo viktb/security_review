@@ -3,6 +3,7 @@
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 use Drupal\security_review\Checks\BaseUrl;
+use Drupal\security_review\SecurityReview;
 
 /**
  * Implements hook_security_review_checks().
@@ -18,6 +19,14 @@ function security_review_security_review_checks() {
  */
 function security_review_security_review_log(Check $check, $message, array $context, $level) {
   Drupal::logger('security_review')->log($level, $message, $context);
+}
+
+/**
+ * Implements hook_modules_uninstalled().
+ */
+function security_review_modules_uninstalled($modules) {
+  // Delete any orphaned check data.
+  SecurityReview::cleanStorage();
 }
 
 /**
