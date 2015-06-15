@@ -63,7 +63,7 @@ class CheckWebTest extends WebTestBase {
    * skippedBy() value.
    */
   public function testSkipCheck() {
-    foreach($this->checks as $check) {
+    foreach ($this->checks as $check) {
       /** @var Check $check */
       $check->skip();
 

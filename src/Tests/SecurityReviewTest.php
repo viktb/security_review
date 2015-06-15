@@ -36,7 +36,7 @@ class SecurityReviewTest extends KernelTestBase {
    */
   public function testConfigLogging() {
     $this->assertTrue(SecurityReview::isLogging(), 'Logging enabled by default.');
-    SecurityReview::setLogging(false);
+    SecurityReview::setLogging(FALSE);
     $this->assertFalse(SecurityReview::isLogging(), 'Logging disabled.');
   }
 
@@ -45,7 +45,7 @@ class SecurityReviewTest extends KernelTestBase {
    */
   public function testConfigConfigured() {
     $this->assertFalse(SecurityReview::isConfigured(), 'Not configured by default.');
-    SecurityReview::setConfigured(true);
+    SecurityReview::setConfigured(TRUE);
     $this->assertTrue(SecurityReview::isConfigured(), 'Set to configured.');
   }
 

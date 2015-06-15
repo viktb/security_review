@@ -47,7 +47,7 @@ class ChecklistTest extends KernelTestBase {
     $this->checks = security_review_security_review_checks();
     Checklist::clearCache();
     $this->checkIDs = array();
-    foreach($this->checks as $check) {
+    foreach ($this->checks as $check) {
       /** @var Check $check */
       $this->checkIDs[] = $check->id();
     }
@@ -58,7 +58,7 @@ class ChecklistTest extends KernelTestBase {
    * security_review_security_review_checks() returns.
    */
   public function testChecksProvided() {
-    foreach(Checklist::getChecks() as $check) {
+    foreach (Checklist::getChecks() as $check) {
       /** @var Check $check */
       $this->assertTrue(in_array($check->id(), $this->checkIDs), $check->getTitle() . ' found.');
     }
@@ -68,7 +68,7 @@ class ChecklistTest extends KernelTestBase {
    * Tests whether checks returned by getEnabledChecks() are all enabled.
    */
   public function testEnabledChecks() {
-    foreach(Checklist::getEnabledChecks() as $check) {
+    foreach (Checklist::getEnabledChecks() as $check) {
       /** @var Check $check */
       $this->assertFalse($check->isSkipped(), $check->getTitle() . ' is enabled.');
 
@@ -85,7 +85,7 @@ class ChecklistTest extends KernelTestBase {
    *   getCheckByIdentifier().
    */
   public function testCheckSearch() {
-    foreach(Checklist::getChecks() as $check) {
+    foreach (Checklist::getChecks() as $check) {
       /** @var Check $check */
       // getCheck().
       $found = Checklist::getCheck($check->getMachineNamespace(), $check->getMachineTitle());

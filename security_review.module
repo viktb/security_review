@@ -58,7 +58,7 @@ function template_preprocess_run_and_review(&$variables) {
   $variables['date'] = format_date($variables['date']);
   foreach ($variables['checks'] as &$check) {
     $check['style'] = '';
-    if($check['skipped']) {
+    if ($check['skipped']) {
       $check['style'] .= ' skipped';
     }
     switch ($check['result']) {

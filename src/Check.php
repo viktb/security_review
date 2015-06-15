@@ -326,8 +326,8 @@ abstract class Check {
    * @param \Drupal\security_review\CheckResult $result
    *   The result to store.
    */
-  public function storeResult(CheckResult $result = null) {
-    if ($result == null) {
+  public function storeResult(CheckResult $result = NULL) {
+    if ($result == NULL) {
       $context = array(
         '!reviewcheck' => $this->getTitle(),
         '!namespace' => $this->getNamespace()

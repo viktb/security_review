@@ -50,7 +50,7 @@ class CheckTest extends KernelTestBase {
    * Every check should be enabled by default.
    */
   public function testEnabledByDefault() {
-    foreach($this->checks as $check) {
+    foreach ($this->checks as $check) {
       /** @var Check $check */
       $this->assertFalse($check->isSkipped(), $check->getTitle() . ' is enabled by default.');
     }
@@ -61,7 +61,7 @@ class CheckTest extends KernelTestBase {
    * return the same as the result that got stored.
    */
   public function testStoreResult() {
-    foreach($this->checks as $check) {
+    foreach ($this->checks as $check) {
       /** @var Check $check */
       // Run the check and store its result.
       $result = $check->run();
@@ -71,7 +71,7 @@ class CheckTest extends KernelTestBase {
       $lastResult = $check->lastResult();
       $this->assertEqual($result->result(), $lastResult->result(), 'Result stored.');
       $this->assertEqual($result->time(), $lastResult->time(), 'Time stored.');
-      if($check->storesFindings()){
+      if ($check->storesFindings()) {
         // If storesFindings() is set to FALSE, then these could differ.
         $this->assertEqual($result->findings(), $lastResult->findings(), 'Findings stored.');
       }
@@ -84,9 +84,9 @@ class CheckTest extends KernelTestBase {
    * result integer is not the same.
    */
   public function testLastResultUpdate() {
-    foreach($this->checks as $check){
+    foreach ($this->checks as $check) {
       /** @var Check $check */
-      if(!$check->storesFindings()) {
+      if (!$check->storesFindings()) {
         // Get the real result.
         $result = $check->run();
 

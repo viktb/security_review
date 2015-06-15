@@ -16,8 +16,7 @@ use Drupal\security_review\Check;
  */
 function hook_security_review_checks() {
   // Instances of the defined Checks.
-  return array(
-    /*
+  return array(/*
     MyCheck::getInstance(),
     MyOtherCheck::getInstance(),
     */
@@ -37,7 +36,7 @@ function hook_security_review_checks() {
  *   Severity (RfcLogLevel).
  */
 function hook_security_review_log(Check $check, $message, array $context, $level) {
-  if($check->getNamespace() == "My Module"){
+  if ($check->getNamespace() == "My Module") {
     // Do something with the information.
   }
 }

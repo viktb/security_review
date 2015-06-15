@@ -156,7 +156,8 @@ class SettingsForm extends ConfigFormBase {
         /** @var Check $check */
         $checkForm = &$form['advanced']['check_specific'][$check->id()];
         if (isset($checkForm)) {
-          $check->settings()->validateForm($checkForm, $checkSpecificValues[$check->id()]);
+          $check->settings()
+            ->validateForm($checkForm, $checkSpecificValues[$check->id()]);
         }
       }
     }

@@ -1,13 +1,13 @@
 (function ($) {
     Drupal.behaviors.securityReview = {
         attach: function (context) {
-            $(context).find('.security-review-toggle-link a').click(function() {
+            $(context).find('.security-review-toggle-link a').click(function () {
                 var link = $(this);
                 var url = link.attr('href');
                 var td = link.parent();
                 var tr = td.parent();
-                $.getJSON(url + '&js=1', function(data) {
-                    if(data.skipped) {
+                $.getJSON(url + '&js=1', function (data) {
+                    if (data.skipped) {
                         tr.addClass('skipped');
                     }
                     else {

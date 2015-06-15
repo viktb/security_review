@@ -8,8 +8,8 @@
 namespace Drupal\security_review\Controller;
 
 use Drupal;
-use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Url;
 use Drupal\security_review\Checklist;
 use Symfony\Component\HttpFoundation\JsonResponse;
 

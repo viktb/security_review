@@ -144,7 +144,7 @@ class SecurityReview {
    *   Severity (RfcLogLevel).
    */
   public static function log(Check $check, $message, array $context, $level) {
-    if(static::isLogging()) {
+    if (static::isLogging()) {
       Drupal::moduleHandler()->invokeAll(
         'security_review_log',
         array(
@@ -163,9 +163,9 @@ class SecurityReview {
    * @param \Drupal\security_review\CheckResult $result
    *   The result to log.
    */
-  public static function logCheckResult(CheckResult $result = null) {
-    if(SecurityReview::isLogging()) {
-      if ($result == null) {
+  public static function logCheckResult(CheckResult $result = NULL) {
+    if (SecurityReview::isLogging()) {
+      if ($result == NULL) {
         $check = $result->check();
         $context = array(
           '!reviewcheck' => $check->getTitle(),
@@ -179,7 +179,7 @@ class SecurityReview {
       $level = RfcLogLevel::NOTICE;
       $message = '!name check invalid result';
 
-      switch($result->result()){
+      switch ($result->result()) {
         case CheckResult::SUCCESS:
           $level = RfcLogLevel::INFO;
           $message = '!name check success';
@@ -213,16 +213,16 @@ class SecurityReview {
     $orphaned = Drupal::configFactory()->listAll('security_review.check.');
 
     // Remove items that are used by the checks.
-    foreach(Checklist::getChecks() as $check) {
+    foreach (Checklist::getChecks() as $check) {
       /** @var Check $check */
       $key = array_search('security_review.check.' . $check->id(), $orphaned);
-      if($key !== FALSE) {
+      if ($key !== FALSE) {
         unset($orphaned[$key]);
       }
     }
 
     // Delete orphaned configuration data.
-    foreach($orphaned as $configName) {
+    foreach ($orphaned as $configName) {
       $config = Drupal::configFactory()->getEditable($configName);
       $config->delete();
     }
