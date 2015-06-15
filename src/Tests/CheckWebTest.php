@@ -33,7 +33,7 @@ class CheckWebTest extends WebTestBase {
   /**
    * The test user.
    *
-   * @var
+   * @var \Drupal\user\Entity\User
    */
   protected $user;
 
