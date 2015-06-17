@@ -3,8 +3,18 @@
         {{ paragraph }}
     </p>
 {% endfor %}
-<h3>{{ "Check-specific help"|t }}</h3>
-<p>{{ "Details and help on the security review checks. Checks are not always perfectly correct in their procedure and result. Refer to drupal.org handbook documentation if you are unsure how to make the recommended alterations to your configuration or consult the module's README.txt for support."|t }}</p>
+<h3>
+    {% trans %}
+    Check-specific help
+    {% endtrans %}
+</h3>
+<p>
+    {% trans %}
+    Details and help on the security review checks. Checks are not always perfectly correct in their procedure and
+    result. Refer to drupal.org handbook documentation if you are unsure how to make the recommended alterations to your
+    configuration or consult the module's README.txt for support.
+    {% endtrans %}
+</p>
 {% if checks is not empty %}
     {% for check_namespace in checks %}
         <h4>{{ check_namespace.namespace }}</h4>
