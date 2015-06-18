@@ -55,6 +55,9 @@ class Checklist {
       }
     }
 
+    // Sort the checks.
+    usort($checks, "static::compareChecks");
+
     return $checks;
   }
 
@@ -164,5 +167,37 @@ class Checklist {
     }
 
     return NULL;
+  }
+
+  /**
+   * Helper function for sorting checks.
+   *
+   * @param \Drupal\security_review\Check $a
+   *   Check A.
+   * @param \Drupal\security_review\Check $b
+   *   Check B.
+   *
+   * @return int
+   *   The comparison's result.
+   */
+  public static function compareChecks(Check $a, Check $b) {
+    // If one comes from security_review and the other doesn't, prefer the one
+    // with the security_review namespace.
+    if ($a->getMachineNamespace() == 'security_review' && $b->getMachineNamespace() != 'security_review') {
+      return -1;
+    }
+    else if ($a->getMachineNamespace() != 'security_review' && $b->getMachineNamespace() == 'security_review') {
+      return 1;
+    }
+    else {
+      if ($a->getNamespace() == $b->getNamespace()) {
+        // If the namespaces match, sort by title.
+        return strcmp($a->getTitle(), $b->getTitle());
+      }
+      else {
+        // If the namespaces don't mach, sort by namespace.
+        return strcmp($a->getNamespace(), $b->getNamespace());
+      }
+    }
   }
 }
