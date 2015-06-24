@@ -117,4 +117,12 @@ class CheckResult {
   public function time() {
     return $this->time;
   }
+
+  /**
+   * @return string
+   *   The result message for this result.
+   */
+  public function resultMessage() {
+    return $this->check->getMessage($this->result);
+  }
 }
