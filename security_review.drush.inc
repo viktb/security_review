@@ -22,7 +22,7 @@ function security_review_drush_command() {
     'description' => "Run the Security Review checklist",
     'options' => array(
       'store' => 'Write results to the database',
-      //'log' => 'Log results of each check to watchdog, defaults to off',
+      'log' => 'Log results of each check to watchdog, defaults to off',
       'lastrun' => 'Do not run the checklist, just print last results',
       'check' => 'Comma-separated list of specified checks to run. See README.txt for list of options',
       'skip' => 'Invert behavior of --check. Run all checks except specified checks',
@@ -61,6 +61,11 @@ function security_review_drush() {
   $skip_checks = drush_get_option_list('skip');
   $short_titles = drush_get_option('short');
   $show_findings = drush_get_option('results');
+
+  // Set temporary logging.
+  if ($log) {
+    SecurityReview::setLogging(TRUE, TRUE);
+  }
 
   if (!Drupal::moduleHandler()->moduleExists('security_review')) {
     // Checklist is being executed when module is disabled. Deny these features.
@@ -124,12 +129,7 @@ function security_review_drush() {
     }
 
     // Run the checks.
-    foreach ($checks as $check) {
-      /** @var Check $check */
-      if ($check instanceof Check) {
-        $results[] = $check->run();
-      }
-    }
+    $results = Checklist::runChecks($checks);
 
     // Store the results.
     if ($store) {
