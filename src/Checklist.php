@@ -186,7 +186,7 @@ class Checklist {
     if ($a->getMachineNamespace() == 'security_review' && $b->getMachineNamespace() != 'security_review') {
       return -1;
     }
-    else if ($a->getMachineNamespace() != 'security_review' && $b->getMachineNamespace() == 'security_review') {
+    elseif ($a->getMachineNamespace() != 'security_review' && $b->getMachineNamespace() == 'security_review') {
       return 1;
     }
     else {

@@ -88,7 +88,7 @@ function security_review_drush() {
     $skip = array();
 
     // Fill the $checks array.
-    if(!empty($specific_checks)) {
+    if (!empty($specific_checks)) {
       // Get explicitly specified checks.
       foreach ($specific_checks as $specific_check) {
         $checks[] = _security_review_drush_get_check($specific_check);
@@ -105,14 +105,14 @@ function security_review_drush() {
     }
 
     // Remove checks listed after --skip.
-    if(!empty($skip_checks)) {
+    if (!empty($skip_checks)) {
       foreach ($skip_checks as $skip_check) {
         $skip[] = _security_review_drush_get_check($skip_check);
       }
     }
 
     // Remove checks that are being skipped if storing.
-    if($store) {
+    if ($store) {
       foreach ($checks as $check) {
         /** @var Check $check */
         if ($check->isSkipped()) {
@@ -201,7 +201,7 @@ function _security_review_drush_print_results(array $results, $short_titles = FA
         case CheckResult::INFO:
           $status = 'info';
           break;
-       }
+      }
 
       if ($show_findings) {
         $findings = trim($result->check()->evaluatePlain($result));
