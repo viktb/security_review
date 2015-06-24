@@ -169,6 +169,19 @@ abstract class Check {
   }
 
   /**
+   * Evaluates a CheckResult and returns a plaintext output.
+   *
+   * @param \Drupal\security_review\CheckResult $result
+   *   The check result to evaluate.
+   *
+   * @return string
+   *   The evaluation string.
+   */
+  public function evaluatePlain(CheckResult $result) {
+    return '';
+  }
+
+  /**
    * Converts a result integer to a human-readable result message.
    *
    * @param int $resultConst
