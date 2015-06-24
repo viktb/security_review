@@ -185,7 +185,7 @@ function _security_review_drush_print_results(array $results, $short_titles = FA
     /** @var CheckResult $result */
     if ($result instanceof CheckResult) {
       $check = $result->check();
-      $message = $short_titles ? $check->getTitle() : $check->getMessage($result->result());
+      $message = $short_titles ? $check->getTitle() : $result->resultMessage();
       $status = 'notice';
 
       switch ($result->result()) {

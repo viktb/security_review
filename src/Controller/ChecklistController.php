@@ -79,7 +79,7 @@ class ChecklistController {
       $lastResult = $check->lastResult();
       if ($lastResult != NULL) {
         $checkInfo['result'] = $lastResult->result();
-        $checkInfo['message'] = $check->getMessage($lastResult->result());
+        $checkInfo['message'] = $lastResult->resultMessage();
       }
 
       // Determine help link.
