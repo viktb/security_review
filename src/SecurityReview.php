@@ -15,6 +15,8 @@ use Drupal\Core\Logger\RfcLogLevel;
  * A class containing static methods regarding the module's configuration.
  */
 class SecurityReview {
+  private static $temporaryLogging = NULL;
+
   /**
    * Private constructor for disabling instantiation of the static class.
    */
@@ -45,6 +47,10 @@ class SecurityReview {
    *   A boolean indicating whether logging is enabled.
    */
   public static function isLogging() {
+    if (static::$temporaryLogging !== NULL) {
+      return static::$temporaryLogging;
+    }
+
     return static::config()->get('log') === TRUE;
   }
 
@@ -86,10 +92,15 @@ class SecurityReview {
    * @param bool $logging
    *   The new value of the 'logging' setting.
    */
-  public static function setLogging($logging) {
-    $config = static::config();
-    $config->set('log', $logging);
-    $config->save();
+  public static function setLogging($logging, $temporary = FALSE) {
+    if (!$temporary) {
+      $config = static::config();
+      $config->set('log', $logging);
+      $config->save();
+    }
+    else {
+      static::$temporaryLogging = ($logging == TRUE);
+    }
   }
 
   /**
