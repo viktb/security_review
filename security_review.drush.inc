@@ -27,7 +27,7 @@ function security_review_drush_command() {
       'check' => 'Comma-separated list of specified checks to run. See README.txt for list of options',
       'skip' => 'Invert behavior of --check. Run all checks except specified checks',
       'short' => "Short result messages instead of full description (e.g. 'Text formats')",
-      //'results' => 'Show the incorrect settings for failed checks',
+      'results' => 'Show the incorrect settings for failed checks',
     ),
     'examples' => array(
       'secrev' => 'Run the checklist and output the results',
@@ -202,6 +202,13 @@ function _security_review_drush_print_results(array $results, $short_titles = FA
           $status = 'info';
           break;
        }
+
+      if ($show_findings) {
+        $findings = trim($result->check()->evaluatePlain($result));
+        if ($findings != '') {
+          $message .= "\n" . $findings;
+        }
+      }
 
       drush_log($message, $status);
     }
