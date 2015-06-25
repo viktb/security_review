@@ -225,7 +225,6 @@ class SecurityReview {
 
     // Remove items that are used by the checks.
     foreach (Checklist::getChecks() as $check) {
-      /** @var Check $check */
       $key = array_search('security_review.check.' . $check->id(), $orphaned);
       if ($key !== FALSE) {
         unset($orphaned[$key]);

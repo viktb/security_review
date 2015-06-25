@@ -62,8 +62,6 @@ class HelpController {
 
     $checks = array();
     foreach (Checklist::getChecks() as $check) {
-      /** @var Check $check */
-
       // Get the namespace array's reference.
       $check_namespace = &$checks[$check->getMachineNamespace()];
 

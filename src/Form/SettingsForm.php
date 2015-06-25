@@ -81,7 +81,6 @@ class SettingsForm extends ConfigFormBase {
     $values = array();
     $options = array();
     foreach ($checks as $check) {
-      /** @var Check $check */
       // Determine if check is being skipped.
       if ($check->isSkipped()) {
         $values[] = $check->id();
@@ -106,8 +105,6 @@ class SettingsForm extends ConfigFormBase {
 
     // Iterate through checklist and get check-specific setting pages.
     foreach ($checks as $check) {
-      /** @var Check $check */
-
       // Get the check's setting form.
       $checkForm = $check->settings()->buildForm();
 
@@ -152,7 +149,6 @@ class SettingsForm extends ConfigFormBase {
     if (isset($form['advanced']['check_specific'])) {
       $checkSpecificValues = $form_state->getValue('check_specific');
       foreach (Checklist::getChecks() as $check) {
-        /** @var Check $check */
         $checkForm = &$form['advanced']['check_specific'][$check->id()];
         if (isset($checkForm)) {
           $check->settings()
@@ -183,7 +179,6 @@ class SettingsForm extends ConfigFormBase {
     // Skip selected checks.
     $skipped = array_keys(array_filter($form_state->getValue('skip')));
     foreach (Checklist::getChecks() as $check) {
-      /** @var Check $check */
       if (in_array($check->id(), $skipped)) {
         $check->skip();
       }

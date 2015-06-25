@@ -21,7 +21,7 @@ class Checklist {
   /**
    * Array of cached Checks.
    *
-   * @var array
+   * @var \Drupal\security_review\Check[]
    */
   private static $cachedChecks = array();
 
@@ -35,7 +35,7 @@ class Checklist {
   /**
    * Returns the checks that are returned by hook_security_review_checks.
    *
-   * @return array
+   * @return \Drupal\security_review\Check[]
    *   Array of Checks.
    */
   public static function getChecks() {
@@ -64,14 +64,13 @@ class Checklist {
   /**
    * Returns the enabled checks that are returned by hook_security_review_checks.
    *
-   * @return array
+   * @return \Drupal\security_review\Check[]
    *   Array of enabled Checks.
    */
   public static function getEnabledChecks() {
     $enabled = array();
 
     foreach (static::getChecks() as $check) {
-      /** @var Check $check */
       if (!$check->isSkipped()) {
         $enabled[] = $check;
       }
@@ -81,7 +80,7 @@ class Checklist {
   }
 
   /**
-   * @param array $checks
+   * @param \Drupal\security_review\Check[] $checks
    *   The array of Checks to group.
    *
    * @return array
@@ -91,7 +90,6 @@ class Checklist {
     $output = array();
 
     foreach ($checks as $check) {
-      /** @var Check $check */
       $output[$check->getMachineNamespace()][] = $check;
     }
 
@@ -99,18 +97,16 @@ class Checklist {
   }
 
   /**
-   * @param array $checks
+   * @param \Drupal\security_review\Check[] $checks
    *   The array of Checks to run.
    *
-   * @return array
+   * @return \Drupal\security_review\CheckResult[]
    *   The array of CheckResults generated.
    */
   public static function runChecks(array $checks) {
     $results = array();
 
     foreach ($checks as $check) {
-      /** @var Check $check */
-
       $result = $check->run();
       SecurityReview::logCheckResult($result);
       $results[] = $result;
@@ -120,12 +116,11 @@ class Checklist {
   }
 
   /**
-   * @param array $results
+   * @param \Drupal\security_review\CheckResult[] $results
    *   The CheckResults to store.
    */
   public static function storeResults(array $results) {
     foreach ($results as $result) {
-      /** @var CheckResult $result */
       $result->check()->storeResult($result);
     }
   }
@@ -136,12 +131,11 @@ class Checklist {
    * @param string $title
    *   The machine title of the requested check.
    *
-   * @return null|Check
+   * @return null|\Drupal\security_review\Check
    *   The Check or null if it doesn't exist.
    */
   public static function getCheck($namespace, $title) {
     foreach (static::getChecks() as $check) {
-      /** @var Check $check */
       if ($check->getMachineNamespace() == $namespace
         && $check->getMachineTitle() == $title) {
         return $check;
@@ -155,12 +149,11 @@ class Checklist {
    * @param string $uniqueIdentifier
    *   The machine namespace of the requested check.
    *
-   * @return null|Check
+   * @return null|\Drupal\security_review\Check
    *   The Check or null if it doesn't exist.
    */
   public static function getCheckByIdentifier($uniqueIdentifier) {
     foreach (static::getChecks() as $check) {
-      /** @var Check $check */
       if ($check->id() == $uniqueIdentifier) {
         return $check;
       }

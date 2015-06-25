@@ -66,8 +66,6 @@ class ChecklistController {
 
     $checks = array();
     foreach (Checklist::getChecks() as $check) {
-      /** @var Check $check */
-
       // Initialize with defaults.
       $checkInfo = array(
         'result' => CheckResult::SKIPPED,
