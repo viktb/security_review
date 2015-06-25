@@ -1,3 +1,6 @@
+For an up-to-date and user-friendlier documentation go to:
+https://www.drupal.org/node/2508415
+
 # Security Review API
 
     * Defining a security check
