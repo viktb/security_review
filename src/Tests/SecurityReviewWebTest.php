@@ -7,7 +7,6 @@
 
 namespace Drupal\security_review\Tests;
 
-use Drupal\security_review\Check;
 use Drupal\security_review\Checklist;
 use Drupal\security_review\SecurityReview;
 use Drupal\simpletest\WebTestBase;

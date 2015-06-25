@@ -7,13 +7,10 @@
 
 namespace Drupal\security_review\Form;
 
-use Drupal;
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Url;
-use Drupal\security_review\Check;
 use Drupal\security_review\Checklist;
 use Drupal\security_review\Security;
 use Drupal\security_review\SecurityReview;

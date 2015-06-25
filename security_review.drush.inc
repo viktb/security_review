@@ -5,7 +5,6 @@
  * Drush commands for Security Review module.
  */
 
-use Drupal\security_review\Check;
 use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckResult;
 use Drupal\security_review\SecurityReview;
