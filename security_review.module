@@ -2,6 +2,7 @@
 
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
+use Drupal\security_review\Checks\AdminPermissions;
 use Drupal\security_review\Checks\BaseUrl;
 use Drupal\security_review\SecurityReview;
 
@@ -10,7 +11,8 @@ use Drupal\security_review\SecurityReview;
  */
 function security_review_security_review_checks() {
   return array(
-    new BaseUrl()
+    new AdminPermissions(),
+    new BaseUrl(),
   );
 }
 
