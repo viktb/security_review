@@ -61,16 +61,16 @@ function security_review_drush() {
   $short_titles = drush_get_option('short');
   $show_findings = drush_get_option('results');
 
-  // Set temporary logging.
-  if ($log) {
-    SecurityReview::setLogging(TRUE, TRUE);
-  }
-
   if (!Drupal::moduleHandler()->moduleExists('security_review')) {
     // Checklist is being executed when module is disabled. Deny these features.
     $store = FALSE;
     $log = FALSE;
     $last_run = FALSE;
+  }
+
+  // Set temporary logging.
+  if ($log) {
+    SecurityReview::setLogging(TRUE, TRUE);
   }
 
   if (!empty($short_titles)) {
