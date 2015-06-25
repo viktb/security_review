@@ -9,6 +9,7 @@ namespace Drupal\security_review;
 
 use Drupal;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\user\Entity\Role;
 
 /**
  * A class containing static methods regarding frequently used security-related
@@ -81,6 +82,15 @@ class Security {
     // Get the permissions the given roles have, grouped by roles.
     $permissions_grouped = user_role_permissions($roleIDs);
 
+    // Fill up the administrative roles' permissions too.
+    foreach ($roleIDs as $roleID) {
+      $role = Role::load($roleID);
+      /** @var Role $role */
+      if ($role->isAdmin()) {
+        $permissions_grouped[$roleID] = static::permissions();
+      }
+    }
+
     if ($groupByRoleId) {
       // If the result should be grouped, we have nothing else to do.
       return $permissions_grouped;
@@ -146,5 +156,24 @@ class Security {
    */
   public static function trustedPermissions($groupByRoleId = FALSE) {
     return static::rolePermissions(static::trustedRoles(), $groupByRoleId);
+  }
+
+
+  /**
+   * Gets all the permissions.
+   *
+   * @param bool $meta
+   *   Whether to return only permission strings or metadata too.
+   * @see \Drupal\user\PermissionHandlerInterface::getPermissions()
+   * @return array
+   *   Array of every permission.
+   */
+  public static function permissions($meta = FALSE) {
+    $permissions = \Drupal::service('user.permissions')->getPermissions();
+
+    if (!$meta) {
+      return array_keys($permissions);
+    }
+    return $permissions;
   }
 }
