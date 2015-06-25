@@ -71,11 +71,6 @@ class AdminPermissions extends Check {
     $output = '';
     $output .= '<p>';
     $output .= t("Drupal's permission system is extensive and allows for varying degrees of control. Certain permissions would allow a user total control, or the ability to escalate their control, over your site and should only be granted to trusted users.");
-    $output .= '</p><p>';
-    $output .= \Drupal::l(
-      t('Read more about trusted vs. untrusted roles and permissions on Acquia.com.'),
-      Url::fromUri('https://docs.acquia.com/articles/importance-user-roles-and-permissions-site-security')
-    );
     $output .= '</p>';
 
     return array(
