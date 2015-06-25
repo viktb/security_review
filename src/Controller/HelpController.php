@@ -119,17 +119,46 @@ class HelpController {
     );
     $output[] = $check->help();
 
-    // Evaluate last result, if any.
-    $lastResult = $check->lastResult();
-    if ($lastResult instanceof CheckResult) {
-      // Separator.
-      $output[] = array(
-        '#type' => 'markup',
-        '#markup' => '<div />'
+    // If the check is skipped print the skip message, else print the
+    // evaluation.
+    if ($check->isSkipped()) {
+
+      if ($check->skippedBy() != NULL) {
+        $user = Drupal::l(
+          $check->skippedBy()->getUsername(),
+          $check->skippedBy()->urlInfo()
+        );
+      }
+      else {
+        $user = 'Anonymous';
+      }
+
+      $skipMessage = t(
+        'Check marked for skipping on !date by !user',
+        array(
+          '!date' => format_date($check->skippedOn()),
+          '!user' => $user
+        )
       );
 
-      // Evaluation page.
-      $output[] = $check->evaluate($lastResult);
+      $output[] = array(
+        '#type' => 'markup',
+        '#markup' => "<p>$skipMessage</p>"
+      );
+    }
+    else {
+      // Evaluate last result, if any.
+      $lastResult = $check->lastResult();
+      if ($lastResult instanceof CheckResult) {
+        // Separator.
+        $output[] = array(
+          '#type' => 'markup',
+          '#markup' => '<div />'
+        );
+
+        // Evaluation page.
+        $output[] = $check->evaluate($lastResult);
+      }
     }
 
     // Return the completed page.
