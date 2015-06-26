@@ -30,7 +30,7 @@ class RunForm extends FormBase {
     $form['run_form'] = array(
       '#type' => 'details',
       '#title' => t('Run'),
-      '#description' => t('Click the button below to run the security checklist and review the results.'),
+      '#description' => t('Click the button below to run the security checklist and review the results.<br />'),
       '#open' => TRUE,
     );
 
