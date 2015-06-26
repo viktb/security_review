@@ -16,6 +16,7 @@ use Drupal\simpletest\KernelTestBase;
  * @group security_review
  */
 class CheckTest extends KernelTestBase {
+
   /**
    * Modules to enable.
    *
@@ -103,4 +104,5 @@ class CheckTest extends KernelTestBase {
       }
     }
   }
+
 }

@@ -11,6 +11,7 @@ namespace Drupal\security_review;
  * Used to define the result of a Check.
  */
 class CheckResult {
+
   const SKIPPED = -1;
   const SUCCESS = 0;
   const FAIL = 1;
@@ -125,4 +126,5 @@ class CheckResult {
   public function resultMessage() {
     return $this->check->getMessage($this->result);
   }
+
 }

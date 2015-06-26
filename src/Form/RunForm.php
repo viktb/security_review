@@ -15,6 +15,7 @@ use Drupal\security_review\SecurityReview;
  * 'Run' form class.
  */
 class RunForm extends FormBase {
+
   /**
    * {@inheritdoc}
    */
@@ -48,4 +49,5 @@ class RunForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     SecurityReview::runChecklist();
   }
+
 }

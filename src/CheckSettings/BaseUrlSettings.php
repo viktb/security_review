@@ -13,6 +13,7 @@ use Drupal\security_review\CheckSettings;
  * Provides the settings form for Drupal Base URL check.
  */
 class BaseUrlSettings extends CheckSettings {
+
   /**
    * {@inheritdoc}
    */
@@ -38,4 +39,5 @@ class BaseUrlSettings extends CheckSettings {
   public function submitForm(array &$form, $values) {
     $this->set('method', $values['method']);
   }
+
 }

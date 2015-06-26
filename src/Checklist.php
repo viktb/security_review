@@ -13,6 +13,7 @@ use Drupal;
  * Contains static functions for handling checks throughout all modules.
  */
 class Checklist {
+
   /**
    * Private constructor for disabling instantiation of the static class.
    */
@@ -193,4 +194,5 @@ class Checklist {
       }
     }
   }
+
 }

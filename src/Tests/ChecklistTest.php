@@ -16,6 +16,7 @@ use Drupal\simpletest\KernelTestBase;
  * @group security_review
  */
 class ChecklistTest extends KernelTestBase {
+
   /**
    * Modules to enable.
    *
@@ -93,4 +94,5 @@ class ChecklistTest extends KernelTestBase {
       $this->assertEqual($check->id(), $found->id(), 'Found ' . $check->getTitle() . '.');
     }
   }
+
 }

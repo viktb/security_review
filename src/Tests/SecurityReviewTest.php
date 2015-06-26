@@ -16,6 +16,7 @@ use Drupal\simpletest\KernelTestBase;
  * @group security_review
  */
 class SecurityReviewTest extends KernelTestBase {
+
   /**
    * Modules to enable.
    *
@@ -69,4 +70,5 @@ class SecurityReviewTest extends KernelTestBase {
     SecurityReview::setLastRun($time);
     $this->assertEqual($time, SecurityReview::getLastRun(), 'last_run set to now.');
   }
+
 }

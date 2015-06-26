@@ -17,6 +17,7 @@ use Drupal\security_review\CheckSettings\BaseUrlSettings;
  * Defines the Drupal Base URL check.
  */
 class BaseUrl extends Check {
+
   /**
    * {@inheritdoc}
    */
@@ -144,4 +145,5 @@ class BaseUrl extends Check {
         return "Unexpected result.";
     }
   }
+
 }

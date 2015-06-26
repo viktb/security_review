@@ -15,6 +15,7 @@ use Drupal\simpletest\WebTestBase;
  * @group security_review
  */
 class CheckWebTest extends WebTestBase {
+
   /**
    * Modules to enable.
    *
@@ -72,4 +73,5 @@ class CheckWebTest extends WebTestBase {
       $this->assertEqual($this->user->id(), $skippedBy->id(), 'Skipped by ' . $skippedBy->label());
     }
   }
+
 }

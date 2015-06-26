@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Responsible for handling the toggle links on the Run & Review page.
  */
 class ToggleController extends ControllerBase {
+
   public function index($check_id) {
     // Determine access type.
     $ajax = Drupal::request()->query->get('js') == 1;
@@ -69,4 +70,5 @@ class ToggleController extends ControllerBase {
     // Go back to Run & Review if the access was wrong.
     return $this->redirect('security_review');
   }
+
 }

@@ -16,6 +16,7 @@ use Drupal\user\Entity\Role;
  * data.
  */
 class Security {
+
   /**
    * Private constructor for disabling instantiation of the static class.
    */
@@ -176,4 +177,5 @@ class Security {
     }
     return $permissions;
   }
+
 }

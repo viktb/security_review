@@ -12,6 +12,7 @@ namespace Drupal\security_review;
  * that can alter these settings.
  */
 interface CheckSettingsInterface {
+
   /**
    * Gets a check-specific setting value identified by $key.
    *
@@ -63,4 +64,5 @@ interface CheckSettingsInterface {
    *   The current values of the form.
    */
   public function submitForm(array &$form, $values);
+
 }

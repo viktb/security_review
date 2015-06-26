@@ -14,6 +14,7 @@ use Drupal\Core\Config\Config;
  * enough for most checks.
  */
 class CheckSettings implements CheckSettingsInterface {
+
   /**
    * @var \Drupal\Core\Config\Config $config
    */
@@ -74,4 +75,5 @@ class CheckSettings implements CheckSettingsInterface {
   public function submitForm(array &$form, $values) {
     // Handle submission.
   }
+
 }

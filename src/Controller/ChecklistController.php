@@ -17,6 +17,7 @@ use Drupal\security_review\SecurityReview;
  * The class of the 'Run & Review' page's controller.
  */
 class ChecklistController {
+
   /**
    * Creates the Run & Review page.
    *
@@ -114,4 +115,5 @@ class ChecklistController {
       )
     );
   }
+
 }

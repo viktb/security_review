@@ -19,6 +19,7 @@ use Drupal\security_review\SecurityReview;
  * Settings page for Security Review.
  */
 class SettingsForm extends ConfigFormBase {
+
   /**
    * {@inheritdoc}
    */
@@ -213,4 +214,5 @@ class SettingsForm extends ConfigFormBase {
   protected function getEditableConfigNames() {
     return ['security_review.checks'];
   }
+
 }

@@ -17,6 +17,7 @@ use Drupal\simpletest\WebTestBase;
  * @group security_review
  */
 class SecurityReviewWebTest extends WebTestBase {
+
   /**
    * Modules to enable.
    *
@@ -88,4 +89,5 @@ class SecurityReviewWebTest extends WebTestBase {
       $this->assertEqual(0, $check->lastRun(), $check->getTitle() . ' has not been run.');
     }
   }
+
 }

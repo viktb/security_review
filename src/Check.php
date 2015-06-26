@@ -15,6 +15,7 @@ use Drupal\user\Entity\User;
  * Defines a security check.
  */
 abstract class Check {
+
   /**
    * @var \Drupal\security_review\CheckSettingsInterface $settings
    */
@@ -380,4 +381,5 @@ abstract class Check {
   public function createResult($result, array $findings = array(), $time = NULL) {
     return new CheckResult($this, $result, $findings, $time);
   }
+
 }

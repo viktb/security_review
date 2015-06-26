@@ -15,6 +15,7 @@ use Drupal\Core\Logger\RfcLogLevel;
  * A class containing static methods regarding the module's configuration.
  */
 class SecurityReview {
+
   private static $temporaryLogging = NULL;
 
   /**
@@ -237,4 +238,5 @@ class SecurityReview {
       $config->delete();
     }
   }
+
 }

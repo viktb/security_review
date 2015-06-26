@@ -17,6 +17,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * The class of the Help pages' controller.
  */
 class HelpController {
+
   /**
    * Serves as an entry point for the help pages.
    *
@@ -161,4 +162,5 @@ class HelpController {
     // Return the completed page.
     return $output;
   }
+
 }

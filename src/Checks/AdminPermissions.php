@@ -14,6 +14,7 @@ use Drupal\security_review\Security;
 use Drupal\user\Entity\Role;
 
 class AdminPermissions extends Check {
+
   /**
    * {@inheritdoc}
    */
@@ -152,4 +153,5 @@ class AdminPermissions extends Check {
 
     return $output;
   }
+
 }
