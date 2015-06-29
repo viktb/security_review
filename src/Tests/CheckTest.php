@@ -66,7 +66,7 @@ class CheckTest extends KernelTestBase {
       $check->storeResult($result);
 
       // Compare lastResult() with $result.
-      $lastResult = $check->lastResult();
+      $lastResult = $check->lastResult(TRUE);
       $this->assertEqual($result->result(), $lastResult->result(), 'Result stored.');
       $this->assertEqual($result->time(), $lastResult->time(), 'Time stored.');
       if ($check->storesFindings()) {

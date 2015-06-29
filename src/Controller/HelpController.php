@@ -146,7 +146,7 @@ class HelpController {
     }
     else {
       // Evaluate last result, if any.
-      $lastResult = $check->lastResult();
+      $lastResult = $check->lastResult(TRUE);
       if ($lastResult instanceof CheckResult) {
         // Separator.
         $output[] = array(

@@ -200,10 +200,15 @@ abstract class Check {
    * @return \Drupal\security_review\CheckResult|null
    *   The last stored result (or null).
    */
-  public function lastResult() {
+  public function lastResult($getFindings = FALSE) {
     $statePrefix = $this->statePrefix . 'last_result.';
     $result = Drupal::state()->get($statePrefix . 'result');
-    $findings = Drupal::state()->get($statePrefix . 'findings');
+    if($getFindings) {
+      $findings = Drupal::state()->get($statePrefix . 'findings');
+    }
+    else {
+      $findings = array();
+    }
     $time = Drupal::state()->get($statePrefix . 'time');
 
     $validResult = is_int($result)
@@ -218,10 +223,7 @@ abstract class Check {
 
     $lastResult = new CheckResult($this, $result, $findings, $time);
 
-    if ($this->storesFindings()) {
-      return $lastResult;
-    }
-    else {
+    if ($getFindings && !$this->storesFindings()) {
       // Run the check to get the findings.
       $freshResult = $this->run();
 
@@ -241,6 +243,8 @@ abstract class Check {
         return CheckResult::combine($lastResult, $this->run());
       }
     }
+
+    return $lastResult;
   }
 
   /**

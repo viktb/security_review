@@ -136,7 +136,7 @@ function security_review_drush() {
   }
   else {
     foreach (Checklist::getChecks() as $check) {
-      $last_result = $check->lastResult();
+      $last_result = $check->lastResult($show_findings);
       if ($last_result instanceof CheckResult) {
         $results[] = $last_result;
       }
