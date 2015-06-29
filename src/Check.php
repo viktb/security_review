@@ -243,7 +243,7 @@ abstract class Check {
       }
       else {
         // Else return the old result with the fresh one's findings.
-        return CheckResult::combine($lastResult, $this->run());
+        return CheckResult::combine($lastResult, $freshResult);
       }
     }
 
