@@ -92,6 +92,9 @@ class SecurityReview {
    *
    * @param bool $logging
    *   The new value of the 'logging' setting.
+   * @param bool $temporary
+   *   Whether to set only temporarily.
+   *
    */
   public static function setLogging($logging, $temporary = FALSE) {
     if (!$temporary) {

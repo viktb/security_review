@@ -197,6 +197,9 @@ abstract class Check {
    * Returns the last stored result of the check or null if no results have been
    * stored yet.
    *
+   * @param bool $getFindings
+   *   Whether to get the findings too.
+   *
    * @return \Drupal\security_review\CheckResult|null
    *   The last stored result (or null).
    */
