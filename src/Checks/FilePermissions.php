@@ -102,6 +102,18 @@ class FilePermissions extends Check {
     return $this->createResult($result, $files);
   }
 
+  /**
+   * Scans a directory recursively and returns the writable items inside it.
+   *
+   * @param string $directory
+   *   The directory to scan.
+   * @param string[] $parsed
+   *   Array of already parsed real paths.
+   * @param string[] $ignore
+   *   Array of file names to ignore.
+   * @return string[]
+   *   The writable items found.
+   */
   public function scan($directory, &$parsed, $ignore) {
     $items = array();
     if ($handle = opendir($directory)) {
