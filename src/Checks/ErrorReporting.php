@@ -103,4 +103,5 @@ class ErrorReporting extends Check {
         return 'Unexpected result.';
     }
   }
+
 }
