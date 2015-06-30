@@ -38,11 +38,18 @@ function security_review_modules_uninstalled($modules) {
  */
 function security_review_theme($existing, $type, $theme, $path) {
   return array(
-    'run_and_review' => array(
-      'template' => 'run_and_review',
+    'check_evaluation' => array(
+      'template' => 'check_evaluation',
       'variables' => array(
-        'date' => array(),
-        'checks' => array()
+        'paragraphs' => array(),
+        'items' => array()
+      )
+    ),
+    'check_help' => array(
+      'template' => 'check_help',
+      'variables' => array(
+        'title' => array(),
+        'paragraphs' => array()
       )
     ),
     'general_help' => array(
@@ -51,7 +58,14 @@ function security_review_theme($existing, $type, $theme, $path) {
         'paragraphs' => array(),
         'checks' => array()
       )
-    )
+    ),
+    'run_and_review' => array(
+      'template' => 'run_and_review',
+      'variables' => array(
+        'date' => array(),
+        'checks' => array()
+      )
+    ),
   );
 }
 

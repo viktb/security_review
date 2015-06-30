@@ -1,0 +1,12 @@
+<h3>
+    {% trans %}
+    {{ title }}
+    {% endtrans %}
+</h3>
+{% for paragraph in paragraphs %}
+    <p>
+        {% trans %}
+        {{ paragraph }}
+        {% endtrans %}
+    </p>
+{% endfor %}

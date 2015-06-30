@@ -1,0 +1,14 @@
+{% for paragraph in paragraphs %}
+    <p>
+        {% trans %}
+        {{ paragraph }}
+        {% endtrans %}
+    </p>
+{% endfor %}
+{% if items is not empty %}
+    <ul>
+    {% for item in items %}
+        <li>{{ item }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
