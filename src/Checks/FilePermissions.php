@@ -160,6 +160,10 @@ class FilePermissions extends Check {
    * {@inheritdoc}
    */
   public function evaluate(CheckResult $result) {
+    if ($result->result() == CheckResult::SUCCESS) {
+      return array();
+    }
+
     $paragraphs = array();
     $paragraphs[] = t(
       '<p>The following files and directories appear to be writeable by your web server. In most cases you can fix this by simply altering the file permissions or ownership. If you have command-line access to your host try running "chmod 644 [file path]" where [file path] is one of the following paths (relative to your webroot). For more information consult the !link.</p>',
@@ -177,6 +181,10 @@ class FilePermissions extends Check {
    * {@inheritdoc}
    */
   public function evaluatePlain(CheckResult $result) {
+    if ($result->result() == CheckResult::SUCCESS) {
+      return '';
+    }
+
     $output = "Writable files:\n";
     foreach ($result->findings() as $file) {
       $output .= "\t" . $file . "\n";
@@ -195,7 +203,7 @@ class FilePermissions extends Check {
       case CheckResult::FAIL:
         return 'Some files and directories in your install are writable by the server.';
       default:
-        return "Unexpected result.";
+        return 'Unexpected result.';
     }
   }
 

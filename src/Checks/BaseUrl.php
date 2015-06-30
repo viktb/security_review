@@ -114,6 +114,10 @@ class BaseUrl extends Check {
    * {@inheritdoc}
    */
   public function evaluate(CheckResult $result) {
+    if ($result->result() == CheckResult::SUCCESS) {
+      return array();
+    }
+
     return array(
       '#theme' => 'check_evaluation',
       '#paragraphs' => $result->findings(),

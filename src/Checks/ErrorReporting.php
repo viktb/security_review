@@ -64,6 +64,10 @@ class ErrorReporting extends Check {
    * {@inheritdoc}
    */
   public function evaluate(CheckResult $result) {
+    if ($result->result() == CheckResult::SUCCESS) {
+      return array();
+    }
+
     $paragraphs = array();
     $paragraphs[] = t('You have error reporting set to both the screen and the log.');
     $paragraphs[] = Drupal::l(
@@ -82,6 +86,10 @@ class ErrorReporting extends Check {
    * {@inheritdoc}
    */
   public function evaluatePlain(CheckResult $result) {
+    if ($result->result() == CheckResult::SUCCESS) {
+      return '';
+    }
+
     if (isset($result->findings()['level'])) {
       return t('error level: !level', array(
         '!level' => $result->findings()['level']
