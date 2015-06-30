@@ -143,18 +143,15 @@ class FilePermissions extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $output = '';
-    $output .= '<p>';
-    $output .= t("It is dangerous to allow the web server to write to files inside the document root of your server. Doing so could allow Drupal to write files that could then be executed. An attacker might use such a vulnerability to take control of your site. An exception is the Drupal files, private files, and temporary directories which Drupal needs permission to write to in order to provide features like file attachments.");
-    $output .= '</p><p>';
-    $output .= t("In addition to inspecting existing directories, this test attempts to create and write to your file system. Look in your security_review module directory on the server for files named file_write_test.YYYYMMDDHHMMSS and for a file called IGNOREME.txt which gets a timestamp appended to it if it is writeable.</p>");
-    $output .= '</p><p>';
-    $output .= Drupal::l(t('Read more about file system permissions in the handbooks.'), Url::fromUri('http://drupal.org/node/244924'));
-    $output .= '</p>';
+    $paragraphs = array();
+    $paragraphs[] = "It is dangerous to allow the web server to write to files inside the document root of your server. Doing so could allow Drupal to write files that could then be executed. An attacker might use such a vulnerability to take control of your site. An exception is the Drupal files, private files, and temporary directories which Drupal needs permission to write to in order to provide features like file attachments.";
+    $paragraphs[] = "In addition to inspecting existing directories, this test attempts to create and write to your file system. Look in your security_review module directory on the server for files named file_write_test.YYYYMMDDHHMMSS and for a file called IGNOREME.txt which gets a timestamp appended to it if it is writeable.";
+    $paragraphs[] = Drupal::l(t('Read more about file system permissions in the handbooks.'), Url::fromUri('http://drupal.org/node/244924'));
 
     return array(
-      '#type' => 'markup',
-      '#markup' => $output
+      '#theme' => 'check_help',
+      '#title' => 'Web server file system permissions',
+      '#paragraphs' => $paragraphs
     );
   }
 
@@ -162,24 +159,16 @@ class FilePermissions extends Check {
    * {@inheritdoc}
    */
   public function evaluate(CheckResult $result) {
-    $output = t(
+    $paragraphs = array();
+    $paragraphs[] = t(
       '<p>The following files and directories appear to be writeable by your web server. In most cases you can fix this by simply altering the file permissions or ownership. If you have command-line access to your host try running "chmod 644 [file path]" where [file path] is one of the following paths (relative to your webroot). For more information consult the !link.</p>',
       array('!link' => Drupal::l(t('Drupal.org handbooks on file permissions'), Url::fromUri('http://drupal.org/node/244924')))
     );
-    $output .= '<ul>';
-
-    foreach ($result->findings() as $file) {
-      $output .= t(
-        '<li>!file</li>',
-        array('!file' => $file)
-      );
-    }
-
-    $output .= '</ul>';
 
     return array(
-      '#type' => 'markup',
-      '#markup' => $output
+      '#theme' => 'check_evaluation',
+      '#paragraphs' => $paragraphs,
+      '#items' => $result->findings()
     );
   }
 

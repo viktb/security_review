@@ -111,10 +111,6 @@ class HelpController {
 
     // Print the help page.
     $output = array();
-    $output[] = array(
-      '#type' => 'markup',
-      '#markup' => '<h3>' . t($check->getTitle()) . '</h3>'
-    );
     $output[] = $check->help();
 
     // If the check is skipped print the skip message, else print the

@@ -100,14 +100,13 @@ class BaseUrl extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $output = '';
-    $output .= '<p>';
-    $output .= t("Setting Drupal's \$base_url in settings.php can help protect against attackers manipulating links to your site. For example, an attacker could exploit a missing \$base_url setting to carry out a phishing attack that may lead to the theft of your site's private user data.");
-    $output .= '</p>';
+    $paragraphs = array();
+    $paragraphs[] = "Setting Drupal's \$base_url in settings.php can help protect against attackers manipulating links to your site. For example, an attacker could exploit a missing \$base_url setting to carry out a phishing attack that may lead to the theft of your site's private user data.";
 
     return array(
-      '#type' => 'markup',
-      '#markup' => $output
+      '#theme' => 'check_help',
+      '#title' => 'Drupal base URL',
+      '#paragraphs' => $paragraphs
     );
   }
 
@@ -115,20 +114,10 @@ class BaseUrl extends Check {
    * {@inheritdoc}
    */
   public function evaluate(CheckResult $result) {
-    if ($result->result() === CheckResult::SUCCESS) {
-      return array();
-    }
-
-    $output = '';
-    foreach ($result->findings() as $finding) {
-      $output .= '<p>';
-      $output .= t($finding);
-      $output .= '</p>';
-    }
-
     return array(
-      '#type' => 'markup',
-      '#markup' => $output
+      '#theme' => 'check_evaluation',
+      '#paragraphs' => $result->findings(),
+      '#items' => array()
     );
   }
 

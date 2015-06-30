@@ -69,14 +69,12 @@ class AdminPermissions extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $output = '';
-    $output .= '<p>';
-    $output .= t("Drupal's permission system is extensive and allows for varying degrees of control. Certain permissions would allow a user total control, or the ability to escalate their control, over your site and should only be granted to trusted users.");
-    $output .= '</p>';
-
+    $paragraphs = array();
+    $paragraphs[] = "Drupal's permission system is extensive and allows for varying degrees of control. Certain permissions would allow a user total control, or the ability to escalate their control, over your site and should only be granted to trusted users.";
     return array(
-      '#type' => 'markup',
-      '#markup' => $output
+      '#theme' => 'check_help',
+      '#title' => 'Admin and trusted Drupal permissions',
+      '#paragraphs' => $paragraphs
     );
   }
 
@@ -98,13 +96,14 @@ class AdminPermissions extends Check {
    * {@inheritdoc}
    */
   public function evaluate(CheckResult $result) {
-    $output = '';
+    $output = array();
 
     foreach ($result->findings() as $rid => $permissions) {
       $role = Role::load($rid);
       /** @var Role $role */
-      $output .= t(
-        "<p>!role has the following restricted permissions:</p>",
+      $paragraphs = array();
+      $paragraphs[] = t(
+        "!role has the following restricted permissions:",
         array(
           '!role' => \Drupal::l(
             $role->label(),
@@ -116,19 +115,14 @@ class AdminPermissions extends Check {
         )
       );
 
-      $output .= "<ul>";
-      foreach ($permissions as $permission) {
-        $output .= t('<li>@permission</li>', array(
-          '@permission' => $permission
-        ));
-      }
-      $output .= "</ul>";
+      $output[] = array(
+        '#theme' => 'check_evaluation',
+        '#paragraphs' => $paragraphs,
+        '#items' => $permissions
+      );
     }
 
-    return array(
-      '#type' => 'markup',
-      '#markup' => $output
-    );
+    return $output;
   }
 
   /**
