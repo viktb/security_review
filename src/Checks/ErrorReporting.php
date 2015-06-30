@@ -12,6 +12,9 @@ use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 
+/**
+ * Defines a security check that checks the error reporting setting.
+ */
 class ErrorReporting extends Check {
 
   /**
