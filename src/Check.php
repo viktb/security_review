@@ -148,6 +148,15 @@ abstract class Check {
   public abstract function run();
 
   /**
+   * Same as run(), but used in CLI context such as Drush.
+   *
+   * @return \Drupal\security_review\CheckResult
+   */
+  public function runCli() {
+    return $this->run();
+  }
+
+  /**
    * Returns the check-specific help page.
    *
    * @return array
