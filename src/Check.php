@@ -142,7 +142,7 @@ abstract class Check {
   /**
    * The actual procedure of carrying out the check.
    *
-   * @return CheckResult
+   * @return \Drupal\security_review\CheckResult
    *   The result of running the check.
    */
   public abstract function run();
@@ -285,7 +285,7 @@ abstract class Check {
    * Returns the user the check was skipped by, or null if it hasn't been
    * skipped yet or the user that skipped the check is not valid anymore.
    *
-   * @return null|User
+   * @return \Drupal\user\Entity\User|null
    *   The user the check was last skipped by (or null).
    */
   public function skippedBy() {
@@ -375,11 +375,11 @@ abstract class Check {
   /**
    * Creates a new CheckResult for this Check.
    *
-   * @param $result
+   * @param int $result
    *   The result integer (see the constants defined in CheckResult).
    * @param array $findings
    *   The findings.
-   * @param null $time
+   * @param int $time
    *   The time the test was run.
    *
    * @return \Drupal\security_review\CheckResult
