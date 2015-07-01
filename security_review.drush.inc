@@ -127,7 +127,7 @@ function security_review_drush() {
     }
 
     // Run the checks.
-    $results = Checklist::runChecks($checks);
+    $results = Checklist::runChecks($checks, TRUE);
 
     // Store the results.
     if ($store) {

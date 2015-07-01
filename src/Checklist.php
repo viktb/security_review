@@ -100,15 +100,22 @@ class Checklist {
   /**
    * @param \Drupal\security_review\Check[] $checks
    *   The array of Checks to run.
+   * @param bool $cli
+   *   Whether to call runCli() instead of run().
    *
    * @return \Drupal\security_review\CheckResult[]
    *   The array of CheckResults generated.
    */
-  public static function runChecks(array $checks) {
+  public static function runChecks(array $checks, $cli = FALSE) {
     $results = array();
 
     foreach ($checks as $check) {
-      $result = $check->run();
+      if ($cli) {
+        $result = $check->runCli();
+      }
+      else {
+        $result = $check->run();
+      }
       SecurityReview::logCheckResult($result);
       $results[] = $result;
     }
