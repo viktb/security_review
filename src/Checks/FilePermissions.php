@@ -15,8 +15,7 @@ use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 
 /**
- * Defines a security check that checks the whole Drupal directory for
- * possible vulnerabilities.
+ * Check that files aren't writeable by the server.
  */
 class FilePermissions extends Check {
 

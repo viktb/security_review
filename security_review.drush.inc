@@ -100,7 +100,7 @@ function security_review_drush() {
       // Unset file_perms of security_review because drush is running as a
       // different user.
       // TODO.
-      //$skip[] = new \Drupal\security_review\Checks\FilePerms();
+      $skip[] = new \Drupal\security_review\Checks\FilePerms();
     }
 
     // Remove checks listed after --skip.

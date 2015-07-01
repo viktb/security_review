@@ -14,7 +14,7 @@ use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 
 /**
- *
+ * If private files is enabled check that the directory is not under the web root.
  */
 class PrivateFiles extends Check {
 
@@ -107,7 +107,7 @@ class PrivateFiles extends Check {
       case CheckResult::FAIL:
         return 'Private files is enabled but the specified directory is not secure outside the web server root.';
       case CheckResult::INFO:
-        return 'Private files is not enabled.';
+        return 'Private files feature is not enabled.';
       default:
         return 'Unexpected result.';
     }
