@@ -90,8 +90,10 @@ class ExecutablePhp extends Check {
         $findings[] = 'incorrect_htaccess';
       }
       if (is_writable($htaccess_path)) {
-        // Don't modify $result.
         $findings[] = 'writable_htaccess';
+        if ($result !== CheckResult::FAIL) {
+          $result = CheckResult::WARN;
+        }
       }
     }
 
@@ -167,6 +169,8 @@ class ExecutablePhp extends Check {
         return 'PHP files in the Drupal files directory cannot be executed.';
       case CheckResult::FAIL:
         return 'PHP files in the Drupal files directory can be executed.';
+      case CheckResult::WARN:
+        return 'The .htaccess file in the files directory is writeable.';
       default:
         return 'Unexpected result.';
     }
