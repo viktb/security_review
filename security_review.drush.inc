@@ -100,7 +100,7 @@ function security_review_drush() {
 
       // Unset file_perms of security_review because drush is running as a
       // different user.
-      $skip[] = new FilePermissions();
+      $skip_checks[] = 'security_review:file_perms';
     }
 
     // Remove checks listed after --skip.
@@ -120,7 +120,13 @@ function security_review_drush() {
     }
 
     // Remove the skipped checks.
-    $checks = array_diff($checks, array_filter($skip));
+    foreach ($skip as $skip_check) {
+      foreach ($checks as $key => $check) {
+        if ($check->id() == $skip_check->id()) {
+          unset($checks[$key]);
+        }
+      }
+    }
 
     if (empty($checks)) {
       return drush_set_error('EMPTY_CHECKLIST', dt("No checks to run. Run 'drush help secrev' for option use or consult the drush section of API.txt for further help."));
