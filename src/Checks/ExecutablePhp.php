@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Contains \Drupal\security_review\Checks\ExecutablePhp.
