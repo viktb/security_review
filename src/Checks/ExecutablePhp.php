@@ -140,7 +140,7 @@ class ExecutablePhp extends Check {
           $paragraphs[] = t("The .htaccess file exists but does not contain the correct content. It is possible it's been maliciously altered.");
           break;
         case 'writable_htaccess':
-          $paragraphs[] = t("The .htaccess file is writeable which poses a risk should a malious user find a way to execute PHP code they could alter the htaccess file to allow further PHP code execution.");
+          $paragraphs[] = t("The .htaccess file is writable which poses a risk should a malicious user find a way to execute PHP code they could alter the .htaccess file to allow further PHP code execution.");
           break;
       }
     }
@@ -170,7 +170,7 @@ class ExecutablePhp extends Check {
       case CheckResult::FAIL:
         return 'PHP files in the Drupal files directory can be executed.';
       case CheckResult::WARN:
-        return 'The .htaccess file in the files directory is writeable.';
+        return 'The .htaccess file in the files directory is writable.';
       default:
         return 'Unexpected result.';
     }
