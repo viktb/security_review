@@ -74,7 +74,7 @@ class ExecutablePhp extends Check {
     // Check for presence of the .htaccess file and if the contents are correct.
     $htaccess_path = PublicStream::basePath() . '/.htaccess';
     if (!file_exists($htaccess_path)) {
-      $result = FALSE;
+      $result = CheckResult::FAIL;
       $findings[] = 'missing_htaccess';
     }
     else {
