@@ -69,7 +69,10 @@ class ChecklistController {
       // Initialize with defaults.
       $checkInfo = array(
         'result' => CheckResult::SKIPPED,
-        'message' => 'The check hasn\'t been run yet.',
+        'message' => t(
+          'The check "!name" hasn\'t been run yet.',
+          array('!name' => $check->getTitle())
+        ),
         'skipped' => $check->isSkipped()
       );
 
