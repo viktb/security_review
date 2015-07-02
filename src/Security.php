@@ -178,4 +178,58 @@ class Security {
     return $permissions;
   }
 
+  /**
+   * Gets the list of unsafe HTML tags.
+   *
+   * @return string[]
+   *   List of unsafe tags.
+   */
+  public static function unsafeTags() {
+    $unsafe_tags = array(
+      'applet',
+      'area',
+      'audio',
+      'base',
+      'basefont',
+      'body',
+      'button',
+      'comment',
+      'embed',
+      'eval',
+      'form',
+      'frame',
+      'frameset',
+      'head',
+      'html',
+      'iframe',
+      'image',
+      'img',
+      'input',
+      'isindex',
+      'label',
+      'link',
+      'map',
+      'math',
+      'meta',
+      'noframes',
+      'noscript',
+      'object',
+      'optgroup',
+      'option',
+      'param',
+      'script',
+      'select',
+      'style',
+      'svg',
+      'table',
+      'td',
+      'textarea',
+      'title',
+      'video',
+      'vmlframe',
+    );
+    Drupal::moduleHandler()->alter('security_review_unsafe_tags', $unsafe_tags);
+    return $unsafe_tags;
+  }
+
 }
