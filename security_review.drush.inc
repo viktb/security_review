@@ -7,6 +7,7 @@
 
 use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckResult;
+use Drupal\security_review\Checks\FilePermissions;
 use Drupal\security_review\SecurityReview;
 
 /**
@@ -99,7 +100,7 @@ function security_review_drush() {
 
       // Unset file_perms of security_review because drush is running as a
       // different user.
-      $skip[] = new \Drupal\security_review\Checks\FilePermissions();
+      $skip[] = new FilePermissions();
     }
 
     // Remove checks listed after --skip.
