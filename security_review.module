@@ -10,6 +10,7 @@ use Drupal\security_review\Checks\FailedLogins;
 use Drupal\security_review\Checks\FilePermissions;
 use Drupal\security_review\Checks\InputFormats;
 use Drupal\security_review\Checks\PrivateFiles;
+use Drupal\security_review\Checks\QueryErrors;
 use Drupal\security_review\Checks\TemporaryFiles;
 use Drupal\security_review\SecurityReview;
 
@@ -26,6 +27,7 @@ function security_review_security_review_checks() {
     new FilePermissions(),
     new InputFormats(),
     new PrivateFiles(),
+    new QueryErrors(),
     new TemporaryFiles(),
   );
 }
