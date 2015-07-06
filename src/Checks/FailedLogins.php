@@ -12,6 +12,9 @@ use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 
+/**
+ * Checks for abundant failed logins.
+ */
 class FailedLogins extends Check {
 
   /**
