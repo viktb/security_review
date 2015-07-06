@@ -1,9 +1,7 @@
 <?php
+
 /**
- * Created by PhpStorm.
- * User: Viktor
- * Date: 2015.07.06.
- * Time: 21:55
+ * Contains \Drupal\security_review\Checks\ViewsAccess.
  */
 
 namespace Drupal\security_review\Checks;
@@ -14,6 +12,9 @@ use Drupal\views\Entity\View;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 
+/**
+ * Checks for Views that do not check access.
+ */
 class ViewsAccess extends Check {
 
   /**
