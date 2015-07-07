@@ -180,7 +180,7 @@ class Field extends Check {
             array(
               '@vulnerabilities' => implode(' and ', $finding),
               '@field' => $field,
-              '!link' => $url->getUri()
+              '!link' => $url->toString()
             )
           ) . "\n";
         }
