@@ -10,6 +10,7 @@ namespace Drupal\security_review\Checks;
 use Drupal;
 use Drupal\Core\Entity\Entity;
 use Drupal\Core\Field\FieldItemList;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 use Drupal\text\Plugin\Field\FieldType\TextItemBase;
@@ -61,15 +62,14 @@ class Field extends Check {
     // Search for text fields.
     $textItems = array();
     foreach ($entities as $entity) {
-      /** @var Entity $entity */
-      foreach ($entity->getTypedData()->getProperties() as $property) {
-        if ($property instanceof FieldItemList) {
-          /** @var FieldItemList $property */
-          foreach ($property as $item) {
-            if ($item instanceof TextItemBase) {
+      if ($entity instanceof ContentEntityInterface) {
+        /** @var ContentEntityInterface $entity */
+        foreach ($entity->getFields() as $fieldList) {
+          foreach ($fieldList as $fieldItem) {
+            if ($fieldItem instanceof TextItemBase) {
               /** @var TextItemBase $item */
               // Text field found.
-              $textItems[] = $item;
+              $textItems[] = $fieldItem;
             }
           }
         }
