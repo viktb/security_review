@@ -59,7 +59,8 @@ class InputFormats extends Check {
         // Untrusted users can use this format.
         // Check format for enabled HTML filter.
         if ($format->filters()->has('filter_html') &&
-        $format->filters('filter_html')->getConfiguration()['status']) {
+          $format->filters('filter_html')->getConfiguration()['status']
+        ) {
           $filter = $format->filters('filter_html');
 
           // Check for unsafe tags in allowed tags.
@@ -70,7 +71,8 @@ class InputFormats extends Check {
           }
         }
         elseif (!$format->filters()->has('filter_html_escape') ||
-        !$format->filters('filter_html_escape')->getConfiguration()['status']) {
+          !$format->filters('filter_html_escape')->getConfiguration()['status']
+        ) {
           // Format is usable by untrusted users but does not contain the HTML Filter or the HTML escape.
           $findings['formats'][$format->id()] = $format->label();
         }

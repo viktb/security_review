@@ -8,9 +8,9 @@
 namespace Drupal\security_review\Checks;
 
 use Drupal;
-use Drupal\Core\Url;
-use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\Core\StreamWrapper\PrivateStream;
+use Drupal\Core\StreamWrapper\PublicStream;
+use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 
@@ -89,7 +89,7 @@ class FilePermissions extends Check {
       fclose($file_create);
     }
     // Try to append to our IGNOREME file.
-    $file = './'. $directory . '/IGNOREME.txt';
+    $file = './' . $directory . '/IGNOREME.txt';
     if ($file_append = @fopen($file, 'a')) {
       $append_status = fwrite($file_append, date('Ymdhis') . ' - ' . $append_message . "\n");
       fclose($file_append);
@@ -100,43 +100,6 @@ class FilePermissions extends Check {
     }
 
     return $this->createResult($result, $files);
-  }
-
-  /**
-   * Scans a directory recursively and returns the writable items inside it.
-   *
-   * @param string $directory
-   *   The directory to scan.
-   * @param string[] $parsed
-   *   Array of already parsed real paths.
-   * @param string[] $ignore
-   *   Array of file names to ignore.
-   * @return string[]
-   *   The writable items found.
-   */
-  public function scan($directory, &$parsed, $ignore) {
-    $items = array();
-    if ($handle = opendir($directory)) {
-      while (($file = readdir($handle)) !== FALSE) {
-        // Don't check hidden files or ones we said to ignore.
-        $path = $directory . "/" . $file;
-        if ($file[0] != "." && !in_array($file, $ignore) && !in_array(realpath($path), $ignore)) {
-          if (is_dir($path) && !in_array(realpath($path), $parsed)) {
-            $parsed[] = realpath($path);
-            $items = array_merge($items, $this->scan($path, $parsed, $ignore));
-            if (is_writable($path)) {
-              $items[] = preg_replace("/\/\//si", "/", $path);
-            }
-          }
-          elseif (is_writable($path)) {
-            $items[] = preg_replace("/\/\//si", "/", $path);
-          }
-        }
-
-      }
-      closedir($handle);
-    }
-    return $items;
   }
 
   /**
@@ -204,6 +167,43 @@ class FilePermissions extends Check {
       default:
         return 'Unexpected result.';
     }
+  }
+
+  /**
+   * Scans a directory recursively and returns the writable items inside it.
+   *
+   * @param string $directory
+   *   The directory to scan.
+   * @param string[] $parsed
+   *   Array of already parsed real paths.
+   * @param string[] $ignore
+   *   Array of file names to ignore.
+   * @return string[]
+   *   The writable items found.
+   */
+  protected function scan($directory, &$parsed, $ignore) {
+    $items = array();
+    if ($handle = opendir($directory)) {
+      while (($file = readdir($handle)) !== FALSE) {
+        // Don't check hidden files or ones we said to ignore.
+        $path = $directory . "/" . $file;
+        if ($file[0] != "." && !in_array($file, $ignore) && !in_array(realpath($path), $ignore)) {
+          if (is_dir($path) && !in_array(realpath($path), $parsed)) {
+            $parsed[] = realpath($path);
+            $items = array_merge($items, $this->scan($path, $parsed, $ignore));
+            if (is_writable($path)) {
+              $items[] = preg_replace("/\/\//si", "/", $path);
+            }
+          }
+          elseif (is_writable($path)) {
+            $items[] = preg_replace("/\/\//si", "/", $path);
+          }
+        }
+
+      }
+      closedir($handle);
+    }
+    return $items;
   }
 
 }

@@ -20,7 +20,8 @@ class Security {
   /**
    * Private constructor for disabling instantiation of the static class.
    */
-  private function __construct() {}
+  private function __construct() {
+  }
 
   /**
    * Returns the IDs of untrusted roles.

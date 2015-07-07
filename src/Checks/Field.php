@@ -8,9 +8,8 @@
 namespace Drupal\security_review\Checks;
 
 use Drupal;
-use Drupal\Core\Entity\Entity;
-use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\Entity;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 use Drupal\text\Plugin\Field\FieldType\TextItemBase;
@@ -55,7 +54,8 @@ class Field extends Check {
 
     // Load all of the entities.
     $entities = array();
-    foreach (Drupal::entityManager()->getAllBundleInfo() as $entity_type_id => $bundles) {
+    $bundleInfo = Drupal::entityManager()->getAllBundleInfo();
+    foreach ($bundleInfo as $entity_type_id => $bundles) {
       $entities = array_merge($entities, entity_load_multiple($entity_type_id));
     }
 

@@ -17,7 +17,8 @@ class Checklist {
   /**
    * Private constructor for disabling instantiation of the static class.
    */
-  private function __construct() {}
+  private function __construct() {
+  }
 
   /**
    * Array of cached Checks.
@@ -145,7 +146,8 @@ class Checklist {
   public static function getCheck($namespace, $title) {
     foreach (static::getChecks() as $check) {
       if ($check->getMachineNamespace() == $namespace
-        && $check->getMachineTitle() == $title) {
+        && $check->getMachineTitle() == $title
+      ) {
         return $check;
       }
     }

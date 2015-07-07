@@ -7,7 +7,6 @@
 
 use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckResult;
-use Drupal\security_review\Checks\FilePermissions;
 use Drupal\security_review\SecurityReview;
 
 /**

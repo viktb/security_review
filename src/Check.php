@@ -215,7 +215,7 @@ abstract class Check {
   public function lastResult($getFindings = FALSE) {
     $statePrefix = $this->statePrefix . 'last_result.';
     $result = Drupal::state()->get($statePrefix . 'result');
-    if($getFindings) {
+    if ($getFindings) {
       $findings = Drupal::state()->get($statePrefix . 'findings');
     }
     else {

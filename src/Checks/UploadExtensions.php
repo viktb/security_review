@@ -131,8 +131,7 @@ class UploadExtensions extends Check {
             $urlParams
           );
           $items[] = Drupal::l($item, $url);
-        }
-        catch (RouteNotFoundException $e) {
+        } catch (RouteNotFoundException $e) {
           $items[] = $item;
         }
       }

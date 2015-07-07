@@ -8,8 +8,8 @@
 namespace Drupal\security_review\Checks;
 
 use Drupal;
-use Drupal\Core\Url;
 use Drupal\Core\StreamWrapper\PrivateStream;
+use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 

@@ -21,7 +21,8 @@ class SecurityReview {
   /**
    * Private constructor for disabling instantiation of the static class.
    */
-  private function __construct() {}
+  private function __construct() {
+  }
 
   /**
    * @return \Drupal\Core\Config\Config

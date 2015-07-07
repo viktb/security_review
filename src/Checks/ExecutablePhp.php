@@ -8,9 +8,9 @@
 namespace Drupal\security_review\Checks;
 
 use Drupal;
-use Drupal\Core\Url;
-use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\Component\PhpStorage\FileStorage;
+use Drupal\Core\StreamWrapper\PublicStream;
+use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 use GuzzleHttp\Exception\RequestException;
@@ -109,10 +109,12 @@ class ExecutablePhp extends Check {
     $paragraphs[] = "The Drupal files directory is for user-uploaded files and by default provides some protection against a malicious user executing arbitrary PHP code against your site.";
     $paragraphs[] = t(
       'Read more about the !risks.',
-      array('!risks' => Drupal::l(
-        'risk of PHP code execution on Drupal.org',
-        Url::fromUri('https://drupal.org/node/615888')
-      ))
+      array(
+        '!risks' => Drupal::l(
+          'risk of PHP code execution on Drupal.org',
+          Url::fromUri('https://drupal.org/node/615888')
+        )
+      )
     );
 
     return array(

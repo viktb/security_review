@@ -81,20 +81,6 @@ class AdminPermissions extends Check {
   /**
    * {@inheritdoc}
    */
-  public function getMessage($resultConst) {
-    switch ($resultConst) {
-      case CheckResult::SUCCESS:
-        return 'Untrusted roles do not have administrative or trusted Drupal permissions.';
-      case CheckResult::FAIL:
-        return 'Untrusted roles have been granted administrative or trusted Drupal permissions.';
-      default:
-        return "Unexpected result.";
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate(CheckResult $result) {
     $output = array();
 
@@ -146,6 +132,20 @@ class AdminPermissions extends Check {
     }
 
     return $output;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMessage($resultConst) {
+    switch ($resultConst) {
+      case CheckResult::SUCCESS:
+        return 'Untrusted roles do not have administrative or trusted Drupal permissions.';
+      case CheckResult::FAIL:
+        return 'Untrusted roles have been granted administrative or trusted Drupal permissions.';
+      default:
+        return "Unexpected result.";
+    }
   }
 
 }
