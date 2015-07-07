@@ -8,8 +8,9 @@
 namespace Drupal\security_review\Checks;
 
 use Drupal;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Entity;
+use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 use Drupal\text\Plugin\Field\FieldType\TextItemBase;
@@ -62,8 +63,8 @@ class Field extends Check {
     // Search for text fields.
     $textItems = array();
     foreach ($entities as $entity) {
-      if ($entity instanceof ContentEntityInterface) {
-        /** @var ContentEntityInterface $entity */
+      if ($entity instanceof FieldableEntityInterface) {
+        /** @var FieldableEntityInterface $entity */
         foreach ($entity->getFields() as $fieldList) {
           foreach ($fieldList as $fieldItem) {
             if ($fieldItem instanceof TextItemBase) {
@@ -80,6 +81,7 @@ class Field extends Check {
     foreach ($textItems as $item) {
       $entity = $item->getEntity();
       foreach ($item->getProperties() as $property) {
+        /** @var TypedDataInterface $property */
         $value = $property->getValue();
         if (is_string($value)) {
           $fieldName = $property->getDataDefinition()->getLabel();
