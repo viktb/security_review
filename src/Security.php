@@ -232,4 +232,28 @@ class Security {
     return $unsafe_tags;
   }
 
+  /**
+   * Gets the list of unsafe file extensions.
+   *
+   * @return string[]
+   *   List of unsafe extensions.
+   */
+  public static function unsafeExtensions() {
+    $unsafe_ext = array(
+      'swf',
+      'exe',
+      'html',
+      'htm',
+      'php',
+      'phtml',
+      'py',
+      'js',
+      'vb',
+      'vbe',
+      'vbs',
+    );
+    Drupal::moduleHandler()->alter('security_review_unsafe_extensions', $unsafe_ext);
+    return $unsafe_ext;
+  }
+
 }
