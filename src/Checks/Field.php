@@ -135,7 +135,7 @@ class Field extends Check {
         foreach ($fields as $field => $finding) {
           $url = $entity->urlInfo('edit-form');
           if ($url === NULL) {
-            $url = $entity->url();
+            $url = $entity->urlInfo();
           }
           $items[] = t(
             '@vulnerabilities found in <em>@field</em> field of !link',
