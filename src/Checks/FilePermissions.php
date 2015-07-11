@@ -56,7 +56,12 @@ class FilePermissions extends Check {
 
     $ignore = $this->getIgnoreList();
     $parsed = array(realpath('.'));
-    $files = $this->scan('.', $parsed, $ignore);
+    $writable = array();
+    foreach ($this->fileList('.', $parsed, $ignore) as $item) {
+      if (is_writable($item)) {
+        $writable[] = $item;
+      }
+    }
 
     // Try creating or appending files.
     // Assume it doesn't work.    $create_status = $append_status = FALSE;
@@ -77,11 +82,11 @@ class FilePermissions extends Check {
       fclose($file_append);
     }
 
-    if (count($files) || $create_status || $append_status) {
+    if (count($writable) || $create_status || $append_status) {
       $result = CheckResult::FAIL;
     }
 
-    return $this->createResult($result, $files);
+    return $this->createResult($result, $writable);
   }
 
   /**
@@ -94,37 +99,34 @@ class FilePermissions extends Check {
 
     $result = CheckResult::SUCCESS;
 
-    // Run a system specific scan that doesn't take ignored files into account.
     $uid = intval(SecurityReview::getServerUid());
     $gids = SecurityReview::getServerGroups();
     $commands = array();
+    // Search for files owned by the user with writable user permissions.
     $commands[] = 'find . \( -type f -or -type d \) \( -uid ' . $uid . ' -perm -u=w \) -print';
     foreach ($gids as $gid) {
+      // Search for files owned by the group with writable group permissions.
       $commands[] = 'find . \( -type f -or -type d \) \( -gid ' . $gid . ' -perm -g=w \) -print';
     }
+    // Search for files with writable other permissions.
     $commands[] = 'find . \( -type f -or -type d \) -perm -o=w -print';
-    $files_real = array();
+
+    $writable = array();
     foreach ($commands as $command) {
       exec($command, $output);
-      $files_real = array_merge($files_real, $output);
+      $writable = array_merge($writable, $output);
     }
 
-    // Run the normal scan.
     $ignore = $this->getIgnoreList();
     $parsed = array(realpath('.'));
-    $files_normal = $this->scan('.', $parsed, $ignore);
+    $fileList = $this->fileList('.', $parsed, $ignore);
+    $writable = array_intersect(array_unique($writable), $fileList);
 
-    // The intersect of $files_real and $files_normal are the files that really
-    // count.
-    // @todo A better way of using $ignore (this assumes the Drush user has more
-    // permissions than the web server's user.
-    $files = array_intersect($files_normal, $files_real);
-
-    if (!empty($files)) {
+    if (!empty($writable)) {
       $result = CheckResult::FAIL;
     }
 
-    return $this->createResult($result, $files);
+    return $this->createResult($result, $writable);
   }
 
   /**
@@ -197,7 +199,7 @@ class FilePermissions extends Check {
   }
 
   /**
-   * Scans a directory recursively and returns the writable items inside it.
+   * Scans a directory recursively and returns the files and directories inside.
    *
    * @param string $directory
    *   The directory to scan.
@@ -206,9 +208,9 @@ class FilePermissions extends Check {
    * @param string[] $ignore
    *   Array of file names to ignore.
    * @return string[]
-   *   The writable items found.
+   *   The items found.
    */
-  protected function scan($directory, &$parsed, $ignore) {
+  protected function fileList($directory, &$parsed, $ignore) {
     $items = array();
     if ($handle = opendir($directory)) {
       while (($file = readdir($handle)) !== FALSE) {
@@ -217,14 +219,9 @@ class FilePermissions extends Check {
         if ($file[0] != "." && !in_array($file, $ignore) && !in_array(realpath($path), $ignore)) {
           if (is_dir($path) && !in_array(realpath($path), $parsed)) {
             $parsed[] = realpath($path);
-            $items = array_merge($items, $this->scan($path, $parsed, $ignore));
-            if (is_writable($path)) {
-              $items[] = preg_replace("/\/\//si", "/", $path);
-            }
+            $items = array_merge($items, $this->fileList($path, $parsed, $ignore));
           }
-          elseif (is_writable($path)) {
-            $items[] = preg_replace("/\/\//si", "/", $path);
-          }
+          $items[] = preg_replace("/\/\//si", "/", $path);
         }
 
       }
