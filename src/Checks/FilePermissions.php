@@ -222,6 +222,10 @@ class FilePermissions extends Check {
     return $items;
   }
 
+  /**
+   * @return array
+   *   List of relative and canonical file paths to ignore.
+   */
   protected function getIgnoreList() {
     $file_path = PublicStream::basePath();
     $ignore = array('..', 'CVS', '.git', '.svn', '.bzr', realpath($file_path));
