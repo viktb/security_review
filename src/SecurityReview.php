@@ -252,8 +252,10 @@ class SecurityReview {
     }
     // Determine web server's uid and groups.
     $uid = posix_getuid();
+    $groups = posix_getgroups();
 
     Drupal::state()->set('security_review.server.uid', $uid);
+    Drupal::state()->set('security_review.server.groups', $groups);
   }
 
   /**
@@ -270,6 +272,10 @@ class SecurityReview {
    */
   public static function getServerUid() {
     return Drupal::state()->get('security_review.server.uid');
+  }
+
+  public static function getServerGroups() {
+    return Drupal::state()->get('security_review.server.groups');
   }
 
 }

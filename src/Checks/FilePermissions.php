@@ -96,8 +96,18 @@ class FilePermissions extends Check {
 
     // Run a system specific scan that doesn't take ignored files into account.
     $uid = intval(SecurityReview::getServerUid());
-    $command = "find . -uid $uid -writable";
-    exec($command, $files_real);
+    $gids = SecurityReview::getServerGroups();
+    $commands = array();
+    $commands[] = 'find . \( -type f -or -type d \) \( -uid ' . $uid . ' -perm -u=w \) -print';
+    foreach ($gids as $gid) {
+      $commands[] = 'find . \( -type f -or -type d \) \( -gid ' . $gid . ' -perm -g=w \) -print';
+    }
+    $commands[] = 'find . \( -type f -or -type d \) -perm -o=w -print';
+    $files_real = array();
+    foreach ($commands as $command) {
+      exec($command, $output);
+      $files_real = array_merge($files_real, $output);
+    }
 
     // Run the normal scan.
     $ignore = $this->getIgnoreList();
@@ -106,7 +116,8 @@ class FilePermissions extends Check {
 
     // The intersect of $files_real and $files_normal are the files that really
     // count.
-    // @todo A better way of using $ignore.
+    // @todo A better way of using $ignore (this assumes the Drush user has more
+    // permissions than the web server's user.
     $files = array_intersect($files_normal, $files_real);
 
     if (!empty($files)) {
