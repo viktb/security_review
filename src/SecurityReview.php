@@ -243,4 +243,31 @@ class SecurityReview {
     }
   }
 
+  /**
+   *
+   */
+  public static function setServerData() {
+    if (!static::isServerPosix()) {
+      return;
+    }
+    // Determine web server's uid and groups.
+    $uid = posix_getuid();
+
+    Drupal::state()->set('security_review.server.uid', $uid);
+  }
+
+  /**
+   * @return bool
+   */
+  public static function isServerPosix() {
+    return function_exists('posix_getuid');
+  }
+
+  /**
+   * @return int
+   */
+  public static function getServerUid() {
+    return Drupal::state()->get('security_review.server.uid');
+  }
+
 }

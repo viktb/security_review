@@ -17,4 +17,7 @@ function security_review_install() {
 
   // Clean orphaned checks.
   SecurityReview::cleanStorage();
+
+  // Store the web server's user.
+  SecurityReview::setServerData();
 }

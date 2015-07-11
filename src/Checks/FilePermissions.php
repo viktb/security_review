@@ -13,6 +13,7 @@ use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
+use Drupal\security_review\SecurityReview;
 
 /**
  * Check that files aren't writeable by the server.
@@ -53,26 +54,7 @@ class FilePermissions extends Check {
   public function run() {
     $result = CheckResult::SUCCESS;
 
-    $file_path = PublicStream::basePath();
-    $ignore = array('..', 'CVS', '.git', '.svn', '.bzr', realpath($file_path));
-
-    // Add temporary files directory if it's set.
-    $temp_path = file_directory_temp();
-    if (!empty($temp_path)) {
-      $ignore[] = realpath('./' . rtrim($temp_path, '/'));
-    }
-
-    // Add private files directory if it's set.
-    $private_files = PrivateStream::basePath();
-    if (!empty($private_files)) {
-      // Remove leading slash if set.
-      if (strrpos($private_files, '/') !== FALSE) {
-        $private_files = substr($private_files, strrpos($private_files, '/') + 1);
-      }
-      $ignore[] = $private_files;
-    }
-
-    Drupal::moduleHandler()->alter('security_review_file_ignore', $ignore);
+    $ignore = $this->getIgnoreList();
     $parsed = array(realpath('.'));
     $files = $this->scan('.', $parsed, $ignore);
 
@@ -96,6 +78,38 @@ class FilePermissions extends Check {
     }
 
     if (count($files) || $create_status || $append_status) {
+      $result = CheckResult::FAIL;
+    }
+
+    return $this->createResult($result, $files);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function runCli() {
+    if (!SecurityReview::isServerPosix() || !function_exists('exec')) {
+      return $this->createResult(CheckResult::INFO);
+    }
+
+    $result = CheckResult::SUCCESS;
+
+    // Run a system specific scan that doesn't take ignored files into account.
+    $uid = intval(SecurityReview::getServerUid());
+    $command = "find . -uid $uid -writable";
+    exec($command, $files_real);
+
+    // Run the normal scan.
+    $ignore = $this->getIgnoreList();
+    $parsed = array(realpath('.'));
+    $files_normal = $this->scan('.', $parsed, $ignore);
+
+    // The intersect of $files_real and $files_normal are the files that really
+    // count.
+    // @todo A better way of using $ignore.
+    $files = array_intersect($files_normal, $files_real);
+
+    if (!empty($files)) {
       $result = CheckResult::FAIL;
     }
 
@@ -164,6 +178,8 @@ class FilePermissions extends Check {
         return 'Drupal installation files and directories (except required) are not writable by the server.';
       case CheckResult::FAIL:
         return 'Some files and directories in your install are writable by the server.';
+      case CheckResult::INFO:
+        return 'The test cannot be run on this system.';
       default:
         return 'Unexpected result.';
     }
@@ -204,6 +220,30 @@ class FilePermissions extends Check {
       closedir($handle);
     }
     return $items;
+  }
+
+  protected function getIgnoreList() {
+    $file_path = PublicStream::basePath();
+    $ignore = array('..', 'CVS', '.git', '.svn', '.bzr', realpath($file_path));
+
+    // Add temporary files directory if it's set.
+    $temp_path = file_directory_temp();
+    if (!empty($temp_path)) {
+      $ignore[] = realpath('./' . rtrim($temp_path, '/'));
+    }
+
+    // Add private files directory if it's set.
+    $private_files = PrivateStream::basePath();
+    if (!empty($private_files)) {
+      // Remove leading slash if set.
+      if (strrpos($private_files, '/') !== FALSE) {
+        $private_files = substr($private_files, strrpos($private_files, '/') + 1);
+      }
+      $ignore[] = $private_files;
+    }
+
+    Drupal::moduleHandler()->alter('security_review_file_ignore', $ignore);
+    return $ignore;
   }
 
 }

@@ -115,3 +115,11 @@ function template_preprocess_run_and_review(&$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_cron().
+ */
+function security_review_cron() {
+  // Store the web server's user.
+  SecurityReview::setServerData();
+}
