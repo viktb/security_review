@@ -13,6 +13,8 @@ use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
+use Drupal\security_review\Security;
+use Drupal\security_review\SecurityReview;
 use GuzzleHttp\Exception\RequestException;
 
 /**
@@ -37,7 +39,7 @@ class ExecutablePhp extends Check {
   /**
    * {@inheritdoc}
    */
-  public function run() {
+  public function run($CLI = FALSE) {
     $result = CheckResult::SUCCESS;
     $findings = array();
 
@@ -90,7 +92,15 @@ class ExecutablePhp extends Check {
         $result = CheckResult::FAIL;
         $findings[] = 'incorrect_htaccess';
       }
-      if (is_writable($htaccess_path)) {
+      $writable_htaccess = FALSE;
+      if (!$CLI) {
+        $writable_htaccess = is_writable($htaccess_path);
+      }
+      elseif ($CLI) {
+        $writable = Security::cliFindWritableInPath($htaccess_path);
+        $writable_htaccess = !empty($writable);
+      }
+      if ($writable_htaccess) {
         $findings[] = 'writable_htaccess';
         if ($result !== CheckResult::FAIL) {
           $result = CheckResult::WARN;
@@ -99,6 +109,13 @@ class ExecutablePhp extends Check {
     }
 
     return $this->createResult($result, $findings);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function runCli() {
+    return $this->run(TRUE);
   }
 
   /**

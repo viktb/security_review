@@ -13,6 +13,7 @@ use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
+use Drupal\security_review\Security;
 use Drupal\security_review\SecurityReview;
 
 /**
@@ -98,30 +99,11 @@ class FilePermissions extends Check {
     }
 
     $result = CheckResult::SUCCESS;
-
-    $uid = intval(SecurityReview::getServerUid());
-    $gids = SecurityReview::getServerGroups();
-    $commands = array();
-    // Search for files owned by the user with writable user permissions.
-    $commands[] = 'find . \( -type f -or -type d \) \( -uid ' . $uid . ' -perm -u=w \) -print';
-    foreach ($gids as $gid) {
-      // Search for files owned by the group with writable group permissions.
-      $commands[] = 'find . \( -type f -or -type d \) \( -gid ' . $gid . ' -perm -g=w \) -print';
-    }
-    // Search for files with writable other permissions.
-    $commands[] = 'find . \( -type f -or -type d \) -perm -o=w -print';
-
-    $writable = array();
-    foreach ($commands as $command) {
-      exec($command, $output);
-      $writable = array_merge($writable, $output);
-    }
-
+    $writable = Security::cliFindWritableInPath('.');
     $ignore = $this->getIgnoreList();
     $parsed = array(realpath('.'));
     $fileList = $this->fileList('.', $parsed, $ignore);
-    $writable = array_intersect(array_unique($writable), $fileList);
-
+    $writable = array_intersect($writable, $fileList);
     if (!empty($writable)) {
       $result = CheckResult::FAIL;
     }

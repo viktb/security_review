@@ -267,4 +267,41 @@ class Security {
     return DRUPAL_ROOT . '/' . \Drupal::service('kernel')->getSitePath();
   }
 
+  /**
+   * Finds files and directories writable by the specified $uid and/or $gids.
+   *
+   * @param string $path
+   *   The path to start the search from.
+   * @param int $uid
+   *   The UID of the test user.
+   * @param int[] $gids
+   *   The GIDs of the test groups.
+   *
+   * @return string[]
+   *   List of writable items.
+   */
+  public static function cliFindWritableInPath($path, $uid = NULL, array $gids = array()) {
+    if ($uid === NULL) {
+      $uid = SecurityReview::getServerUid();
+      $gids = SecurityReview::getServerGroups();
+    }
+
+    $commands = array();
+    // Search for files owned by the user with writable user permissions.
+    $commands[] = 'find ' . $path . ' \( -type f -or -type d \) \( -uid ' . intval($uid) . ' -perm -u=w \) -print';
+    foreach ($gids as $gid) {
+      // Search for files owned by the group with writable group permissions.
+      $commands[] = 'find ' . $path . ' \( -type f -or -type d \) \( -gid ' . intval($gid) . ' -perm -g=w \) -print';
+    }
+    // Search for files with writable other permissions.
+    $commands[] = 'find ' . $path . ' \( -type f -or -type d \) -perm -o=w -print';
+
+    $writable = array();
+    foreach ($commands as $command) {
+      exec($command, $output);
+      $writable = array_merge($writable, $output);
+    }
+    return array_unique($writable);
+  }
+
 }
