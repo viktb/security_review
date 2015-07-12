@@ -16,20 +16,22 @@ interface CheckSettingsInterface {
   /**
    * Gets a check-specific setting value identified by $key.
    *
-   * @param $key
+   * @param string $key
    *   The key.
+   * @param mixed $defaultValue
+   *   Default value to return in case $key does not exist.
    *
    * @return mixed
    *   The value of the stored setting.
    */
-  public function get($key);
+  public function get($key, $defaultValue);
 
   /**
    * Sets a check-specific setting value identified by $key.
    *
-   * @param $key
+   * @param string $key
    *   The key.
-   * @param $value
+   * @param mixed $value
    *   The new value.
    *
    * @return CheckSettingsInterface
