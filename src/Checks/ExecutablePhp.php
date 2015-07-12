@@ -81,6 +81,7 @@ class ExecutablePhp extends Check {
       $findings[] = 'missing_htaccess';
     }
     else {
+      // Check whether the contents of .htaccess are correct.
       $contents = file_get_contents($htaccess_path);
       $expected = FileStorage::htaccessLines(FALSE);
 
@@ -92,14 +93,16 @@ class ExecutablePhp extends Check {
         $result = CheckResult::FAIL;
         $findings[] = 'incorrect_htaccess';
       }
-      $writable_htaccess = FALSE;
+
+      // Check whether .htaccess is writable.
       if (!$CLI) {
         $writable_htaccess = is_writable($htaccess_path);
       }
-      elseif ($CLI) {
+      else {
         $writable = Security::cliFindWritableInPath($htaccess_path);
         $writable_htaccess = !empty($writable);
       }
+
       if ($writable_htaccess) {
         $findings[] = 'writable_htaccess';
         if ($result !== CheckResult::FAIL) {
