@@ -70,7 +70,6 @@ class BaseUrl extends Check {
       }
       else {
         include $settingsPath;
-
         if (isset($base_url)) {
           $result = CheckResult::SUCCESS;
         }
@@ -78,16 +77,8 @@ class BaseUrl extends Check {
 
       global $base_url;
       if ($result === CheckResult::FAIL) {
-        $findings[] = t(
-          'Your site is available at the following URL: !url.',
-          array('!url' => $base_url));
-        $findings[] = t(
-          "If your site should only be available at that URL it is recommended that you set it as the \$base_url variable in the settings.php file at !file",
-          array('!file' => $settingsPath)
-        );
-        $findings[] = t(
-          "Or, if you are using Drupal's multi-site functionality then you should set the \$base_url variable for the appropriate settings.php for your site."
-        );
+        $findings['base_url'] = $base_url;
+        $findings['settings'] = $settingsPath;
       }
 
       return $this->createResult($result, $findings);
@@ -119,9 +110,22 @@ class BaseUrl extends Check {
       return array();
     }
 
+    $findings = $result->findings();
+    $paragraphs = array();
+    $paragraphs[] = t(
+      'Your site is available at the following URL: !url.',
+      array('!url' => $findings['base_url']));
+    $paragraphs[] = t(
+      "If your site should only be available at that URL it is recommended that you set it as the \$base_url variable in the settings.php file at !file",
+      array('!file' => $findings['settings'])
+    );
+    $paragraphs[] = t(
+      "Or, if you are using Drupal's multi-site functionality then you should set the \$base_url variable for the appropriate settings.php for your site."
+    );
+
     return array(
       '#theme' => 'check_evaluation',
-      '#paragraphs' => $result->findings(),
+      '#paragraphs' => $paragraphs,
       '#items' => array()
     );
   }
