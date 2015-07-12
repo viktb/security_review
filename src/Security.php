@@ -257,4 +257,14 @@ class Security {
     return $unsafe_ext;
   }
 
+  /**
+   * Returns the site path.
+   *
+   * @return string
+   *   Absolute site path.
+   */
+  public static function sitePath() {
+    return DRUPAL_ROOT . '/' . \Drupal::service('kernel')->getSitePath();
+  }
+
 }

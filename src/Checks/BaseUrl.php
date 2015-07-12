@@ -12,6 +12,7 @@ use Drupal\Core\DrupalKernel;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 use Drupal\security_review\CheckSettings\BaseUrlSettings;
+use Drupal\security_review\Security;
 
 /**
  * Defines the Drupal Base URL check.
@@ -51,7 +52,7 @@ class BaseUrl extends Check {
    * {@inheritdoc}
    */
   public function run() {
-    $settingsPath = DRUPAL_ROOT . '/' . DrupalKernel::findSitePath(Drupal::request()) . '/settings.php';
+    $settingsPath = Security::sitePath() . '/settings.php';
     $result = CheckResult::FAIL;
     $findings = array();
 
