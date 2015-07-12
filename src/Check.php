@@ -267,7 +267,8 @@ abstract class Check {
    *   The timestamp of the last stored result.
    */
   public function lastRun() {
-    $lastResultTime = Drupal::state()->get($this->statePrefix . 'last_result.time');
+    $lastResultTime = Drupal::state()
+      ->get($this->statePrefix . 'last_result.time');
 
     if (!is_int($lastResultTime)) {
       return 0;

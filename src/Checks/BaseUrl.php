@@ -7,8 +7,6 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal;
-use Drupal\Core\DrupalKernel;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 use Drupal\security_review\CheckSettings\BaseUrlSettings;

@@ -178,13 +178,13 @@ class Field extends Check {
             $url = $entity->url();
           }
           $output .= "\t" . t(
-            '@vulnerabilities in @field of !link',
-            array(
-              '@vulnerabilities' => implode(' and ', $finding),
-              '@field' => $field,
-              '!link' => $url->toString()
-            )
-          ) . "\n";
+              '@vulnerabilities in @field of !link',
+              array(
+                '@vulnerabilities' => implode(' and ', $finding),
+                '@field' => $field,
+                '!link' => $url->toString()
+              )
+            ) . "\n";
         }
       }
     }

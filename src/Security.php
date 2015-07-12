@@ -253,7 +253,8 @@ class Security {
       'vbe',
       'vbs',
     );
-    Drupal::moduleHandler()->alter('security_review_unsafe_extensions', $unsafe_ext);
+    Drupal::moduleHandler()
+      ->alter('security_review_unsafe_extensions', $unsafe_ext);
     return $unsafe_ext;
   }
 

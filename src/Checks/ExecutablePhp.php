@@ -14,7 +14,6 @@ use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 use Drupal\security_review\Security;
-use Drupal\security_review\SecurityReview;
 use GuzzleHttp\Exception\RequestException;
 
 /**

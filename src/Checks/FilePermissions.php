@@ -55,10 +55,8 @@ class FilePermissions extends Check {
   public function run() {
     $result = CheckResult::SUCCESS;
 
-    $ignore = $this->getIgnoreList();
-    $parsed = array(realpath('.'));
     $writable = array();
-    foreach ($this->fileList('.', $parsed, $ignore) as $item) {
+    foreach ($this->getFileList('.') as $item) {
       if (is_writable($item)) {
         $writable[] = $item;
       }
@@ -69,7 +67,9 @@ class FilePermissions extends Check {
 
     $append_message = t("Your web server should not be able to write to your modules directory. This is a security vulnerable. Consult the Security Review file permissions check help for mitigation steps.");
 
-    $directory = Drupal::moduleHandler()->getModule('security_review')->getPath();
+    $directory = Drupal::moduleHandler()
+      ->getModule('security_review')
+      ->getPath();
     // Write a file with the timestamp
     $file = './' . $directory . '/file_write_test.' . date('Ymdhis');
     if ($file_create = @fopen($file, 'w')) {
@@ -100,10 +100,9 @@ class FilePermissions extends Check {
 
     $result = CheckResult::SUCCESS;
     $writable = Security::cliFindWritableInPath('.');
-    $ignore = $this->getIgnoreList();
-    $parsed = array(realpath('.'));
-    $fileList = $this->fileList('.', $parsed, $ignore);
+    $fileList = $this->getFileList('.');
     $writable = array_intersect($writable, $fileList);
+
     if (!empty($writable)) {
       $result = CheckResult::FAIL;
     }
@@ -192,7 +191,16 @@ class FilePermissions extends Check {
    * @return string[]
    *   The items found.
    */
-  protected function fileList($directory, &$parsed, $ignore) {
+  protected function getFileList($directory, &$parsed = NULL, &$ignore = NULL) {
+    // Initialize $parsed and $ignore arrays.
+    if ($parsed === NULL) {
+      $parsed = array(realpath($directory));
+    }
+    if ($ignore === NULL) {
+      $ignore = $this->getIgnoreList();
+    }
+
+    // Start scanning.
     $items = array();
     if ($handle = opendir($directory)) {
       while (($file = readdir($handle)) !== FALSE) {
@@ -201,14 +209,14 @@ class FilePermissions extends Check {
         if ($file[0] != "." && !in_array($file, $ignore) && !in_array(realpath($path), $ignore)) {
           if (is_dir($path) && !in_array(realpath($path), $parsed)) {
             $parsed[] = realpath($path);
-            $items = array_merge($items, $this->fileList($path, $parsed, $ignore));
+            $items = array_merge($items, $this->getFileList($path, $parsed, $ignore));
           }
           $items[] = preg_replace("/\/\//si", "/", $path);
         }
-
       }
       closedir($handle);
     }
+
     return $items;
   }
 
