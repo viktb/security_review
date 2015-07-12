@@ -260,7 +260,7 @@ class SecurityReview {
 
   /**
    * @return bool
-   *   Returns whether the web server is POSIX based.
+   *   Whether the web server is POSIX based.
    */
   public static function isServerPosix() {
     return function_exists('posix_getuid');
@@ -268,12 +268,16 @@ class SecurityReview {
 
   /**
    * @return int
-   *   Returns the UID of the web server's user.
+   *   UID of the web server's user.
    */
   public static function getServerUid() {
     return Drupal::state()->get('security_review.server.uid');
   }
 
+  /**
+   * @return int[]
+   *   GIDs of the web server's user.
+   */
   public static function getServerGroups() {
     return Drupal::state()->get('security_review.server.groups');
   }
