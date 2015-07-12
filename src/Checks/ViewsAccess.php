@@ -124,7 +124,7 @@ class ViewsAccess extends Check {
       return '';
     }
 
-    $output = '';
+    $output = t('Views without access check:') . ":\n";
     foreach ($findings as $view_id => $displays) {
       $output .= "\t" . $view_id . ": " . implode(', ', $displays) . "\n";
     }

@@ -143,14 +143,14 @@ class InputFormats extends Check {
     $output = '';
 
     if (!empty($result->findings()['tags'])) {
-      $output .= "Tags:\n";
+      $output .= t('Tags') . "\n";
       foreach ($result->findings()['tags'] as $tag) {
         $output .= "\t$tag\n";
       }
     }
 
     if (!empty($result->findings()['formats'])) {
-      $output .= "Formats:\n";
+      $output .= t('Formats') . "\n";
       foreach ($result->findings()['formats'] as $format) {
         $output .= "\t$format\n";
       }

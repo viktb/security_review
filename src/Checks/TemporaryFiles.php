@@ -100,7 +100,7 @@ class TemporaryFiles extends Check {
       return '';
     }
 
-    $output = '';
+    $output = t('Temporary files:') . "\n";
     foreach ($findings as $file) {
       $output .= "\t" . $file . "\n";
     }

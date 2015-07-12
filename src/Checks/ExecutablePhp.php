@@ -159,8 +159,25 @@ class ExecutablePhp extends Check {
    * {@inheritdoc}
    */
   public function evaluatePlain(CheckResult $result) {
-    $evaluation = $this->evaluate($result)['#paragraphs'];
-    return implode("\n", $evaluation);
+    $paragraphs = array();
+    $directory = PublicStream::basePath();
+    foreach ($result->findings() as $label) {
+      switch ($label) {
+        case 'executable_php':
+          $paragraphs[] = t('PHP file executed in !path', array('!path' => $directory));
+          break;
+        case 'missing_htaccess':
+          $paragraphs[] = t('.htaccess is missing from !path', array('!path' => $directory));
+          break;
+        case 'incorrect_htaccess':
+          $paragraphs[] = t('.htaccess wrong content');
+          break;
+        case 'writable_htaccess':
+          $paragraphs[] = t('.htaccess writable');
+          break;
+      }
+    }
+    return implode("\n", $paragraphs);
   }
 
   /**
