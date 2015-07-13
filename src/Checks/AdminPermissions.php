@@ -45,12 +45,12 @@ class AdminPermissions extends Check {
 
     // Collect permissions marked as for trusted users only.
     $all_permissions = Security::permissions(TRUE);
-    $all_keys = array_keys($all_permissions);
+    $all_permission_strings = array_keys($all_permissions);
 
     // Get permissions for untrusted roles.
     $untrusted_permissions = Security::untrustedPermissions(TRUE);
     foreach ($untrusted_permissions as $rid => $permissions) {
-      $intersect = array_intersect($all_keys, $permissions);
+      $intersect = array_intersect($all_permission_strings, $permissions);
       foreach ($intersect as $permission) {
         if (isset($all_permissions[$permission]['restrict access'])) {
           $findings[$rid][] = $permission;

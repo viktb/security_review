@@ -54,8 +54,7 @@ class QueryErrors extends Check {
       'variables',
       'hostname',
     ));
-    $query->condition('type', 'php')
-      ->condition('severity', RfcLogLevel::ERROR);
+    $query->condition('type', 'php')->condition('severity', RfcLogLevel::ERROR);
     if ($lastResult instanceof CheckResult) {
       $query->condition('timestamp', $lastResult->time(), '>=');
     }
@@ -72,7 +71,9 @@ class QueryErrors extends Check {
       );
       $ip = $row->hostname;
 
-      if (strpos($message, 'SQL') !== FALSE && strpos($message, 'SELECT') !== FALSE) {
+      $message_contains_sql = strpos($message, 'SQL') !== FALSE;
+      $message_contains_select = strpos($message, 'SELECT') !== FALSE;
+      if ($message_contains_sql && $message_contains_select) {
         $entryForIP = &$entries[$ip];
 
         if (!isset($entryForIP)) {

@@ -84,12 +84,16 @@ class ChecklistController {
       }
 
       // Determine help link.
-      $checkInfo['help_link'] = Drupal::l('Details', Url::fromRoute('security_review.help',
-        array(
-          'namespace' => $check->getMachineNamespace(),
-          'title' => $check->getMachineTitle()
+      $checkInfo['help_link'] = Drupal::l(
+        'Details',
+        Url::fromRoute(
+          'security_review.help',
+          array(
+            'namespace' => $check->getMachineNamespace(),
+            'title' => $check->getMachineTitle()
+          )
         )
-      ));
+      );
 
       // Add toggle button.
       $toggle_text = $check->isSkipped() ? 'Enable' : 'Skip';
@@ -98,10 +102,7 @@ class ChecklistController {
           'check_id' => $check->id()
         ),
         array(
-          'query' => array(
-            'token' => Drupal::csrfToken()
-              ->get($check->id())
-          )
+          'query' => array('token' => Drupal::csrfToken()->get($check->id()))
         )
       ));
 

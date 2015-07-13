@@ -47,18 +47,18 @@ class HelpController {
   private function generalHelp() {
     $paragraphs = array();
 
-    $paragraphs[] = t('You should take the security of your site very seriously.
-      Fortunately, Drupal is fairly secure by default.
-      The Security Review module automates many of the easy-to-make mistakes that render your site insecure, however it does not automatically make your site impenetrable.
-      You should give care to what modules you install and how you configure your site and server.
-      Be mindful of who visits your site and what features you expose for their use.');
-    $paragraphs[] = t('You can read more about securing your site in the !drupal_org and on !cracking_drupal.
-      There are also additional modules you can install to secure or protect your site. Be aware though that the more modules you have running on your site the greater (usually) attack area you expose.',
+    $paragraphs[] = t('You should take the security of your site very seriously. Fortunately, Drupal is fairly secure by default. The Security Review module automates many of the easy-to-make mistakes that render your site insecure, however it does not automatically make your site impenetrable. You should give care to what modules you install and how you configure your site and server. Be mindful of who visits your site and what features you expose for their use.');
+    $paragraphs[] = t(
+      'You can read more about securing your site in the !drupal_org and on !cracking_drupal. There are also additional modules you can install to secure or protect your site. Be aware though that the more modules you have running on your site the greater (usually) attack area you expose.',
       array(
         '!drupal_org' => Drupal::l('drupal.org handbooks', Url::fromUri('http://drupal.org/security/secure-configuration')),
         '!cracking_drupal' => Drupal::l('CrackingDrupal.com', Url::fromUri('http://crackingdrupal.com')),
-      ));
-    $paragraphs[] = Drupal::l(t('Drupal.org Handbook: Introduction to security-related contrib modules'), Url::fromUri('http://drupal.org/node/382752'));
+      )
+    );
+    $paragraphs[] = Drupal::l(
+      t('Drupal.org Handbook: Introduction to security-related contrib modules'),
+      Url::fromUri('http://drupal.org/node/382752')
+    );
 
     $checks = array();
     foreach (Checklist::getChecks() as $check) {
