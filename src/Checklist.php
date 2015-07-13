@@ -156,15 +156,17 @@ class Checklist {
   }
 
   /**
-   * @param string $uniqueIdentifier
+   * Finds a Check by it's id.
+   *
+   * @param string $id
    *   The machine namespace of the requested check.
    *
    * @return null|\Drupal\security_review\Check
    *   The Check or null if it doesn't exist.
    */
-  public static function getCheckByIdentifier($uniqueIdentifier) {
+  public static function getCheckByIdentifier($id) {
     foreach (static::getChecks() as $check) {
-      if ($check->id() == $uniqueIdentifier) {
+      if ($check->id() == $id) {
         return $check;
       }
     }

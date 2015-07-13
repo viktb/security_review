@@ -26,7 +26,7 @@ class CheckSettings implements CheckSettingsInterface {
   protected $check;
 
   /**
-   * @param Check $check
+   * @param \Drupal\security_review\Check $check
    * @param \Drupal\Core\Config\Config $config
    */
   public function __construct(Check $check, Config &$config) {

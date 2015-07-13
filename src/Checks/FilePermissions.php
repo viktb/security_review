@@ -189,6 +189,7 @@ class FilePermissions extends Check {
    *   Array of already parsed real paths.
    * @param string[] $ignore
    *   Array of file names to ignore.
+   *
    * @return string[]
    *   The items found.
    */
@@ -222,7 +223,10 @@ class FilePermissions extends Check {
   }
 
   /**
-   * @return array
+   * Returns an array of relative and canonical path strings to ignore while
+   * running the check.
+   *
+   * @return string[]
    *   List of relative and canonical file paths to ignore.
    */
   protected function getIgnoreList() {

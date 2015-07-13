@@ -69,7 +69,7 @@ class SecurityReview {
   /**
    * Returns the IDs of the stored untrusted roles.
    *
-   * @return array
+   * @return string[]
    *   Stored untrusted roles' IDs.
    */
   public static function getUntrustedRoles() {
@@ -123,7 +123,7 @@ class SecurityReview {
   /**
    * Stores the given 'untrusted_roles' setting.
    *
-   * @param array $untrustedRoles
+   * @param string[] $untrustedRoles
    *   The new untrusted roles' IDs.
    */
   public static function setUntrustedRoles(array $untrustedRoles) {

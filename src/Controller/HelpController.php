@@ -25,8 +25,9 @@ class HelpController {
    *   The namespace of the check (null if general page).
    * @param $title
    *   The name of the check.
+   *
    * @return array
-   *   The requested help page's contents.
+   *   The requested help page.
    */
   public function index($namespace, $title) {
     // If no namespace is set, print the general help page
@@ -42,7 +43,7 @@ class HelpController {
    * Returns the general help page.
    *
    * @return array
-   *   The general help page's content.
+   *   The general help page.
    */
   private function generalHelp() {
     $paragraphs = array();
@@ -97,6 +98,7 @@ class HelpController {
    *   The name of the check.
    *
    * @return array
+   *   The check's help page.
    *
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */

@@ -105,7 +105,7 @@ abstract class Check {
   public abstract function getTitle();
 
   /**
-   * Returns the unique identifier constructed using the namespace, id pair.
+   * Returns the identifier constructed using the namespace and title values.
    *
    * @return string
    *   Unique identifier of the check.

@@ -29,7 +29,7 @@ class Security {
    * If the module hasn't been configured yet, it returns the default untrusted
    * roles.
    *
-   * @return array
+   * @return string[]
    *   Untrusted roles' IDs.
    */
   public static function untrustedRoles() {
@@ -50,7 +50,7 @@ class Security {
    *   Anonymous      : always
    *   Authenticated  : if visitors are allowed to create accounts.
    *
-   * @return array
+   * @return string[]
    *   Default untrusted roles' IDs.
    */
   public static function defaultUntrustedRoles() {
@@ -71,10 +71,11 @@ class Security {
   /**
    * Returns the permission strings that a group of roles have.
    *
-   * @param array $roleIDs
+   * @param string[] $roleIDs
    *   The array of roleIDs to check.
    * @param bool $groupByRoleId
    *   Choose whether to group permissions by role ID.
+   *
    * @return array
    *   An array of the permissions untrusted roles have. If $groupByRoleId is
    *   true, the array key is the role ID, the value is the array of permissions
@@ -115,6 +116,7 @@ class Security {
    *
    * @param bool $groupByRoleId
    *   Choose whether to group permissions by role ID.
+   *
    * @return array
    *   An array of the permissions untrusted roles have. If $groupByRoleId is
    *   true, the array key is the role ID, the value is the array of permissions
@@ -151,6 +153,7 @@ class Security {
    *
    * @param bool $groupByRoleId
    *   Choose whether to group permissions by role ID.
+   *
    * @return array
    *   An array of the permissions trusted roles have. If $groupByRoleId is
    *   true, the array key is the role ID, the value is the array of permissions
@@ -166,7 +169,9 @@ class Security {
    *
    * @param bool $meta
    *   Whether to return only permission strings or metadata too.
+   *
    * @see \Drupal\user\PermissionHandlerInterface::getPermissions()
+   *
    * @return array
    *   Array of every permission.
    */

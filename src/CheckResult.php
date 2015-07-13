@@ -42,11 +42,11 @@ class CheckResult {
   /**
    * @param \Drupal\security_review\Check $check
    *   The Check that created this result.
-   * @param $result
+   * @param int $result
    *   The result integer (see the constants defined above).
    * @param array $findings
    *   The findings.
-   * @param null $time
+   * @param int $time
    *   The time the test was run.
    */
   public function __construct(Check $check, $result, array $findings, $time = NULL) {
