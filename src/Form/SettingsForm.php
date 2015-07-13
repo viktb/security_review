@@ -59,8 +59,6 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => Security::untrustedRoles(),
     );
 
-    // TODO: Report inactive namespaces. Old: security_review.pages.inc:146-161.
-
     $form['advanced'] = array(
       '#type' => 'details',
       '#title' => t('Advanced'),
