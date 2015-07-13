@@ -7,6 +7,7 @@
 
 namespace Drupal\security_review\Form;
 
+use Drupal;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\security_review\SecurityReview;
@@ -27,6 +28,10 @@ class RunForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    if (!Drupal::currentUser()->hasPermission('run security checks')) {
+      return array();
+    }
+
     $form['run_form'] = array(
       '#type' => 'details',
       '#title' => t('Run'),
