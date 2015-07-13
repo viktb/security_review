@@ -43,7 +43,7 @@ class AdminPermissions extends Check {
     $result = CheckResult::SUCCESS;
     $findings = array();
 
-    // Collect permissions marked as for trusted users only.
+    // Get every permission.
     $all_permissions = Security::permissions(TRUE);
     $all_permission_strings = array_keys($all_permissions);
 
