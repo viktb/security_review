@@ -78,7 +78,7 @@ class InputFormats extends Check {
             $findings['tags'][$format->id()] = $tag;
           }
         }
-        elseif ($filter_html_escape_enabled) {
+        elseif (!$filter_html_escape_enabled) {
           // Format is usable by untrusted users but does not contain the HTML Filter or the HTML escape.
           $findings['formats'][$format->id()] = $format->label();
         }
