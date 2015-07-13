@@ -40,7 +40,7 @@ class QueryErrors extends Check {
       return $this->createResult(CheckResult::INFO);
     }
 
-    $result = CheckResult::SUCCESS;
+    $result = CheckResult::HIDE;
     $findings = array();
     $lastResult = $this->lastResult();
 
@@ -155,8 +155,6 @@ class QueryErrors extends Check {
    */
   public function getMessage($resultConst) {
     switch ($resultConst) {
-      case CheckResult::SUCCESS:
-        return 'Normal amount of query errors from the same IP.';
       case CheckResult::FAIL:
         return 'Query errors from the same IP. These may be a SQL injection attack or an attempt at information disclosure.';
       case CheckResult::INFO:

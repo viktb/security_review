@@ -17,6 +17,7 @@ class CheckResult {
   const FAIL = 1;
   const WARN = 2;
   const INFO = 3;
+  const HIDE = 4;
 
   /**
    * @var \Drupal\security_review\Check $check
@@ -54,7 +55,7 @@ class CheckResult {
 
     // Set the result value.
     $result = intval($result);
-    if ($result < self::SUCCESS || $result > self::INFO) {
+    if ($result < self::SUCCESS || $result > self::HIDE) {
       $result = self::INFO;
     }
     $this->result = $result;

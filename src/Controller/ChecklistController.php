@@ -79,6 +79,9 @@ class ChecklistController {
       // Get last result.
       $lastResult = $check->lastResult();
       if ($lastResult != NULL) {
+        if ($lastResult->result() == CheckResult::HIDE) {
+          continue;
+        }
         $checkInfo['result'] = $lastResult->result();
         $checkInfo['message'] = $lastResult->resultMessage();
       }

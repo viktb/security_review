@@ -198,6 +198,8 @@ function _security_review_drush_print_results(array $results, $short_titles = FA
         case CheckResult::INFO:
           $status = 'info';
           break;
+        case CheckResult::HIDE:
+          continue 2;
       }
 
       if ($show_findings) {

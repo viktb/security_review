@@ -225,7 +225,7 @@ abstract class Check {
 
     $validResult = is_int($result)
       && $result >= CheckResult::SUCCESS
-      && $result <= CheckResult::INFO;
+      && $result <= CheckResult::HIDE;
     $validFindings = is_array($findings);
     $validTime = is_int($time) && $time > 0;
 
