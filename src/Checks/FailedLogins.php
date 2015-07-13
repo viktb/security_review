@@ -58,6 +58,7 @@ class FailedLogins extends Check {
       ->condition('severity', RfcLogLevel::NOTICE)
       ->condition('message', 'Login attempt failed from %ip.');
     if ($lastResult instanceof CheckResult) {
+      // Only check entries that got recorded since the last run of the check.
       $query->condition('timestamp', $lastResult->time(), '>=');
     }
 

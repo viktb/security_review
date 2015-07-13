@@ -39,14 +39,15 @@ class ExecutablePhp extends Check {
    * {@inheritdoc}
    */
   public function run($CLI = FALSE) {
+    global $base_url;
     $result = CheckResult::SUCCESS;
     $findings = array();
 
-    global $base_url;
+    // Get the HTTP client.
     $http_client = \Drupal::service('http_client');
     /** @var \Drupal\Core\Http\Client $http_client */
 
-    // Test file data.
+    // Set up test file data.
     $message = 'Security review test ' . date('Ymdhis');
     $content = "<?php\necho '" . $message . "';";
     $file_path = PublicStream::basePath() . '/security_review_test.php';

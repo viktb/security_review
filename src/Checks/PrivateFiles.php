@@ -38,6 +38,7 @@ class PrivateFiles extends Check {
   public function run() {
     $file_directory_path = PrivateStream::basePath();
     if (empty($file_directory_path)) {
+      // Private files feature is not enabled.
       $result = CheckResult::INFO;
     }
     elseif (strpos(realpath($file_directory_path), DRUPAL_ROOT) === 0) {
@@ -45,6 +46,7 @@ class PrivateFiles extends Check {
       $result = CheckResult::FAIL;
     }
     else {
+      // The private files directory is placed correctly.
       $result = CheckResult::SUCCESS;
     }
     return $this->createResult($result, array('path' => $file_directory_path));

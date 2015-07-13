@@ -50,40 +50,42 @@ class BaseUrl extends Check {
    * {@inheritdoc}
    */
   public function run() {
-    $settingsPath = Security::sitePath() . '/settings.php';
+    $settings_php = Security::sitePath() . '/settings.php';
     $result = CheckResult::FAIL;
     $findings = array();
 
-    if (file_exists($settingsPath)) {
-      if ($this->settings()->get('method', 'token') === 'token') {
-        $content = file_get_contents($settingsPath);
-        $tokens = token_get_all($content);
-
-        foreach ($tokens as $token) {
-          if (is_array($token) && $token[0] === T_VARIABLE && $token[1] == '$base_url') {
-            $result = CheckResult::SUCCESS;
-            break;
-          }
-        }
-      }
-      else {
-        include $settingsPath;
-        if (isset($base_url)) {
-          $result = CheckResult::SUCCESS;
-        }
-      }
-
-      global $base_url;
-      if ($result === CheckResult::FAIL) {
-        $findings['base_url'] = $base_url;
-        $findings['settings'] = $settingsPath;
-      }
-
-      return $this->createResult($result, $findings);
-    }
-    else {
+    if (!file_exists($settings_php)) {
       return $this->createResult(CheckResult::INFO, array(t("Couldn't determine settings.php's path.")));
     }
+
+    if ($this->settings()->get('method', 'token') === 'token') {
+      // Determine the $base_url setting using tokenization.
+      $content = file_get_contents($settings_php);
+      $tokens = token_get_all($content);
+
+      foreach ($tokens as $token) {
+        if (is_array($token) && $token[0] === T_VARIABLE && $token[1] == '$base_url') {
+          $result = CheckResult::SUCCESS;
+          break;
+        }
+      }
+    }
+    else {
+      // Determine the $base_url setting by including settings.php.
+      include $settings_php;
+      if (isset($base_url)) {
+        $result = CheckResult::SUCCESS;
+      }
+    }
+
+    if ($result === CheckResult::FAIL) {
+      // Provide information if the check failed.
+      global $base_url;
+      $findings['base_url'] = $base_url;
+      $findings['settings'] = $settings_php;
+    }
+
+    return $this->createResult($result, $findings);
   }
 
   /**

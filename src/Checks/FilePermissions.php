@@ -63,8 +63,9 @@ class FilePermissions extends Check {
     }
 
     // Try creating or appending files.
-    // Assume it doesn't work.    $create_status = $append_status = FALSE;
-
+    // Assume it doesn't work.
+    $create_status = FALSE;
+    $append_status = FALSE;
     $append_message = t("Your web server should not be able to write to your modules directory. This is a security vulnerable. Consult the Security Review file permissions check help for mitigation steps.");
 
     $directory = Drupal::moduleHandler()
@@ -83,7 +84,7 @@ class FilePermissions extends Check {
       fclose($file_append);
     }
 
-    if (count($writable) || $create_status || $append_status) {
+    if (!empty($writable) || $create_status || $append_status) {
       $result = CheckResult::FAIL;
     }
 

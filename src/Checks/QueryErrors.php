@@ -56,6 +56,7 @@ class QueryErrors extends Check {
     ));
     $query->condition('type', 'php')->condition('severity', RfcLogLevel::ERROR);
     if ($lastResult instanceof CheckResult) {
+      // Only check entries that got recorded since the last run of the check.
       $query->condition('timestamp', $lastResult->time(), '>=');
     }
 

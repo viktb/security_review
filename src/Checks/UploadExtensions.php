@@ -49,6 +49,7 @@ class UploadExtensions extends Check {
     $result = CheckResult::SUCCESS;
     $findings = array();
 
+    // Check field configuration entities.
     $entities = entity_load_multiple('field_config');
     foreach ($entities as $entity) {
       /** @var FieldConfig $entity */
@@ -56,6 +57,7 @@ class UploadExtensions extends Check {
       if ($extensions != NULL) {
         $extensions = explode(' ', $extensions);
         $intersect = array_intersect($extensions, Security::unsafeExtensions());
+        // $intersect holds the unsafe extensions this entity allows.
         foreach ($intersect as $unsafeExtension) {
           $findings[$entity->id()][] = $unsafeExtension;
         }
