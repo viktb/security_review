@@ -29,101 +29,101 @@ For the latest documentation and code examples go to: https://www.drupal.org/nod
 
   ### Identifiers
 
-  There are 5 kind of identifiers for a given check:
-    * namespace
-    * machine namespace
-    * title
-    * machine title
-    * id
+    There are 5 kind of identifiers for a given check:
+      * namespace
+      * machine namespace
+      * title
+      * machine title
+      * id
 
-  The 'namespace' must be manually set for each check by overriding the getNamespace() method. This is the human-readable
-  namespace of the check (usually the module's name).
+    The 'namespace' must be manually set for each check by overriding the getNamespace() method. This is the human-readable
+    namespace of the check (usually the module's name).
 
-  The 'machine namespace' is the version of namespace that is used internally. If getMachineNamespace() isn't overridden,
-  then it is produced from the human-readable namespace by removing any non-alphanumeric characters and replacing spaces
-  with underscores. When overriding getMachineNamespace() this rule must be followed.
+    The 'machine namespace' is the version of namespace that is used internally. If getMachineNamespace() isn't overridden,
+    then it is produced from the human-readable namespace by removing any non-alphanumeric characters and replacing spaces
+    with underscores. When overriding getMachineNamespace() this rule must be followed.
 
-  The 'title' must be manually set for each check by overriding the getTitle() method. This is the human-readable title of
-  the check.
+    The 'title' must be manually set for each check by overriding the getTitle() method. This is the human-readable title of
+    the check.
 
-  The 'machine title' has the same relationship to 'title' as 'machine namespace' has to 'namespace'. The machine title
-  should be unique to the namespace. This might only be achievable by overriding getMachineTitle().
+    The 'machine title' has the same relationship to 'title' as 'machine namespace' has to 'namespace'. The machine title
+    should be unique to the namespace. This might only be achievable by overriding getMachineTitle().
 
-  The 'id' is only used internally ant cannot be overridden. It's constructed by taking the 'machine namespace' and
-  'machine title' and putting a hyphen between them.
+    The 'id' is only used internally ant cannot be overridden. It's constructed by taking the 'machine namespace' and
+    'machine title' and putting a hyphen between them.
 
   ### Action and messages
 
-  The part where the actual security check happens is the run() method. This method must be overridden, and should always
-  return an instance of Drupal\security_review\CheckResult.
+    The part where the actual security check happens is the run() method. This method must be overridden, and should always
+    return an instance of Drupal\security_review\CheckResult.
 
-  Instantiating a CheckResult:
+    Instantiating a CheckResult:
 
-  CheckResult defines one constructor: (Check $check, $result, array $findings, $time = NULL)
-    * $check
-      The Check that is responsible for the result
-    * $result
-      An integer that defines the outcome of the check (see CheckResult constants):
-        * CheckResult::SUCCESS
-        * CheckResult::FAIL
-        * CheckResult::WARN
-        * CheckResult::INFO
-        * Do NOT use the SKIPPED constant! That is reserved for internal usage.
-    * $findings
-      An array of findings that can be evaluated. It can be empty.
-    * $time
-      Timestamp indicating the time when the result was produced. If left null it will be the current time.
+    CheckResult defines one constructor: (Check $check, $result, array $findings, $time = NULL)
+      * $check
+        The Check that is responsible for the result
+      * $result
+        An integer that defines the outcome of the check (see CheckResult constants):
+          * CheckResult::SUCCESS
+          * CheckResult::FAIL
+          * CheckResult::WARN
+          * CheckResult::INFO
+          * Do NOT use the SKIPPED constant! That is reserved for internal usage.
+      * $findings
+        An array of findings that can be evaluated. It can be empty.
+      * $time
+        Timestamp indicating the time when the result was produced. If left null it will be the current time.
 
-  NOTE:
-  It's easier to instantiate a result with Check's createResult() method. It has the same parameters as the constructor
-  for CheckResult, except the $check is left out (set to $this).
+    NOTE:
+    It's easier to instantiate a result with Check's createResult() method. It has the same parameters as the constructor
+    for CheckResult, except the $check is left out (set to $this).
 
-  Human-readable messages for each result integer:
+    Human-readable messages for each result integer:
 
-  Must be defined by overriding the getMessage() method. The implementation is usually a switch-case. For more details
-  take a look at Security Review's own Check implementations.
+    Must be defined by overriding the getMessage() method. The implementation is usually a switch-case. For more details
+    take a look at Security Review's own Check implementations.
 
   ### Help page
 
-  Every Check can have its own help page by overriding the help() method. This should return a render array.
-  See https://www.drupal.org/developing/api/8/render/arrays
+    Every Check can have its own help page by overriding the help() method. This should return a render array.
+    See https://www.drupal.org/developing/api/8/render/arrays
 
   ### Evaluation page (optional)
 
-  The evaluation page is for providing an evaluation of a CheckResult produced by the Check. Overriding this is optional,
-  the default implementation returns an empty array. If one chooses to override evaluate(), the function must return a
-  render array.
-  See https://www.drupal.org/developing/api/8/render/arrays
+    The evaluation page is for providing an evaluation of a CheckResult produced by the Check. Overriding this is optional,
+    the default implementation returns an empty array. If one chooses to override evaluate(), the function must return a
+    render array.
+    See https://www.drupal.org/developing/api/8/render/arrays
 
   ### Check-specific settings (optional)
 
-  If the Check requires storage for settings, it can be accessed via $this->settings(). This method returns a
-  Drupal\security_review\CheckSettingsInterface. It has get() and set() methods for accessing the stored configuration,
-  and buildForm(), submitForm(), validateForm() for form building. By default Check's implementation contains a
-  Drupal\security_review\CheckSettings, which stores the values in the Configuration system, and does nothing in its
-  form building methods. Usually it's enough to extend this class if the Check needs separate settings on the Security
-  Review settings page.
+    If the Check requires storage for settings, it can be accessed via $this->settings(). This method returns a
+    Drupal\security_review\CheckSettingsInterface. It has get() and set() methods for accessing the stored configuration,
+    and buildForm(), submitForm(), validateForm() for form building. By default Check's implementation contains a
+    Drupal\security_review\CheckSettings, which stores the values in the Configuration system, and does nothing in its
+    form building methods. Usually it's enough to extend this class if the Check needs separate settings on the Security
+    Review settings page.
 
-  When using check-specific settings it's recommended to define a configuration schema to store the values in their
-  correct types. The schema to declare is called security_review.check_settings.[id of check] .
+    When using check-specific settings it's recommended to define a configuration schema to store the values in their
+    correct types. The schema to declare is called security_review.check_settings.[id of check] .
 
 ## Hooks
 
   ### hook_security_review_checks()
 
-  To let Security Review know of the checks defined in the module it has to implement hook_security_review_checks().
-  This hook is fairly simple. It has to return an array of check instances.
+    To let Security Review know of the checks defined in the module it has to implement hook_security_review_checks().
+    This hook is fairly simple. It has to return an array of check instances.
 
-  For example implementations see security_review.api.php and security_review.module and the examples.
+    For example implementations see security_review.api.php and security_review.module and the examples.
 
   ### hook_security_review_log()
 
-  Provides logging functions for various events:
-  Check skipped / enabled
-  Check ran
-  Check gave a NULL result
+    Provides logging functions for various events:
+    Check skipped / enabled
+    Check ran
+    Check gave a NULL result
 
-  For example implementations see security_review.api.php and security_review.module.
+    For example implementations see security_review.api.php and security_review.module.
 
 ## Alterable variables
 
@@ -145,24 +145,24 @@ For the latest documentation and code examples go to: https://www.drupal.org/nod
 
   ### security_review_unsafe_tags
 
-  The list of HTML tags considered to be unsafe. See https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet .
-  Default variable content is at Security::unsafeTags().
+    The list of HTML tags considered to be unsafe. See https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet .
+    Default variable content is at Security::unsafeTags().
 
   ### security_review_unsafe_extensions
 
-  The list of file extensions considered to be unsafe for upload. Untrusted users should not be allowed to upload files
-  of these extensions.
-  Default variable content is at Security::unsafeExtensions().
+    The list of file extensions considered to be unsafe for upload. Untrusted users should not be allowed to upload files
+    of these extensions.
+    Default variable content is at Security::unsafeExtensions().
 
   ### security_review_file_ignore
 
-  The list of relative and absolute paths to ignore when running the File permissions check.
-  Default variable content is at FilePermissions::run().
+    The list of relative and absolute paths to ignore when running the File permissions check.
+    Default variable content is at FilePermissions::run().
 
   ### security_review_temporary_files
 
-  The list of files to check for the Temporary files security check.
-  Default variable definition is at TemporaryFiles::run().
+    The list of files to check for the Temporary files security check.
+    Default variable definition is at TemporaryFiles::run().
 
 ## Drush usage
 
