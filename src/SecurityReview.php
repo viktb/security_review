@@ -247,7 +247,7 @@ class SecurityReview {
    * Stores information about the server into the State system.
    */
   public static function setServerData() {
-    if (!static::isServerPosix()) {
+    if (!static::isServerPosix() || PHP_SAPI === 'cli') {
       return;
     }
     // Determine web server's uid and groups.
