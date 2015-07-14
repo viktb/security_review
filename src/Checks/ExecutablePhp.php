@@ -99,7 +99,7 @@ class ExecutablePhp extends Check {
         $writable_htaccess = is_writable($htaccess_path);
       }
       else {
-        $writable = Security::cliFindWritableInPath($htaccess_path);
+        $writable = Security::findWritableFiles(array($htaccess_path), TRUE);
         $writable_htaccess = !empty($writable);
       }
 

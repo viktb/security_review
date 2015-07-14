@@ -52,36 +52,36 @@ class FilePermissions extends Check {
   /**
    * {@inheritdoc}
    */
-  public function run() {
+  public function run($CLI = FALSE) {
     $result = CheckResult::SUCCESS;
 
-    $writable = array();
-    foreach ($this->getFileList('.') as $item) {
-      if (is_writable($item)) {
-        $writable[] = $item;
-      }
-    }
+    $fileList = $this->getFileList('.');
+    $writable = Security::findWritableFiles($fileList, $CLI);
 
     // Try creating or appending files.
     // Assume it doesn't work.
     $create_status = FALSE;
     $append_status = FALSE;
-    $append_message = t("Your web server should not be able to write to your modules directory. This is a security vulnerable. Consult the Security Review file permissions check help for mitigation steps.");
 
-    $directory = Drupal::moduleHandler()
-      ->getModule('security_review')
-      ->getPath();
-    // Write a file with the timestamp
-    $file = './' . $directory . '/file_write_test.' . date('Ymdhis');
-    if ($file_create = @fopen($file, 'w')) {
-      $create_status = fwrite($file_create, date('Ymdhis') . ' - ' . $append_message . "\n");
-      fclose($file_create);
-    }
-    // Try to append to our IGNOREME file.
-    $file = './' . $directory . '/IGNOREME.txt';
-    if ($file_append = @fopen($file, 'a')) {
-      $append_status = fwrite($file_append, date('Ymdhis') . ' - ' . $append_message . "\n");
-      fclose($file_append);
+    if (!$CLI) {
+      $append_message = t("Your web server should not be able to write to your modules directory. This is a security vulnerable. Consult the Security Review file permissions check help for mitigation steps.");
+      $directory = Drupal::moduleHandler()
+        ->getModule('security_review')
+        ->getPath();
+
+      // Write a file with the timestamp
+      $file = './' . $directory . '/file_write_test.' . date('Ymdhis');
+      if ($file_create = @fopen($file, 'w')) {
+        $create_status = fwrite($file_create, date('Ymdhis') . ' - ' . $append_message . "\n");
+        fclose($file_create);
+      }
+
+      // Try to append to our IGNOREME file.
+      $file = './' . $directory . '/IGNOREME.txt';
+      if ($file_append = @fopen($file, 'a')) {
+        $append_status = fwrite($file_append, date('Ymdhis') . ' - ' . $append_message . "\n");
+        fclose($file_append);
+      }
     }
 
     if (!empty($writable) || $create_status || $append_status) {
@@ -95,20 +95,11 @@ class FilePermissions extends Check {
    * {@inheritdoc}
    */
   public function runCli() {
-    if (!SecurityReview::isServerPosix() || !function_exists('exec')) {
+    if (!SecurityReview::isServerPosix()) {
       return $this->createResult(CheckResult::INFO);
     }
 
-    $result = CheckResult::SUCCESS;
-    $writable = Security::cliFindWritableInPath('.');
-    $fileList = $this->getFileList('.');
-    $writable = array_intersect($writable, $fileList);
-
-    if (!empty($writable)) {
-      $result = CheckResult::FAIL;
-    }
-
-    return $this->createResult($result, $writable);
+    return $this->run(TRUE);
   }
 
   /**

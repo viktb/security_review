@@ -274,42 +274,44 @@ class Security {
   }
 
   /**
-   * Finds files and directories writable by the specified $UIDs and/or $GIDs.
-   *
-   * @param string $path
-   *   The path to start the search from.
-   * @param int[] $UIDs
-   *   The UIDs of the test users.
-   * @param int[] $GIDs
-   *   The GIDs of the test groups.
-   *
-   * @return string[]
-   *   List of writable items.
+   * @param array $files
+   * @param bool|FALSE $CLI
+   * @return array
    */
-  public static function cliFindWritableInPath($path, array $UIDs = array(), array $GIDs = array()) {
-    if (empty($UIDs) && empty($GIDs)) {
-      $UIDs[] = SecurityReview::getServerUID();
-      $GIDs = SecurityReview::getServerGIDs();
-    }
-
-    $commands = array();
-    foreach ($UIDs as $UID) {
-      // Search for files owned by the user with writable user permissions.
-      $commands[] = 'find ' . $path . ' \( -type f -or -type d \) \( -user ' . $UID . ' -perm -u=w \) -print';
-    }
-    foreach ($GIDs as $GID) {
-      // Search for files owned by the group with writable group permissions.
-      $commands[] = 'find ' . $path . ' \( -type f -or -type d \) \( -group ' . $GID . ' -perm -g=w \) -print';
-    }
-    // Search for files with writable other permissions.
-    $commands[] = 'find ' . $path . ' \( -type f -or -type d \) -perm -o=w -print';
-
+  public static function findWritableFiles(array $files, $CLI = FALSE) {
     $writable = array();
-    foreach ($commands as $command) {
-      exec($command, $output);
-      $writable = array_merge($writable, $output);
+    if (!$CLI) {
+      foreach ($files as $file) {
+        if (is_writable($file)) {
+          $writable[] = $file;
+        }
+      }
     }
-    return array_unique($writable);
+    else {
+      $UID = SecurityReview::getServerUID();
+      $GIDs = SecurityReview::getServerGIDs();
+
+      foreach ($files as $file) {
+        $perms = 0777 & fileperms($file);
+        $ow = ($perms >> 1) & 1;
+        if ($ow === 1) {
+          $writable[] = $file;
+          continue;
+        }
+
+        $uw = ($perms >> 7) & 1;
+        if ($uw === 1 && fileowner($file) == $UID) {
+          $writable[] = $file;
+          continue;
+        }
+
+        $gw = ($perms >> 4) & 1;
+        if ($gw === 1 && in_array(filegroup($file), $GIDs)) {
+          $writable[] = $file;
+        }
+      }
+    }
+    return $writable;
   }
 
 }
