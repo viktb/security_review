@@ -6,7 +6,7 @@
  * Available variables:
  * - checks: Array of check informations.
  *   A check information consists of:
- *   - style: Styling string based on the check result.
+ *   - result: The check's result (string).
  *   - message: The result message.
  *   - help_link: The link to the check's help page.
  *   - toggle_link: The toggle link for the check.
@@ -28,7 +28,11 @@
 <table class="security-review-run-and-review__table">
     <tbody>
     {% for check in checks %}
-        <tr class="security-review-run-and-review__entry{{ check.style }}">
+        {% set style = ' ' ~ check.result %}
+        {% if check.skipped %}
+            {% set style = style ~ ' skipped' %}
+        {% endif %}
+        <tr class="security-review-run-and-review__entry{{ style }}">
             <td>{{ check.message }}</td>
             <td>{{ check.help_link }}</td>
             <td class="security-review-toggle-link">{{ check.toggle_link }}</td>
