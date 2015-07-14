@@ -274,9 +274,16 @@ class Security {
   }
 
   /**
-   * @param array $files
-   * @param bool|FALSE $CLI
-   * @return array
+   * Iterates through files and determines which are writable by the web
+   * server's user.
+   *
+   * @param string[] $files
+   *   The files to iterate through.
+   * @param bool $CLI
+   *   Whether it is being invoked in CLI context.
+   *
+   * @return string[]
+   *   The files that are writable.
    */
   public static function findWritableFiles(array $files, $CLI = FALSE) {
     $writable = array();
