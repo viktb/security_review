@@ -270,7 +270,7 @@ class SecurityReview {
    * @return int
    *   UID of the web server's user.
    */
-  public static function getServerUid() {
+  public static function getServerUID() {
     return Drupal::state()->get('security_review.server.uid');
   }
 
@@ -278,7 +278,7 @@ class SecurityReview {
    * @return int[]
    *   GIDs of the web server's user.
    */
-  public static function getServerGroups() {
+  public static function getServerGIDs() {
     return Drupal::state()->get('security_review.server.groups');
   }
 

@@ -274,30 +274,100 @@ class Security {
   }
 
   /**
+   * Tries to retrieve POSIX user names by their UIDs.
+   *
+   * @param int[] $UIDs
+   *   The array of UIDs.
+   *
+   * @return array
+   *   The user names keyed by their UIDs.
+   */
+  public static function getUserNames(array $UIDs) {
+    $users = array();
+    foreach ($UIDs as &$UID) {
+      $UID = intval($UID);
+      $users[$UID] = NULL;
+    }
+
+    if (function_exists('posix_getpwuid')) {
+      foreach ($UIDs as $UID) {
+        $userInfo = posix_getpwuid($UID);
+        if (isset($userInfo['name'])) {
+          $users[$UID] = $userInfo['name'];
+        }
+      }
+    }
+
+    return $users;
+  }
+
+  /**
+   * Tries to retrieve POSIX group names by their GIDs.
+   *
+   * @param int[] $GIDs
+   *   The array of GIDs.
+   *
+   * @return array
+   *   The group names keyed by their UIDs.
+   */
+  public static function getGroupNames(array $GIDs) {
+    $groups = array();
+    foreach ($GIDs as &$GID) {
+      $GID = intval($GID);
+      $groups[$GID] = NULL;
+    }
+
+    if (function_exists('posix_getgrgid')) {
+      foreach ($GIDs as $GID) {
+        $groupInfo = posix_getgrgid($GID);
+        if (isset($groupInfo['name'])) {
+          $groups[$GID] = $groupInfo['name'];
+        }
+      }
+    }
+
+    return $groups;
+  }
+
+  /**
    * Finds files and directories writable by the specified $uid and/or $gids.
    *
    * @param string $path
    *   The path to start the search from.
-   * @param int $uid
-   *   The UID of the test user.
-   * @param int[] $gids
+   * @param int[] $UIDs
+   *   The UIDs of the test users.
+   * @param int[] $GIDs
    *   The GIDs of the test groups.
    *
    * @return string[]
    *   List of writable items.
    */
-  public static function cliFindWritableInPath($path, $uid = NULL, array $gids = array()) {
-    if ($uid === NULL) {
-      $uid = SecurityReview::getServerUid();
-      $gids = SecurityReview::getServerGroups();
+  public static function cliFindWritableInPath($path, array $UIDs = array(), array $GIDs = array()) {
+    if (empty($UIDs) && empty($GIDs)) {
+      $UIDs[] = SecurityReview::getServerUID();
+      $GIDs = SecurityReview::getServerGIDs();
     }
 
     $commands = array();
-    // Search for files owned by the user with writable user permissions.
-    $commands[] = 'find ' . $path . ' \( -type f -or -type d \) \( -uid ' . intval($uid) . ' -perm -u=w \) -print';
-    foreach ($gids as $gid) {
+    foreach (Security::getUserNames($UIDs) as $UID => $user) {
+      // Search for files owned by the user with writable user permissions.
+      if ($user !== NULL) {
+        $commands[] = 'find ' . $path . ' \( -type f -or -type d \) \( -user ' . $user . ' -perm -u=w \) -print';
+      }
+      else {
+        // Fallback. This might not work in every environment.
+        $commands[] = 'find ' . $path . ' \( -type f -or -type d \) \( -uid ' . $UID . ' -perm -u=w \) -print';
+      }
+    }
+    foreach (Security::getGroupNames($GIDs) as $GID => $group) {
       // Search for files owned by the group with writable group permissions.
-      $commands[] = 'find ' . $path . ' \( -type f -or -type d \) \( -gid ' . intval($gid) . ' -perm -g=w \) -print';
+      if ($group !== NULL) {
+        $commands[] = 'find ' . $path . ' \( -type f -or -type d \) \( -group ' . $group . ' -perm -g=w \) -print';
+      }
+      else {
+        // Fallback. This might not work in every environment.
+        $commands[] = 'find ' . $path . ' \( -type f -or -type d \) \( -gid ' . $GID . ' -perm -g=w \) -print';
+      }
     }
     // Search for files with writable other permissions.
     $commands[] = 'find ' . $path . ' \( -type f -or -type d \) -perm -o=w -print';
