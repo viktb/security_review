@@ -95,7 +95,7 @@ function security_review_theme($existing, $type, $theme, $path) {
 function template_preprocess_run_and_review(&$variables) {
   // Get icon list.
   global $base_url;
-  $icons_root = $base_url . base_path() . 'core/misc/icons/';
+  $icons_root = $base_url . '/core/misc/icons/';
   $variables['icons'] = array(
     'success' => $icons_root . '73b355/check.svg',
     'warning' => $icons_root . 'e29700/warning.svg',
