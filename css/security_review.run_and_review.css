@@ -8,6 +8,10 @@
   border-color: #ccc;
 }
 
+.security-review-run-and-review__entry-icon {
+  width: 16px;
+}
+
 .security-review-run-and-review__entry:last-child {
   border-bottom-width: 1px;
 }

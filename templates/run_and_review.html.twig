@@ -34,6 +34,11 @@
             {% set style = style ~ ' skipped' %}
         {% endif %}
         <tr class="security-review-run-and-review__entry{{ style }}">
+            <td class="security-review-run-and-review__entry-icon">
+                {% if icons[check.result] is defined %}
+                    <img src="{{ icons[check.result] }}" />
+                {% endif %}
+            </td>
             <td>{{ check.message }}</td>
             <td>{{ check.help_link }}</td>
             <td class="security-review-toggle-link">{{ check.toggle_link }}</td>
