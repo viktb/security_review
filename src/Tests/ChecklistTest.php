@@ -22,7 +22,7 @@ class ChecklistTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('security_review');
+  public static $modules = array('security_review', 'security_review_test');
 
   /**
    * The security checks defined by Security Review.
@@ -44,7 +44,11 @@ class ChecklistTest extends KernelTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->checks = security_review_security_review_checks();
+    $this->checks = array_merge(
+      security_review_security_review_checks(),
+      security_review_test_security_review_checks()
+    );
+
     Checklist::clearCache();
     $this->checkIDs = array();
     foreach ($this->checks as $check) {
