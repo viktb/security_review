@@ -46,6 +46,11 @@ class UploadExtensions extends Check {
    * {@inheritdoc}
    */
   public function run() {
+    // If field is not enabled return with INFO.
+    if (!Drupal::moduleHandler()->moduleExists('field')) {
+      return $this->createResult(CheckResult::INFO);
+    }
+
     $result = CheckResult::SUCCESS;
     $findings = array();
 
@@ -182,6 +187,8 @@ class UploadExtensions extends Check {
         return 'Only safe extensions are allowed for uploaded files and images.';
       case CheckResult::FAIL:
         return 'Unsafe file extensions are allowed in uploads.';
+      case CheckResult::INFO:
+        return 'Module field is not enabled.';
       default:
         return 'Unexpected result.';
     }
