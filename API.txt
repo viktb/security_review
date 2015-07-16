@@ -29,7 +29,7 @@ For the latest documentation and code examples go to: https://www.drupal.org/nod
 
   ### Identifiers
 
-    There are 5 kind of identifiers for a given check:
+    There are 5 kinds of identifiers for a given check:
       * namespace
       * machine namespace
       * title
@@ -49,7 +49,7 @@ For the latest documentation and code examples go to: https://www.drupal.org/nod
     The 'machine title' has the same relationship to 'title' as 'machine namespace' has to 'namespace'. The machine title
     should be unique to the namespace. This might only be achievable by overriding getMachineTitle().
 
-    The 'id' is only used internally ant cannot be overridden. It's constructed by taking the 'machine namespace' and
+    The 'id' is only used internally and cannot be overridden. It's constructed by taking the 'machine namespace' and
     'machine title' and putting a hyphen between them.
 
   ### Action and messages
