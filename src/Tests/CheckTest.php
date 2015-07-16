@@ -11,7 +11,7 @@ use Drupal\security_review\CheckResult;
 use Drupal\simpletest\KernelTestBase;
 
 /**
- * Class CheckTest
+ * Contains tests for Checks.
  *
  * @group security_review
  */
@@ -68,6 +68,22 @@ class CheckTest extends KernelTestBase {
   public function testEnabledByDefault() {
     foreach ($this->checks as $check) {
       $this->assertFalse($check->isSkipped(), $check->getTitle() . ' is enabled by default.');
+    }
+  }
+
+  /**
+   * Tests some check's results on a clean install of Drupal.
+   */
+  public function testDefaultResults() {
+    $defaults = array(
+      'security_review-field' => CheckResult::SUCCESS,
+    );
+
+    foreach ($this->checks as $check) {
+      if (array_key_exists($check->id(), $defaults)) {
+        $result = $check->run();
+        $this->assertEqual($result->result(), $defaults[$check->id()], $check->getTitle() . ' produced the right result.');
+      }
     }
   }
 
