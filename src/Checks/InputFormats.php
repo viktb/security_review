@@ -44,6 +44,11 @@ class InputFormats extends Check {
    * {@inheritdoc}
    */
   public function run() {
+    // If filter is not enabled return with INFO.
+    if (!Drupal::moduleHandler()->moduleExists('filter')) {
+      return $this->createResult(CheckResult::INFO);
+    }
+
     $result = CheckResult::SUCCESS;
     $findings = array();
 
@@ -174,6 +179,8 @@ class InputFormats extends Check {
         return 'Untrusted users are not allowed to input dangerous HTML tags.';
       case CheckResult::FAIL:
         return 'Untrusted users are allowed to input dangerous HTML tags.';
+      case CheckResult::INFO:
+        return 'Module filter is not enabled.';
       default:
         return 'Unexpected result.';
     }
