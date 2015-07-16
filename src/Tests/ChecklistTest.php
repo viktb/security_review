@@ -25,11 +25,25 @@ class ChecklistTest extends KernelTestBase {
   public static $modules = array('security_review', 'security_review_test');
 
   /**
-   * The security checks defined by Security Review.
+   * The security checks defined by Security Review and Security Review Test.
    *
    * @var \Drupal\security_review\Check[]
    */
   protected $checks;
+
+  /**
+   * The security checks defined by Security Review.
+   *
+   * @var \Drupal\security_review\Check[]
+   */
+  protected $realChecks;
+
+  /**
+   * The security checks defined by Security Review Test.
+   *
+   * @var \Drupal\security_review\Check[]
+   */
+  protected $testChecks;
 
   /**
    * Array of the IDs of $checks.
@@ -44,10 +58,9 @@ class ChecklistTest extends KernelTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->checks = array_merge(
-      security_review_security_review_checks(),
-      security_review_test_security_review_checks()
-    );
+    $this->realChecks = security_review_security_review_checks();
+    $this->testChecks = security_review_test_security_review_checks();
+    $this->checks = array_merge($this->realChecks, $this->testChecks);
 
     Checklist::clearCache();
     $this->checkIDs = array();
@@ -58,7 +71,8 @@ class ChecklistTest extends KernelTestBase {
 
   /**
    * Tests whether getChecks() contains all the checks that
-   * security_review_security_review_checks() returns.
+   * security_review_security_review_checks() and
+   * security_review_test_security_review_checks() returns.
    */
   public function testChecksProvided() {
     foreach (Checklist::getChecks() as $check) {

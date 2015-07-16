@@ -22,21 +22,37 @@ class CheckTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('security_review');
+  public static $modules = array('security_review', 'security_review_test');
 
   /**
-   * The security checks defined by Security Review.
+   * The security checks defined by Security Review and Security Review Test.
    *
    * @var \Drupal\security_review\Check[]
    */
   protected $checks;
 
   /**
+   * The security checks defined by Security Review.
+   *
+   * @var \Drupal\security_review\Check[]
+   */
+  protected $realChecks;
+
+  /**
+   * The security checks defined by Security Review Test.
+   *
+   * @var \Drupal\security_review\Check[]
+   */
+  protected $testChecks;
+
+  /**
    * Sets up the environment, populates the $checks variable.
    */
   protected function setUp() {
     parent::setUp();
-    $this->checks = security_review_security_review_checks();
+    $this->realChecks = security_review_security_review_checks();
+    $this->testChecks = security_review_test_security_review_checks();
+    $this->checks = array_merge($this->realChecks, $this->testChecks);
   }
 
   /**
@@ -60,7 +76,7 @@ class CheckTest extends KernelTestBase {
    * return the same as the result that got stored.
    */
   public function testStoreResult() {
-    foreach ($this->checks as $check) {
+    foreach ($this->testChecks as $check) {
       // Run the check and store its result.
       $result = $check->run();
       $check->storeResult($result);
@@ -82,7 +98,7 @@ class CheckTest extends KernelTestBase {
    * result integer is not the same.
    */
   public function testLastResultUpdate() {
-    foreach ($this->checks as $check) {
+    foreach ($this->testChecks as $check) {
       if (!$check->storesFindings()) {
         // Get the real result.
         $result = $check->run();
@@ -99,7 +115,7 @@ class CheckTest extends KernelTestBase {
         $check->storeResult($newResult);
 
         // Check if lastResult()'s result integer is the same as $result's.
-        $lastResult = $check->lastResult();
+        $lastResult = $check->lastResult(TRUE);
         $this->assertEqual($lastResult->result(), $result->result(), 'Invalid result got updated.');
       }
     }

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\security_review_test\TestCheck.
+ * Contains \Drupal\security_review_test\Test.
  */
 
 namespace Drupal\security_review_test;
@@ -13,7 +13,7 @@ use Drupal\security_review\CheckResult;
 /**
  * A test security check for testing extensibility.
  */
-class TestCheck extends Check {
+class Test extends Check {
 
   /**
    * @inheritDoc
@@ -33,7 +33,12 @@ class TestCheck extends Check {
    * @inheritDoc
    */
   public function run() {
-    return $this->createResult(CheckResult::INFO);
+    $findings = array();
+    for ($i = 0; $i < 20; ++$i) {
+      $findings[] = rand(0, 1) ? rand(0, 10) : 'string';
+    }
+
+    return $this->createResult(CheckResult::HIDE, $findings);
   }
 
   /**
