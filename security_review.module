@@ -1,6 +1,8 @@
 <?php
 
+use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\security_review\Check;
+use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckResult;
 use Drupal\security_review\Checks\AdminPermissions;
 use Drupal\security_review\Checks\BaseUrl;
@@ -130,4 +132,26 @@ function template_preprocess_run_and_review(&$variables) {
 function security_review_cron() {
   // Store the web server's user.
   SecurityReview::setServerData();
+}
+
+function _security_review_batch_run_op(Check $check, &$context) {
+  $context['message'] = $check->getTitle();
+  $results = Checklist::runChecks(array($check));
+  $context['results'] = array_merge($context['results'], $results);
+}
+
+function _security_review_batch_run_finished($success, $results, $operations) {
+  SecurityReview::setLastRun(time());
+  if ($success) {
+    if (!empty($results)) {
+      Checklist::storeResults($results);
+    }
+    drupal_set_message(t('Review complete'));
+  }
+  else {
+    $error_operation = reset($operations);
+    $message = 'An error occurred while processing ' . $error_operation[0] . ' with arguments :' . print_r($error_operation[0], TRUE);
+    SecurityReview::log(NULL, $message, array(), RfcLogLevel::ERROR);
+    drupal_set_message(t('The review did not store all results, please run again or check the logs for details.'));
+  }
 }
