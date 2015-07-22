@@ -1,6 +1,8 @@
 <?php
 
 use Drupal\Core\Url;
+use Drupal\security_review\Checklist;
+use Drupal\security_review\CheckResult;
 use Drupal\security_review\SecurityReview;
 
 /**
@@ -20,4 +22,57 @@ function security_review_install() {
 
   // Store the web server's user.
   SecurityReview::setServerData();
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function security_review_requirements($phase) {
+  $requirements = array();
+
+  if ($phase == 'runtime'){
+    $failed_checks = FALSE;
+    $no_results = TRUE;
+
+    foreach (Checklist::getEnabledChecks() as $check) {
+      $result = $check->lastResult();
+      if ($result instanceof CheckResult) {
+        $no_results = FALSE;
+        if ($result->result() === CheckResult::FAIL){
+          $failed_checks = TRUE;
+          break;
+        }
+      }
+    }
+
+    $url = Url::fromRoute('security_review');
+    if ($no_results) {
+      $severity = REQUIREMENT_WARNING;
+      $value = t(
+        'The Security Review checklist has not been run. !link',
+        array('!link' => Drupal::l('Run the checklist', $url))
+      );
+    }
+    elseif ($failed_checks) {
+      $severity = REQUIREMENT_WARNING;
+      $value = t(
+        'There are failed Security Review checks. !link',
+        array('!link' => Drupal::l('Review the checklist', $url))
+      );
+    }
+    else {
+      $severity = REQUIREMENT_OK;
+      $value = t(
+        'Passing all non-ignored Security Review checks. !link',
+        array('!link' => Drupal::l('Review the checklist', $url))
+      );
+    }
+    $requirements['security_review'] = array(
+      'title' => t('Security Review'),
+      'severity' => $severity,
+      'value' => $value,
+    );
+  }
+
+  return $requirements;
 }
