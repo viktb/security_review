@@ -86,8 +86,8 @@ module support. You can read more about securely configuring your site at
 http://drupal.org/security/secure-configuration and http://drupalscout.com
 
 Acquia, the provider of this module, offers detailed,
-targetted security review and support for Drupal websites and can be contacted
-at http://wwww.acquia.com or via email at sales@acquia.com.
+targeted security review and support for Drupal websites and can be contacted at
+http://wwww.acquia.com or via email at sales@acquia.com.
 
 You can read more about our Drupal security review service at
 http://www.acquia.com/products-services/professional-services/offerings#security_audit

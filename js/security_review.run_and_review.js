@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Implementation of check toggling using AJAX.
+ */
+
 (function ($) {
   Drupal.behaviors.securityReview = {
     attach: function (context) {

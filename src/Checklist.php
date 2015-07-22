@@ -10,7 +10,7 @@ namespace Drupal\security_review;
 use Drupal;
 
 /**
- * Contains static functions for handling checks throughout all modules.
+ * Contains static functions for handling checks throughout every module.
  */
 class Checklist {
 
@@ -35,7 +35,7 @@ class Checklist {
   }
 
   /**
-   * Returns the checks that are returned by hook_security_review_checks.
+   * Returns every Check.
    *
    * @return \Drupal\security_review\Check[]
    *   Array of Checks.
@@ -64,7 +64,7 @@ class Checklist {
   }
 
   /**
-   * Returns the enabled checks that are returned by hook_security_review_checks.
+   * Returns the enabled Checks.
    *
    * @return \Drupal\security_review\Check[]
    *   Array of enabled Checks.
@@ -82,6 +82,8 @@ class Checklist {
   }
 
   /**
+   * Groups an array of checks by their namespaces.
+   *
    * @param \Drupal\security_review\Check[] $checks
    *   The array of Checks to group.
    *
@@ -99,6 +101,8 @@ class Checklist {
   }
 
   /**
+   * Runs an array of checks.
+   *
    * @param \Drupal\security_review\Check[] $checks
    *   The array of Checks to run.
    * @param bool $cli
@@ -125,6 +129,8 @@ class Checklist {
   }
 
   /**
+   * Stores an array of CheckResults.
+   *
    * @param \Drupal\security_review\CheckResult[] $results
    *   The CheckResults to store.
    */
@@ -135,6 +141,8 @@ class Checklist {
   }
 
   /**
+   * Finds a check by its namespace and title.
+   *
    * @param string $namespace
    *   The machine namespace of the requested check.
    * @param string $title
@@ -145,9 +153,9 @@ class Checklist {
    */
   public static function getCheck($namespace, $title) {
     foreach (static::getChecks() as $check) {
-      if ($check->getMachineNamespace() == $namespace
-        && $check->getMachineTitle() == $title
-      ) {
+      $same_namespace = $check->getMachineNamespace() == $namespace;
+      $same_title = $check->getMachineTitle() == $title;
+      if ($same_namespace && $same_title) {
         return $check;
       }
     }
@@ -156,7 +164,7 @@ class Checklist {
   }
 
   /**
-   * Finds a Check by it's id.
+   * Finds a Check by its id.
    *
    * @param string $id
    *   The machine namespace of the requested check.
@@ -164,7 +172,7 @@ class Checklist {
    * @return null|\Drupal\security_review\Check
    *   The Check or null if it doesn't exist.
    */
-  public static function getCheckByIdentifier($id) {
+  public static function getCheckById($id) {
     foreach (static::getChecks() as $check) {
       if ($check->id() == $id) {
         return $check;
@@ -188,10 +196,12 @@ class Checklist {
   public static function compareChecks(Check $a, Check $b) {
     // If one comes from security_review and the other doesn't, prefer the one
     // with the security_review namespace.
-    if ($a->getMachineNamespace() == 'security_review' && $b->getMachineNamespace() != 'security_review') {
+    $a_is_local = $a->getMachineNamespace() == 'security_review';
+    $b_is_local = $b->getMachineNamespace() == 'security_review';
+    if ($a_is_local && !$b_is_local) {
       return -1;
     }
-    elseif ($a->getMachineNamespace() != 'security_review' && $b->getMachineNamespace() == 'security_review') {
+    elseif (!$a_is_local && $b_is_local) {
       return 1;
     }
     else {

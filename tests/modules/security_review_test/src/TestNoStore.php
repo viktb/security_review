@@ -13,7 +13,7 @@ namespace Drupal\security_review_test;
 class TestNoStore extends Test {
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getTitle() {
     return 'Test without storing findings';

@@ -17,8 +17,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Responsible for handling the toggle links on the Run & Review page.
  */
 class ToggleController extends ControllerBase {
+
   /**
-   * @param $check_id
+   * Handles check toggling.
+   *
+   * @param string $check_id
    *   The ID of the check.
    *
    * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse
@@ -31,7 +34,7 @@ class ToggleController extends ControllerBase {
     // Validate token.
     $token = Drupal::request()->query->get('token');
     if (Drupal::csrfToken()->validate($token, $check_id)) {
-      $check = Checklist::getCheckByIdentifier($check_id);
+      $check = Checklist::getCheckById($check_id);
       if ($check != NULL) {
         if ($check->isSkipped()) {
           $check->enable();
@@ -45,27 +48,31 @@ class ToggleController extends ControllerBase {
         return new JsonResponse(array(
           'skipped' => $check->isSkipped(),
           'toggle_text' => $check->isSkipped() ? 'Enable' : 'Skip',
-          'toggle_href' => Url::fromRoute('security_review.toggle',
-            array(
-              'check_id' => $check->id()
-            ),
+          'toggle_href' => Url::fromRoute(
+            'security_review.toggle',
+            array('check_id' => $check->id()),
             array(
               'query' => array(
-                'token' => Drupal::csrfToken()
-                  ->get($check->id()),
-                'js' => 1
-              )
+                'token' => Drupal::csrfToken()->get($check->id()),
+                'js' => 1,
+              ),
             )
-          )
+          ),
         ));
       }
       else {
         // Set message.
         if ($check->isSkipped()) {
-          drupal_set_message(t($check->getTitle() . ' check skipped.'));
+          drupal_set_message(t(
+            '%name check skipped.',
+            array('%name' => $check->getTitle())
+          ));
         }
         else {
-          drupal_set_message(t($check->getTitle() . ' check no longer skipped.'));
+          drupal_set_message(t(
+            '%name check no longer skipped.',
+            array('%name' => $check->getTitle())
+          ));
         }
 
         // Redirect back to Run & Review.

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\security_review\Tests\CheckTest
+ * Contains \Drupal\security_review\Tests\CheckTest.
  */
 
 namespace Drupal\security_review\Tests;
@@ -88,8 +88,7 @@ class CheckTest extends KernelTestBase {
   }
 
   /**
-   * Tests the storing of a check result on every check. The lastResult() should
-   * return the same as the result that got stored.
+   * Tests the storing of a check result on every test check.
    */
   public function testStoreResult() {
     foreach ($this->testChecks as $check) {
@@ -98,20 +97,22 @@ class CheckTest extends KernelTestBase {
       $check->storeResult($result);
 
       // Compare lastResult() with $result.
-      $lastResult = $check->lastResult(TRUE);
-      $this->assertEqual($result->result(), $lastResult->result(), 'Result stored.');
-      $this->assertEqual($result->time(), $lastResult->time(), 'Time stored.');
+      $last_result = $check->lastResult(TRUE);
+      $this->assertEqual($result->result(), $last_result->result(), 'Result stored.');
+      $this->assertEqual($result->time(), $last_result->time(), 'Time stored.');
       if ($check->storesFindings()) {
         // If storesFindings() is set to FALSE, then these could differ.
-        $this->assertEqual($result->findings(), $lastResult->findings(), 'Findings stored.');
+        $this->assertEqual($result->findings(), $last_result->findings(), 'Findings stored.');
       }
     }
   }
 
   /**
-   * Tests the case when the check doesn't store its findings, and the new result
-   * that got produced when calling lastResult() overwrites the old one if the
-   * result integer is not the same.
+   * Tests stored result correction on lastResult() call.
+   *
+   * Tests the case when the check doesn't store its findings, and the new
+   * result that lastResult() returns overwrites the old one if the result
+   * integer is not the same.
    */
   public function testLastResultUpdate() {
     foreach ($this->testChecks as $check) {
@@ -120,19 +121,19 @@ class CheckTest extends KernelTestBase {
         $result = $check->run();
 
         // Build the fake result.
-        $newResultInt = $result->result() == CheckResult::SUCCESS ? CheckResult::FAIL : CheckResult::SUCCESS;
-        $newResult = new CheckResult(
+        $new_result_result = $result->result() == CheckResult::SUCCESS ? CheckResult::FAIL : CheckResult::SUCCESS;
+        $new_result = new CheckResult(
           $check,
-          $newResultInt,
+          $new_result_result,
           array()
         );
 
         // Store it.
-        $check->storeResult($newResult);
+        $check->storeResult($new_result);
 
         // Check if lastResult()'s result integer is the same as $result's.
-        $lastResult = $check->lastResult(TRUE);
-        $this->assertEqual($lastResult->result(), $result->result(), 'Invalid result got updated.');
+        $last_result = $check->lastResult(TRUE);
+        $this->assertEqual($last_result->result(), $result->result(), 'Invalid result got updated.');
       }
     }
   }

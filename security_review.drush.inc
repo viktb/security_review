@@ -10,7 +10,7 @@ use Drupal\security_review\CheckResult;
 use Drupal\security_review\SecurityReview;
 
 /**
- * Implementation of hook_drush_command().
+ * Implements hook_drush_command().
  */
 function security_review_drush_command() {
   $items = array();
@@ -31,16 +31,16 @@ function security_review_drush_command() {
     'examples' => array(
       'secrev' => 'Run the checklist and output the results',
       'secrev --store' => 'Run the checklist, store, and output the results',
-      'secrev --lastrun' => 'Output the stored results from the last run of the checklist'
+      'secrev --lastrun' => 'Output the stored results from the last run of the checklist',
     ),
-    'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_FULL
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_FULL,
   );
 
   return $items;
 }
 
 /**
- * Implementation of hook_drush_help().
+ * Implements hook_drush_help().
  */
 function security_review_drush_help($section) {
   switch ($section) {
@@ -50,7 +50,7 @@ function security_review_drush_help($section) {
 }
 
 /**
- * Run checklist and display results command.
+ * Runs a checklist and displays results.
  */
 function security_review_drush() {
   $store = drush_get_option('store');
@@ -154,7 +154,7 @@ function security_review_drush() {
  *   The check to get.
  *
  * @return \Drupal\security_review\Check|null
- *   The Check.
+ *   The found Check.
  */
 function _security_review_drush_get_check($check_name) {
   $namespace = 'security_review';
@@ -170,13 +170,11 @@ function _security_review_drush_get_check($check_name) {
  *
  * @param \Drupal\security_review\CheckResult[] $results
  *   An array of CheckResults.
- * @param boolean $short_titles
+ * @param bool $short_titles
  *   Whether to use short message (check title) or full check success or failure
  *   message.
- * @param boolean $show_findings
+ * @param bool $show_findings
  *   Whether to print failed check results.
- *
- * @return NULL
  */
 function _security_review_drush_print_results(array $results, $short_titles = FALSE, $show_findings = FALSE) {
   foreach ($results as $result) {
@@ -189,15 +187,19 @@ function _security_review_drush_print_results(array $results, $short_titles = FA
         case CheckResult::SUCCESS:
           $status = 'success';
           break;
+
         case CheckResult::FAIL:
           $status = 'failed';
           break;
+
         case CheckResult::WARN:
           $status = 'warning';
           break;
+
         case CheckResult::INFO:
           $status = 'info';
           break;
+
         case CheckResult::HIDE:
           continue 2;
       }

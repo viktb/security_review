@@ -10,24 +10,31 @@ namespace Drupal\security_review;
 use Drupal\Core\Config\Config;
 
 /**
- * Defines a default implementation of CheckSettingsInterface which will be
- * enough for most checks.
+ * Defines the default implementation of CheckSettingsInterface.
  */
 class CheckSettings implements CheckSettingsInterface {
 
   /**
-   * @var \Drupal\Core\Config\Config $config
-   */
-  protected $config;
-
-  /**
+   * The parent check.
+   *
    * @var \Drupal\security_review\Check
    */
   protected $check;
 
   /**
+   * The configuration storage of the parent Check.
+   *
+   * @var \Drupal\Core\Config\Config $config
+   */
+  protected $config;
+
+  /**
+   * Creates a CheckSettings instance.
+   *
    * @param \Drupal\security_review\Check $check
+   *   The parent Check.
    * @param \Drupal\Core\Config\Config $config
+   *   The parent Check's configuration.
    */
   public function __construct(Check $check, Config &$config) {
     $this->check = $check;
@@ -37,11 +44,11 @@ class CheckSettings implements CheckSettingsInterface {
   /**
    * {@inheritdoc}
    */
-  public function get($key, $defaultValue = NULL) {
+  public function get($key, $default_value = NULL) {
     $value = $this->config->get('settings.' . $key);
 
     if ($value == NULL) {
-      return $defaultValue;
+      return $default_value;
     }
     return $value;
   }
@@ -65,14 +72,14 @@ class CheckSettings implements CheckSettingsInterface {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, $values) {
+  public function validateForm(array &$form, array $values) {
     // Validation is optional.
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, $values) {
+  public function submitForm(array &$form, array $values) {
     // Handle submission.
   }
 

@@ -25,13 +25,18 @@ class SecurityReview {
   }
 
   /**
+   * Returns the configuration storage for the module's settings.
+   *
    * @return \Drupal\Core\Config\Config
+   *   The configuration storage for the module's settings.
    */
   private static function config() {
     return Drupal::configFactory()->getEditable('security_review.settings');
   }
 
   /**
+   * Returns whether the module has been configured.
+   *
    * If the module has been configured on the settings page this function
    * returns true. Otherwise it returns false.
    *
@@ -95,7 +100,6 @@ class SecurityReview {
    *   The new value of the 'logging' setting.
    * @param bool $temporary
    *   Whether to set only temporarily.
-   *
    */
   public static function setLogging($logging, $temporary = FALSE) {
     if (!$temporary) {
@@ -111,24 +115,24 @@ class SecurityReview {
   /**
    * Sets the 'last_run' value.
    *
-   * @param int $lastRun
+   * @param int $last_run
    *   The new value for 'last_run'.
    */
-  public static function setLastRun($lastRun) {
+  public static function setLastRun($last_run) {
     $config = static::config();
-    $config->set('last_run', $lastRun);
+    $config->set('last_run', $last_run);
     $config->save();
   }
 
   /**
    * Stores the given 'untrusted_roles' setting.
    *
-   * @param string[] $untrustedRoles
+   * @param string[] $untrusted_roles
    *   The new untrusted roles' IDs.
    */
-  public static function setUntrustedRoles(array $untrustedRoles) {
+  public static function setUntrustedRoles(array $untrusted_roles) {
     $config = static::config();
-    $config->set('untrusted_roles', $untrustedRoles);
+    $config->set('untrusted_roles', $untrusted_roles);
     $config->save();
   }
 
@@ -167,7 +171,7 @@ class SecurityReview {
           'check' => $check,
           'message' => $message,
           'context' => $context,
-          'level' => $level
+          'level' => $level,
         )
       );
     }
@@ -185,7 +189,7 @@ class SecurityReview {
         $check = $result->check();
         $context = array(
           '!reviewcheck' => $check->getTitle(),
-          '!namespace' => $check->getNamespace()
+          '!namespace' => $check->getNamespace(),
         );
         SecurityReview::log($check, '!reviewcheck of !namespace produced a null result', $context, RfcLogLevel::CRITICAL);
         return;
@@ -200,23 +204,24 @@ class SecurityReview {
           $level = RfcLogLevel::INFO;
           $message = '!name check success';
           break;
+
         case CheckResult::FAIL:
           $level = RfcLogLevel::ERROR;
           $message = '!name check failure';
           break;
+
         case CheckResult::WARN:
           $level = RfcLogLevel::WARNING;
           $message = '!name check warning';
           break;
+
         case CheckResult::INFO:
           $level = RfcLogLevel::INFO;
           $message = '!name check info';
           break;
       }
 
-      $context = array(
-        '!name' => $check->getTitle()
-      );
+      $context = array('!name' => $check->getTitle());
       static::log($check, $message, $context, $level);
     }
   }
@@ -237,8 +242,8 @@ class SecurityReview {
     }
 
     // Delete orphaned configuration data.
-    foreach ($orphaned as $configName) {
-      $config = Drupal::configFactory()->getEditable($configName);
+    foreach ($orphaned as $config_name) {
+      $config = Drupal::configFactory()->getEditable($config_name);
       $config->delete();
     }
   }
@@ -259,6 +264,8 @@ class SecurityReview {
   }
 
   /**
+   * Returns whether the server is POSIX.
+   *
    * @return bool
    *   Whether the web server is POSIX based.
    */
@@ -267,18 +274,22 @@ class SecurityReview {
   }
 
   /**
+   * Returns the UID of the web server.
+   *
    * @return int
    *   UID of the web server's user.
    */
-  public static function getServerUID() {
+  public static function getServerUid() {
     return Drupal::state()->get('security_review.server.uid');
   }
 
   /**
+   * Returns the GIDs of the web server.
+   *
    * @return int[]
    *   GIDs of the web server's user.
    */
-  public static function getServerGIDs() {
+  public static function getServerGids() {
     return Drupal::state()->get('security_review.server.groups');
   }
 

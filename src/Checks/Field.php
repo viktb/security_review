@@ -50,27 +50,27 @@ class Field extends Check {
 
     $tags = array(
       'Javascript' => 'script',
-      'PHP' => '?php'
+      'PHP' => '?php',
     );
 
     // Load all of the entities.
     $entities = array();
-    $bundleInfo = Drupal::entityManager()->getAllBundleInfo();
-    foreach ($bundleInfo as $entity_type_id => $bundles) {
+    $bundle_info = Drupal::entityManager()->getAllBundleInfo();
+    foreach ($bundle_info as $entity_type_id => $bundles) {
       $entities = array_merge($entities, entity_load_multiple($entity_type_id));
     }
 
     // Search for text fields.
-    $textItems = array();
+    $text_items = array();
     foreach ($entities as $entity) {
       if ($entity instanceof FieldableEntityInterface) {
         /** @var FieldableEntityInterface $entity */
-        foreach ($entity->getFields() as $fieldList) {
-          foreach ($fieldList as $fieldItem) {
-            if ($fieldItem instanceof TextItemBase) {
+        foreach ($entity->getFields() as $field_list) {
+          foreach ($field_list as $field_item) {
+            if ($field_item instanceof TextItemBase) {
               /** @var TextItemBase $item */
               // Text field found.
-              $textItems[] = $fieldItem;
+              $text_items[] = $field_item;
             }
           }
         }
@@ -78,17 +78,17 @@ class Field extends Check {
     }
 
     // Scan the text items for vulnerabilities.
-    foreach ($textItems as $item) {
+    foreach ($text_items as $item) {
       $entity = $item->getEntity();
       foreach ($item->getProperties() as $property) {
         /** @var TypedDataInterface $property */
         $value = $property->getValue();
         if (is_string($value)) {
-          $fieldName = $property->getDataDefinition()->getLabel();
+          $field_name = $property->getDataDefinition()->getLabel();
           foreach ($tags as $vulnerability => $tag) {
             if (strpos($value, '<' . $tag) !== FALSE) {
               // Vulnerability found.
-              $findings[$entity->getEntityTypeId()][$entity->id()][$fieldName][] = $vulnerability;
+              $findings[$entity->getEntityTypeId()][$entity->id()][$field_name][] = $vulnerability;
             }
           }
         }
@@ -112,7 +112,7 @@ class Field extends Check {
     return array(
       '#theme' => 'check_help',
       '#title' => 'Dangerous tags in content',
-      '#paragraphs' => $paragraphs
+      '#paragraphs' => $paragraphs,
     );
   }
 
@@ -145,7 +145,7 @@ class Field extends Check {
               '!link' => Drupal::l(
                 $entity->label(),
                 $url
-              )
+              ),
             )
           );
         }
@@ -155,7 +155,7 @@ class Field extends Check {
     return array(
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => $items
+      '#items' => $items,
     );
   }
 
@@ -182,7 +182,7 @@ class Field extends Check {
               array(
                 '@vulnerabilities' => implode(' and ', $finding),
                 '@field' => $field,
-                '!link' => $url->toString()
+                '!link' => $url->toString(),
               )
             ) . "\n";
         }
@@ -195,12 +195,14 @@ class Field extends Check {
   /**
    * {@inheritdoc}
    */
-  public function getMessage($resultConst) {
-    switch ($resultConst) {
+  public function getMessage($result_const) {
+    switch ($result_const) {
       case CheckResult::SUCCESS:
         return 'Dangerous tags were not found in any submitted content (fields).';
+
       case CheckResult::FAIL:
         return 'Dangerous tags were found in submitted content (fields).';
+
       default:
         return 'Unexpected result.';
     }

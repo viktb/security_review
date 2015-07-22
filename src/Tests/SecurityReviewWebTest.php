@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\security_review\Tests\SecurityReviewWebTest
+ * Contains \Drupal\security_review\Tests\SecurityReviewWebTest.
  */
 
 namespace Drupal\security_review\Tests;
@@ -64,6 +64,8 @@ class SecurityReviewWebTest extends WebTestBase {
   }
 
   /**
+   * Tests a full checklist run.
+   *
    * Tests whether the checks hasn't been run yet, then runs them and checks
    * that their lastRun value is not 0.
    */

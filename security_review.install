@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Install, update and uninstall functions for the security_review module.
+ */
+
 use Drupal\Core\Url;
 use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckResult;
@@ -30,7 +35,7 @@ function security_review_install() {
 function security_review_requirements($phase) {
   $requirements = array();
 
-  if ($phase == 'runtime'){
+  if ($phase == 'runtime') {
     $failed_checks = FALSE;
     $no_results = TRUE;
 
@@ -38,7 +43,7 @@ function security_review_requirements($phase) {
       $result = $check->lastResult();
       if ($result instanceof CheckResult) {
         $no_results = FALSE;
-        if ($result->result() === CheckResult::FAIL){
+        if ($result->result() === CheckResult::FAIL) {
           $failed_checks = TRUE;
           break;
         }

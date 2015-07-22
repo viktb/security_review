@@ -9,6 +9,7 @@ use Drupal\security_review\Check;
 
 /**
  * Returns the array of security checks the module defines.
+ *
  * The checks must extend \Drupal\security_review\Check.
  *
  * @return array

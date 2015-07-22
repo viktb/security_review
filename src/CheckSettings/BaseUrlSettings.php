@@ -36,7 +36,7 @@ class BaseUrlSettings extends CheckSettings {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, $values) {
+  public function submitForm(array &$form, array $values) {
     $this->set('method', $values['method']);
   }
 

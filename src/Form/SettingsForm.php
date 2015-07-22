@@ -23,7 +23,7 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'security-review-settings';
   }
 
@@ -83,7 +83,7 @@ class SettingsForm extends ConfigFormBase {
         $label = t('!name <em>skipped by UID !uid on !date</em>', array(
           '!name' => $check->getTitle(),
           '!uid' => $check->skippedBy()->id(),
-          '!date' => format_date($check->skippedOn())
+          '!date' => format_date($check->skippedOn()),
         ));
       }
       else {
@@ -102,10 +102,10 @@ class SettingsForm extends ConfigFormBase {
     // Iterate through checklist and get check-specific setting pages.
     foreach ($checks as $check) {
       // Get the check's setting form.
-      $checkForm = $check->settings()->buildForm();
+      $check_form = $check->settings()->buildForm();
 
       // If not empty, add it to the form.
-      if (!empty($checkForm)) {
+      if (!empty($check_form)) {
         // If this is the first non-empty setting page initialize the 'details'
         if (!isset($form['advanced']['check_specific'])) {
           $form['advanced']['check_specific'] = array(
@@ -117,19 +117,21 @@ class SettingsForm extends ConfigFormBase {
         }
 
         // Add the form.
-        $subForm = &$form['advanced']['check_specific'][$check->id()];
+        $sub_form = &$form['advanced']['check_specific'][$check->id()];
 
         $title = $check->getTitle();
         // If it's an external check, tell the user its namespace.
         if ($check->getMachineNamespace() != 'security_review') {
-          $title .= ' <em>(' . $check->getNamespace() . ')</em>';
+          $title .= t('<em>%namespace</em>', array(
+            '%namespace' => $check->getNamespace(),
+          ));
         }
-        $subForm = array(
+        $sub_form = array(
           '#type' => 'details',
-          '#title' => t($title),
+          '#title' => $title,
           '#open' => TRUE,
           '#tree' => TRUE,
-          'form' => $checkForm
+          'form' => $check_form,
         );
       }
     }
@@ -143,12 +145,12 @@ class SettingsForm extends ConfigFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     if (isset($form['advanced']['check_specific'])) {
-      $checkSpecificValues = $form_state->getValue('check_specific');
+      $check_specific_values = $form_state->getValue('check_specific');
       foreach (Checklist::getChecks() as $check) {
-        $checkForm = &$form['advanced']['check_specific'][$check->id()];
-        if (isset($checkForm)) {
+        $check_form = &$form['advanced']['check_specific'][$check->id()];
+        if (isset($check_form)) {
           $check->settings()
-            ->validateForm($checkForm, $checkSpecificValues[$check->id()]);
+            ->validateForm($check_form, $check_specific_values[$check->id()]);
         }
       }
     }
@@ -185,17 +187,17 @@ class SettingsForm extends ConfigFormBase {
 
     // Save the check-specific settings.
     if (isset($form['advanced']['check_specific'])) {
-      $checkSpecificValues = $form_state->getValue('check_specific');
-      foreach ($checkSpecificValues as $checkIdentifier => $values) {
+      $check_specific_values = $form_state->getValue('check_specific');
+      foreach ($check_specific_values as $id => $values) {
         // Get corresponding Check.
-        $check = Checklist::getCheckByIdentifier($checkIdentifier);
+        $check = Checklist::getCheckById($id);
 
         // Submit parameters.
-        $checkForm = &$form['advanced']['check_specific'][$checkIdentifier]['form'];
-        $checkFormValues = $checkSpecificValues[$checkIdentifier]['form'];
+        $check_form = &$form['advanced']['check_specific'][$id]['form'];
+        $check_form_values = $check_specific_values[$id]['form'];
 
         // Submit.
-        $check->settings()->submitForm($checkForm, $checkFormValues);
+        $check->settings()->submitForm($check_form, $check_form_values);
       }
     }
 

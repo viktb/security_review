@@ -40,12 +40,12 @@ class TemporaryFiles extends Check {
 
     // Get list of files from the site directory.
     $files = array();
-    $sitePath = Security::sitePath() . '/';
-    $dir = scandir($sitePath);
+    $site_path = Security::sitePath() . '/';
+    $dir = scandir($site_path);
     foreach ($dir as $file) {
       // Set full path to only files.
       if (!is_dir($file)) {
-        $files[] = $sitePath . $file;
+        $files[] = $site_path . $file;
       }
     }
     Drupal::moduleHandler()->alter('security_review_temporary_files', $files);
@@ -76,7 +76,7 @@ class TemporaryFiles extends Check {
     return array(
       '#theme' => 'check_help',
       '#title' => 'Sensitive temporary files',
-      '#paragraphs' => $paragraphs
+      '#paragraphs' => $paragraphs,
     );
   }
 
@@ -95,7 +95,7 @@ class TemporaryFiles extends Check {
     return array(
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => $findings
+      '#items' => $findings,
     );
   }
 
@@ -119,12 +119,14 @@ class TemporaryFiles extends Check {
   /**
    * {@inheritdoc}
    */
-  public function getMessage($resultConst) {
-    switch ($resultConst) {
+  public function getMessage($result_const) {
+    switch ($result_const) {
       case CheckResult::SUCCESS:
         return 'No sensitive temporary files were found.';
+
       case CheckResult::FAIL:
         return 'Sensitive temporary files were found on your files system.';
+
       default:
         return 'Unexpected result.';
     }

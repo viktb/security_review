@@ -13,14 +13,14 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\security_review\Checklist;
 
 /**
- * 'Run' form class.
+ * Provides implementation for the Run form.
  */
 class RunForm extends FormBase {
 
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'security-review-run';
   }
 
@@ -58,13 +58,13 @@ class RunForm extends FormBase {
       'title' => t('Performing Security Review'),
       'init_message' => t('Security Review is starting.'),
       'progress_message' => t('Progress @current out of @total.'),
-      'error_message' => t('An error occurred. Rerun the process or consult the logs.')
+      'error_message' => t('An error occurred. Rerun the process or consult the logs.'),
     );
 
     foreach (Checklist::getEnabledChecks() as $check) {
       $batch['operations'][] = array(
         '_security_review_batch_run_op',
-        array($check)
+        array($check),
       );
     }
 

@@ -52,24 +52,24 @@ class FilePermissions extends Check {
   /**
    * {@inheritdoc}
    */
-  public function run($CLI = FALSE) {
+  public function run($cli = FALSE) {
     $result = CheckResult::SUCCESS;
 
-    $fileList = $this->getFileList('.');
-    $writable = Security::findWritableFiles($fileList, $CLI);
+    $file_list = $this->getFileList('.');
+    $writable = Security::findWritableFiles($file_list, $cli);
 
     // Try creating or appending files.
     // Assume it doesn't work.
     $create_status = FALSE;
     $append_status = FALSE;
 
-    if (!$CLI) {
+    if (!$cli) {
       $append_message = t("Your web server should not be able to write to your modules directory. This is a security vulnerable. Consult the Security Review file permissions check help for mitigation steps.");
       $directory = Drupal::moduleHandler()
         ->getModule('security_review')
         ->getPath();
 
-      // Write a file with the timestamp
+      // Write a file with the timestamp.
       $file = './' . $directory . '/file_write_test.' . date('Ymdhis');
       if ($file_create = @fopen($file, 'w')) {
         $create_status = fwrite($file_create, date('Ymdhis') . ' - ' . $append_message . "\n");
@@ -114,7 +114,7 @@ class FilePermissions extends Check {
     return array(
       '#theme' => 'check_help',
       '#title' => 'Web server file system permissions',
-      '#paragraphs' => $paragraphs
+      '#paragraphs' => $paragraphs,
     );
   }
 
@@ -135,7 +135,7 @@ class FilePermissions extends Check {
     return array(
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => $result->findings()
+      '#items' => $result->findings(),
     );
   }
 
@@ -158,14 +158,17 @@ class FilePermissions extends Check {
   /**
    * {@inheritdoc}
    */
-  public function getMessage($resultConst) {
-    switch ($resultConst) {
+  public function getMessage($result_const) {
+    switch ($result_const) {
       case CheckResult::SUCCESS:
         return 'Drupal installation files and directories (except required) are not writable by the server.';
+
       case CheckResult::FAIL:
         return 'Some files and directories in your install are writable by the server.';
+
       case CheckResult::INFO:
         return 'The test cannot be run on this system.';
+
       default:
         return 'Unexpected result.';
     }
@@ -184,7 +187,7 @@ class FilePermissions extends Check {
    * @return string[]
    *   The items found.
    */
-  protected function getFileList($directory, &$parsed = NULL, &$ignore = NULL) {
+  protected function getFileList($directory, array &$parsed = NULL, array &$ignore = NULL) {
     // Initialize $parsed and $ignore arrays.
     if ($parsed === NULL) {
       $parsed = array(realpath($directory));
@@ -214,8 +217,7 @@ class FilePermissions extends Check {
   }
 
   /**
-   * Returns an array of relative and canonical path strings to ignore while
-   * running the check.
+   * Returns an array of relative and canonical paths to ignore.
    *
    * @return string[]
    *   List of relative and canonical file paths to ignore.

@@ -42,7 +42,7 @@ class QueryErrors extends Check {
 
     $result = CheckResult::HIDE;
     $findings = array();
-    $lastResult = $this->lastResult();
+    $last_result = $this->lastResult();
 
     // Prepare the query.
     $query = Drupal::database()->select('watchdog', 'w');
@@ -55,32 +55,38 @@ class QueryErrors extends Check {
       'hostname',
     ));
     $query->condition('type', 'php')->condition('severity', RfcLogLevel::ERROR);
-    if ($lastResult instanceof CheckResult) {
+    if ($last_result instanceof CheckResult) {
       // Only check entries that got recorded since the last run of the check.
-      $query->condition('timestamp', $lastResult->time(), '>=');
+      $query->condition('timestamp', $last_result->time(), '>=');
     }
 
     // Execute the query.
-    $dbResult = $query->execute();
+    $db_result = $query->execute();
 
     // Count the number of query errors per IP.
     $entries = array();
-    foreach ($dbResult as $row) {
-      $message = t(
-        $row->message,
-        unserialize($row->variables)
-      );
+    foreach ($db_result as $row) {
+      // Get the message.
+      if ($row->variables === 'N;') {
+        $message = $row->message;
+      }
+      else {
+        $message = t($row->message, unserialize($row->variables));
+      }
+
+      // Get the IP.
       $ip = $row->hostname;
 
+      // Search for query errors.
       $message_contains_sql = strpos($message, 'SQL') !== FALSE;
       $message_contains_select = strpos($message, 'SELECT') !== FALSE;
       if ($message_contains_sql && $message_contains_select) {
-        $entryForIP = &$entries[$ip];
+        $entry_for_ip = &$entries[$ip];
 
-        if (!isset($entryForIP)) {
-          $entryForIP = 0;
+        if (!isset($entry_for_ip)) {
+          $entry_for_ip = 0;
         }
-        $entryForIP++;
+        $entry_for_ip++;
       }
     }
 
@@ -110,7 +116,7 @@ class QueryErrors extends Check {
     return array(
       '#theme' => 'check_help',
       '#title' => 'Abundant query errors from the same IP',
-      '#paragraphs' => $paragraphs
+      '#paragraphs' => $paragraphs,
     );
   }
 
@@ -129,7 +135,7 @@ class QueryErrors extends Check {
     return array(
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => $result->findings()
+      '#items' => $result->findings(),
     );
   }
 
@@ -153,12 +159,14 @@ class QueryErrors extends Check {
   /**
    * {@inheritdoc}
    */
-  public function getMessage($resultConst) {
-    switch ($resultConst) {
+  public function getMessage($result_const) {
+    switch ($result_const) {
       case CheckResult::FAIL:
         return 'Query errors from the same IP. These may be a SQL injection attack or an attempt at information disclosure.';
+
       case CheckResult::INFO:
         return 'Module dblog is not enabled.';
+
       default:
         return 'Unexpected result.';
     }

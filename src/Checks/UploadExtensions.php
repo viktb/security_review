@@ -63,8 +63,8 @@ class UploadExtensions extends Check {
         $extensions = explode(' ', $extensions);
         $intersect = array_intersect($extensions, Security::unsafeExtensions());
         // $intersect holds the unsafe extensions this entity allows.
-        foreach ($intersect as $unsafeExtension) {
-          $findings[$entity->id()][] = $unsafeExtension;
+        foreach ($intersect as $unsafe_extension) {
+          $findings[$entity->id()][] = $unsafe_extension;
         }
       }
     }
@@ -87,14 +87,14 @@ class UploadExtensions extends Check {
         '!fields_report' => Drupal::l(
           'all fields on your site',
           Url::fromRoute('entity.field_storage_config.collection')
-        )
+        ),
       )
     );
 
     return array(
       '#theme' => 'check_help',
       '#title' => 'Allowed upload extensions',
-      '#paragraphs' => $paragraphs
+      '#paragraphs' => $paragraphs,
     );
   }
 
@@ -111,34 +111,33 @@ class UploadExtensions extends Check {
     $paragraphs[] = 'The following extensions are considered unsafe and should be removed or limited from use. Or, be sure you are not granting untrusted users the ability to upload files.';
 
     $items = array();
-    foreach ($findings as $entity_id => $unsafeExtensions) {
+    foreach ($findings as $entity_id => $unsafe_extensions) {
       $entity = entity_load('field_config', $entity_id);
       /** @var FieldConfig $entity */
 
-      foreach ($unsafeExtensions as $extension) {
+      foreach ($unsafe_extensions as $extension) {
         $item = t(
           'Review @type in <em>@field</em> field on @bundle',
           array(
             '@type' => $extension,
             '@field' => $entity->label(),
-            '@bundle' => $entity->getTargetBundle()
+            '@bundle' => $entity->getTargetBundle(),
           )
         );
 
         // Try to get an edit url.
         try {
-          $urlParams = array(
-            'field_config' => $entity->id()
-          );
+          $url_params = array('field_config' => $entity->id());
           if ($entity->getTargetEntityTypeId() == 'node') {
-            $urlParams['node_type'] = $entity->getTargetBundle();
+            $url_params['node_type'] = $entity->getTargetBundle();
           }
           $url = Url::fromRoute(
             'entity.field_config.' . $entity->getTargetEntityTypeId() . '_field_edit_form',
-            $urlParams
+            $url_params
           );
           $items[] = Drupal::l($item, $url);
-        } catch (RouteNotFoundException $e) {
+        }
+        catch (RouteNotFoundException $e) {
           $items[] = $item;
         }
       }
@@ -147,7 +146,7 @@ class UploadExtensions extends Check {
     return array(
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => $items
+      '#items' => $items,
     );
   }
 
@@ -161,7 +160,7 @@ class UploadExtensions extends Check {
     }
 
     $output = '';
-    foreach ($findings as $entity_id => $unsafeExtensions) {
+    foreach ($findings as $entity_id => $unsafe_extensions) {
       $entity = entity_load('field_config', $entity_id);
       /** @var FieldConfig $entity */
 
@@ -169,10 +168,10 @@ class UploadExtensions extends Check {
         '!bundle: field !field',
         array(
           '!bundle' => $entity->getTargetBundle(),
-          '!field' => $entity->label()
+          '!field' => $entity->label(),
         )
       );
-      $output .= "\n\t" . implode(', ', $unsafeExtensions) . "\n";
+      $output .= "\n\t" . implode(', ', $unsafe_extensions) . "\n";
     }
 
     return $output;
@@ -181,14 +180,17 @@ class UploadExtensions extends Check {
   /**
    * {@inheritdoc}
    */
-  public function getMessage($resultConst) {
-    switch ($resultConst) {
+  public function getMessage($result_const) {
+    switch ($result_const) {
       case CheckResult::SUCCESS:
         return 'Only safe extensions are allowed for uploaded files and images.';
+
       case CheckResult::FAIL:
         return 'Unsafe file extensions are allowed in uploads.';
+
       case CheckResult::INFO:
         return 'Module field is not enabled.';
+
       default:
         return 'Unexpected result.';
     }

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\security_review\Tests\SecurityReviewTest
+ * Contains \Drupal\security_review\Tests\SecurityReviewTest.
  */
 
 namespace Drupal\security_review\Tests;

@@ -21,21 +21,21 @@ class HelpController {
   /**
    * Serves as an entry point for the help pages.
    *
-   * @param $namespace
+   * @param string|NULL $namespace
    *   The namespace of the check (null if general page).
-   * @param $title
+   * @param string $title
    *   The name of the check.
    *
    * @return array
    *   The requested help page.
    */
   public function index($namespace, $title) {
-    // If no namespace is set, print the general help page
+    // If no namespace is set, print the general help page.
     if ($namespace === NULL) {
       return $this->generalHelp();
     }
 
-    // Print check-specific help
+    // Print check-specific help.
     return $this->checkHelp($namespace, $title);
   }
 
@@ -74,10 +74,10 @@ class HelpController {
 
       // Add the link pointing to the check-specific help.
       $check_namespace['check_links'][] = Drupal::l(
-        t($check->getTitle()),
+        t('%title', array('%title' => $check->getTitle())),
         Url::fromRoute('security_review.help', array(
           'namespace' => $check->getMachineNamespace(),
-          'title' => $check->getMachineTitle()
+          'title' => $check->getMachineTitle(),
         ))
       );
     }
@@ -85,22 +85,23 @@ class HelpController {
     return array(
       '#theme' => 'general_help',
       '#paragraphs' => $paragraphs,
-      '#checks' => $checks
+      '#checks' => $checks,
     );
   }
 
   /**
    * Returns a check-specific help page.
    *
-   * @param $namespace
+   * @param string $namespace
    *   The namespace of the check.
-   * @param $title
+   * @param string $title
    *   The name of the check.
    *
    * @return array
    *   The check's help page.
    *
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+   *   If the check is not found.
    */
   private function checkHelp($namespace, $title) {
     // Get the requested check.
@@ -129,31 +130,31 @@ class HelpController {
         $user = 'Anonymous';
       }
 
-      $skipMessage = t(
+      $skip_message = t(
         'Check marked for skipping on !date by !user',
         array(
           '!date' => format_date($check->skippedOn()),
-          '!user' => $user
+          '!user' => $user,
         )
       );
 
       $output[] = array(
         '#type' => 'markup',
-        '#markup' => "<p>$skipMessage</p>"
+        '#markup' => "<p>$skip_message</p>",
       );
     }
     else {
       // Evaluate last result, if any.
-      $lastResult = $check->lastResult(TRUE);
-      if ($lastResult instanceof CheckResult) {
+      $last_result = $check->lastResult(TRUE);
+      if ($last_result instanceof CheckResult) {
         // Separator.
         $output[] = array(
           '#type' => 'markup',
-          '#markup' => '<div />'
+          '#markup' => '<div />',
         );
 
         // Evaluation page.
-        $output[] = $check->evaluate($lastResult);
+        $output[] = $check->evaluate($last_result);
       }
     }
 

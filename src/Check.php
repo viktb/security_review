@@ -17,23 +17,28 @@ use Drupal\user\Entity\User;
 abstract class Check {
 
   /**
+   * Settings handler for this check.
+   *
    * @var \Drupal\security_review\CheckSettingsInterface $settings
    */
   protected $settings;
 
   /**
+   * The configuration storage for this check.
+   *
    * @var \Drupal\Core\Config\Config $config
    */
   protected $config;
 
   /**
+   * The check's prefix in the State system.
+   *
    * @var string
    */
   protected $statePrefix;
 
   /**
-   * Constructs the check by initializing the configuration storage and the
-   * settings interface.
+   * Initializes the configuration storage and the settings handler.
    */
   public function __construct() {
     $this->config = Drupal::configFactory()
@@ -49,8 +54,9 @@ abstract class Check {
   }
 
   /**
-   * Returns the namespace of the check. Usually it's the same as the module's
-   * name.
+   * Returns the namespace of the check.
+   *
+   * Usually it's the same as the module's name.
    *
    * Naming rules (if overridden):
    *   - All characters should be lowerspace.
@@ -69,8 +75,9 @@ abstract class Check {
   }
 
   /**
-   * Returns the namespace of the check. Usually it's the same as the module's
-   * name.
+   * Returns the namespace of the check.
+   *
+   * Usually it's the same as the module's name.
    *
    * @return string
    *   Human-readable namespace of the check.
@@ -115,8 +122,7 @@ abstract class Check {
   }
 
   /**
-   * Returns whether Security Review should store the findings or reproduce them
-   * when needed.
+   * Returns whether the findings should be stored or reproduced when needed.
    *
    * The only case when this function should return false is if the check can
    * generate a lot of findings (like the File permissions check for example).
@@ -124,7 +130,7 @@ abstract class Check {
    * few of them actually means more overhead as the check has to be re-run
    * in order to get its last result.
    *
-   * @return boolean
+   * @return bool
    *   Boolean indicating whether findings will be stored.
    */
   public function storesFindings() {
@@ -132,6 +138,8 @@ abstract class Check {
   }
 
   /**
+   * Returns the check-specific settings' handler.
+   *
    * @return \Drupal\security_review\CheckSettingsInterface
    *   The settings interface of the check.
    */
@@ -151,6 +159,7 @@ abstract class Check {
    * Same as run(), but used in CLI context such as Drush.
    *
    * @return \Drupal\security_review\CheckResult
+   *   The result of running the check.
    */
   public function runCli() {
     return $this->run();
@@ -165,8 +174,9 @@ abstract class Check {
   public abstract function help();
 
   /**
-   * Returns the evaluation page of a result. Usually this is a list of the
-   * findings and an explanation.
+   * Returns the evaluation page of a result.
+   *
+   * Usually this is a list of the findings and an explanation.
    *
    * @param \Drupal\security_review\CheckResult $result
    *   The check result to evaluate.
@@ -194,86 +204,88 @@ abstract class Check {
   /**
    * Converts a result integer to a human-readable result message.
    *
-   * @param int $resultConst
+   * @param int $result_const
    *   The result integer.
    *
    * @return string
    *   The human-readable result message.
    */
-  public abstract function getMessage($resultConst);
+  public abstract function getMessage($result_const);
 
   /**
-   * Returns the last stored result of the check or null if no results have been
-   * stored yet.
+   * Returns the last stored result of the check.
    *
-   * @param bool $getFindings
+   * Returns null if no results have been stored yet.
+   *
+   * @param bool $get_findings
    *   Whether to get the findings too.
    *
    * @return \Drupal\security_review\CheckResult|null
    *   The last stored result (or null).
    */
-  public function lastResult($getFindings = FALSE) {
-    $statePrefix = $this->statePrefix . 'last_result.';
-    $result = Drupal::state()->get($statePrefix . 'result');
-    if ($getFindings) {
-      $findings = Drupal::state()->get($statePrefix . 'findings');
+  public function lastResult($get_findings = FALSE) {
+    $state_prefix = $this->statePrefix . 'last_result.';
+    $result = Drupal::state()->get($state_prefix . 'result');
+    if ($get_findings) {
+      $findings = Drupal::state()->get($state_prefix . 'findings');
     }
     else {
       $findings = array();
     }
-    $time = Drupal::state()->get($statePrefix . 'time');
+    $time = Drupal::state()->get($state_prefix . 'time');
 
-    $validResult = is_int($result)
+    $valid_result = is_int($result)
       && $result >= CheckResult::SUCCESS
       && $result <= CheckResult::HIDE;
-    $validFindings = is_array($findings);
-    $validTime = is_int($time) && $time > 0;
+    $valid_findings = is_array($findings);
+    $valid_time = is_int($time) && $time > 0;
 
-    if (!$validResult || !$validFindings || !$validTime) {
+    if (!$valid_result || !$valid_findings || !$valid_time) {
       return NULL;
     }
 
-    $lastResult = new CheckResult($this, $result, $findings, $time);
+    $last_result = new CheckResult($this, $result, $findings, $time);
 
-    if ($getFindings && !$this->storesFindings()) {
+    if ($get_findings && !$this->storesFindings()) {
       // Run the check to get the findings.
-      $freshResult = $this->run();
+      $fresh_result = $this->run();
 
       // If it malfunctioned return the last known good result.
-      if (!($freshResult instanceof CheckResult)) {
-        return $lastResult;
+      if (!($fresh_result instanceof CheckResult)) {
+        return $last_result;
       }
 
-      if ($freshResult->result() != $lastResult->result()) {
+      if ($fresh_result->result() != $last_result->result()) {
         // If the result is not the same store the new result and return it.
-        $this->storeResult($freshResult);
-        SecurityReview::logCheckResult($freshResult);
-        return $freshResult;
+        $this->storeResult($fresh_result);
+        SecurityReview::logCheckResult($fresh_result);
+        return $fresh_result;
       }
       else {
         // Else return the old result with the fresh one's findings.
-        return CheckResult::combine($lastResult, $freshResult);
+        return CheckResult::combine($last_result, $fresh_result);
       }
     }
 
-    return $lastResult;
+    return $last_result;
   }
 
   /**
-   * Returns the timestamp the check was last run, or 0 if it hasn't been run
-   * yet.
+   * Returns the timestamp the check was last run.
+   *
+   * Returns 0 if it has not been run yet.
    *
    * @return int
    *   The timestamp of the last stored result.
    */
   public function lastRun() {
-    $lastResultTime = Drupal::state()
+    $last_result_time = Drupal::state()
       ->get($this->statePrefix . 'last_result.time');
 
-    if (!is_int($lastResultTime)) {
+    if (!is_int($last_result_time)) {
       return 0;
     }
-    return $lastResultTime;
+    return $last_result_time;
   }
 
   /**
@@ -283,44 +295,47 @@ abstract class Check {
    *   Boolean indicating whether the check is skipped.
    */
   public function isSkipped() {
-    $isSkipped = $this->config->get('skipped');
+    $is_skipped = $this->config->get('skipped');
 
-    if (!is_bool($isSkipped)) {
+    if (!is_bool($is_skipped)) {
       return FALSE;
     }
-    return $isSkipped;
+    return $is_skipped;
   }
 
   /**
-   * Returns the user the check was skipped by, or null if it hasn't been
-   * skipped yet or the user that skipped the check is not valid anymore.
+   * Returns the user the check was skipped by.
+   *
+   * Returns null if it hasn't been skipped yet or the user that skipped the
+   * check is not valid anymore.
    *
    * @return \Drupal\user\Entity\User|null
    *   The user the check was last skipped by (or null).
    */
   public function skippedBy() {
-    $skippedBy = $this->config->get('skipped_by');
+    $skipped_by = $this->config->get('skipped_by');
 
-    if (!is_int($skippedBy)) {
+    if (!is_int($skipped_by)) {
       return NULL;
     }
-    return User::load($skippedBy);
+    return User::load($skipped_by);
   }
 
   /**
-   * Returns the timestamp the check was last skipped on, or 0 if it hasn't been
-   * skipped yet.
+   * Returns the timestamp the check was last skipped on.
+   *
+   * Returns 0 if it hasn't been skipped yet.
    *
    * @return int
    *   The UNIX timestamp the check was last skipped on (or 0).
    */
   public function skippedOn() {
-    $skippedOn = $this->config->get('skipped_on');
+    $skipped_on = $this->config->get('skipped_on');
 
-    if (!is_int($skippedOn)) {
+    if (!is_int($skipped_on)) {
       return 0;
     }
-    return $skippedOn;
+    return $skipped_on;
   }
 
   /**
@@ -332,16 +347,16 @@ abstract class Check {
       $this->config->save();
 
       // Log.
-      $context = array(
-        '!name' => $this->getTitle()
-      );
+      $context = array('!name' => $this->getTitle());
       SecurityReview::log($this, '!name check no longer skipped', $context, RfcLogLevel::NOTICE);
     }
   }
 
   /**
-   * Marks the check as skipped. It still can be ran manually, but will remain
-   * skipped on the Run & Review page.
+   * Marks the check as skipped.
+   *
+   * It still can be ran manually, but will remain skipped on the Run & Review
+   * page.
    */
   public function skip() {
     if (!$this->isSkipped()) {
@@ -351,9 +366,7 @@ abstract class Check {
       $this->config->save();
 
       // Log.
-      $context = array(
-        '!name' => $this->getTitle()
-      );
+      $context = array('!name' => $this->getTitle());
       SecurityReview::log($this, '!name check skipped', $context, RfcLogLevel::NOTICE);
     }
   }
@@ -368,7 +381,7 @@ abstract class Check {
     if ($result == NULL) {
       $context = array(
         '!reviewcheck' => $this->getTitle(),
-        '!namespace' => $this->getNamespace()
+        '!namespace' => $this->getNamespace(),
       );
       SecurityReview::log($this, 'Unable to store check !reviewcheck for !namespace', $context, RfcLogLevel::CRITICAL);
       return;

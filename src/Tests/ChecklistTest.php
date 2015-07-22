@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\security_review\Tests\ChecklistTest
+ * Contains \Drupal\security_review\Tests\ChecklistTest.
  */
 
 namespace Drupal\security_review\Tests;
@@ -70,6 +70,8 @@ class ChecklistTest extends KernelTestBase {
   }
 
   /**
+   * Tests Checklist::getChecks().
+   *
    * Tests whether getChecks() contains all the checks that
    * security_review_security_review_checks() and
    * security_review_test_security_review_checks() returns.
@@ -95,9 +97,11 @@ class ChecklistTest extends KernelTestBase {
   }
 
   /**
+   * Tests Checklist's Check search functions.
+   *
    * Tests the search functions of Checklist:
    *   getCheck().
-   *   getCheckByIdentifier().
+   *   getCheckById().
    */
   public function testCheckSearch() {
     foreach (Checklist::getChecks() as $check) {
@@ -106,8 +110,8 @@ class ChecklistTest extends KernelTestBase {
       $this->assertNotNull($found, 'Found a check.');
       $this->assertEqual($check->id(), $found->id(), 'Found ' . $check->getTitle() . '.');
 
-      // getCheckByIdentifier().
-      $found = Checklist::getCheckByIdentifier($check->id());
+      // getCheckById().
+      $found = Checklist::getCheckById($check->id());
       $this->assertNotNull($found, 'Found a check.');
       $this->assertEqual($check->id(), $found->id(), 'Found ' . $check->getTitle() . '.');
     }

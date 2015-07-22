@@ -42,7 +42,7 @@ class FailedLogins extends Check {
 
     $result = CheckResult::HIDE;
     $findings = array();
-    $lastResult = $this->lastResult();
+    $last_result = $this->lastResult();
 
     // Prepare the query.
     $query = Drupal::database()->select('watchdog', 'w');
@@ -57,24 +57,24 @@ class FailedLogins extends Check {
     $query->condition('type', 'user')
       ->condition('severity', RfcLogLevel::NOTICE)
       ->condition('message', 'Login attempt failed from %ip.');
-    if ($lastResult instanceof CheckResult) {
+    if ($last_result instanceof CheckResult) {
       // Only check entries that got recorded since the last run of the check.
-      $query->condition('timestamp', $lastResult->time(), '>=');
+      $query->condition('timestamp', $last_result->time(), '>=');
     }
 
     // Execute the query.
-    $dbResult = $query->execute();
+    $db_result = $query->execute();
 
     // Count the number of failed logins per IP.
     $entries = array();
-    foreach ($dbResult as $row) {
+    foreach ($db_result as $row) {
       $ip = unserialize($row->variables)['%ip'];
-      $entryForIP = &$entries[$ip];
+      $entry_for_ip = &$entries[$ip];
 
-      if (!isset($entryForIP)) {
-        $entryForIP = 0;
+      if (!isset($entry_for_ip)) {
+        $entry_for_ip = 0;
       }
-      $entryForIP++;
+      $entry_for_ip++;
     }
 
     // Filter the IPs with more than 10 failed logins.
@@ -103,7 +103,7 @@ class FailedLogins extends Check {
     return array(
       '#theme' => 'check_help',
       '#title' => 'Abundant failed logins from the same IP',
-      '#paragraphs' => $paragraphs
+      '#paragraphs' => $paragraphs,
     );
   }
 
@@ -122,7 +122,7 @@ class FailedLogins extends Check {
     return array(
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => $result->findings()
+      '#items' => $result->findings(),
     );
   }
 
@@ -146,12 +146,14 @@ class FailedLogins extends Check {
   /**
    * {@inheritdoc}
    */
-  public function getMessage($resultConst) {
-    switch ($resultConst) {
+  public function getMessage($result_const) {
+    switch ($result_const) {
       case CheckResult::FAIL:
         return 'Failed login attempts from the same IP. These may be a brute-force attack to gain access to your site.';
+
       case CheckResult::INFO:
         return 'Module dblog is not enabled.';
+
       default:
         return 'Unexpected result.';
     }

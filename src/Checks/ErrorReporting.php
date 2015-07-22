@@ -54,12 +54,12 @@ class ErrorReporting extends Check {
    */
   public function help() {
     $paragraphs = array();
-    $paragraphs[] = 'As a form of hardening your site you should avoid information disclosure. Drupal by default prints errors to the screen and writes them to the log. Error messages disclose the full path to the file where the error occured.';
+    $paragraphs[] = 'As a form of hardening your site you should avoid information disclosure. Drupal by default prints errors to the screen and writes them to the log. Error messages disclose the full path to the file where the error occurred.';
 
     return array(
       '#theme' => 'check_help',
       '#title' => 'Error reporting',
-      '#paragraphs' => $paragraphs
+      '#paragraphs' => $paragraphs,
     );
   }
 
@@ -81,7 +81,7 @@ class ErrorReporting extends Check {
     return array(
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => array()
+      '#items' => array(),
     );
   }
 
@@ -95,7 +95,7 @@ class ErrorReporting extends Check {
 
     if (isset($result->findings()['level'])) {
       return t('Error level: !level', array(
-        '!level' => $result->findings()['level']
+        '!level' => $result->findings()['level'],
       ));
     }
     return '';
@@ -104,12 +104,14 @@ class ErrorReporting extends Check {
   /**
    * {@inheritdoc}
    */
-  public function getMessage($resultConst) {
-    switch ($resultConst) {
+  public function getMessage($result_const) {
+    switch ($result_const) {
       case CheckResult::SUCCESS:
         return 'Error reporting set to log only.';
+
       case CheckResult::FAIL:
         return 'Errors are written to the screen.';
+
       default:
         return 'Unexpected result.';
     }

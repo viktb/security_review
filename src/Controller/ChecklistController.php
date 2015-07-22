@@ -67,50 +67,51 @@ class ChecklistController {
     $checks = array();
     foreach (Checklist::getChecks() as $check) {
       // Initialize with defaults.
-      $checkInfo = array(
+      $check_info = array(
         'result' => CheckResult::SKIPPED,
         'message' => t(
           'The check "!name" hasn\'t been run yet.',
           array('!name' => $check->getTitle())
         ),
-        'skipped' => $check->isSkipped()
+        'skipped' => $check->isSkipped(),
       );
 
       // Get last result.
-      $lastResult = $check->lastResult();
-      if ($lastResult != NULL) {
-        if ($lastResult->result() == CheckResult::HIDE) {
+      $last_result = $check->lastResult();
+      if ($last_result != NULL) {
+        if ($last_result->result() == CheckResult::HIDE) {
           continue;
         }
-        $checkInfo['result'] = $lastResult->result();
-        $checkInfo['message'] = $lastResult->resultMessage();
+        $check_info['result'] = $last_result->result();
+        $check_info['message'] = $last_result->resultMessage();
       }
 
       // Determine help link.
-      $checkInfo['help_link'] = Drupal::l(
+      $check_info['help_link'] = Drupal::l(
         'Details',
         Url::fromRoute(
           'security_review.help',
           array(
             'namespace' => $check->getMachineNamespace(),
-            'title' => $check->getMachineTitle()
+            'title' => $check->getMachineTitle(),
           )
         )
       );
 
       // Add toggle button.
       $toggle_text = $check->isSkipped() ? 'Enable' : 'Skip';
-      $checkInfo['toggle_link'] = Drupal::l($toggle_text, Url::fromRoute('security_review.toggle',
-        array(
-          'check_id' => $check->id()
-        ),
-        array(
-          'query' => array('token' => Drupal::csrfToken()->get($check->id()))
+      $check_info['toggle_link'] = Drupal::l($toggle_text,
+        Url::fromRoute(
+          'security_review.toggle',
+          array('check_id' => $check->id()),
+          array(
+            'query' => array('token' => Drupal::csrfToken()->get($check->id())),
+          )
         )
-      ));
+      );
 
       // Add to array of completed checks.
-      $checks[] = $checkInfo;
+      $checks[] = $check_info;
     }
 
     return array(
@@ -119,7 +120,7 @@ class ChecklistController {
       '#checks' => $checks,
       '#attached' => array(
         'library' => array('security_review/run_and_review'),
-      )
+      ),
     );
   }
 

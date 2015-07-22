@@ -20,26 +20,36 @@ class CheckResult {
   const HIDE = 4;
 
   /**
+   * Stores the parent Check.
+   *
    * @var \Drupal\security_review\Check $check
    */
   private $check;
 
   /**
+   * Stores the outcome of the check.
+   *
    * @var int $result
    */
   private $result;
 
   /**
+   * Stores findings.
+   *
    * @var array $findings
    */
   private $findings;
 
   /**
+   * Stores the timestamp of the check run.
+   *
    * @var int $time
    */
   private $time;
 
   /**
+   * Constructs an immutable CheckResult.
+   *
    * @param \Drupal\security_review\Check $check
    *   The Check that created this result.
    * @param int $result
@@ -47,7 +57,7 @@ class CheckResult {
    * @param array $findings
    *   The findings.
    * @param int $time
-   *   The time the test was run.
+   *   The timestamp of the check run.
    */
   public function __construct(Check $check, $result, array $findings, $time = NULL) {
     // Set the parent check.
@@ -73,6 +83,8 @@ class CheckResult {
   }
 
   /**
+   * Combines two CheckResults.
+   *
    * Combines two CheckResults and returns a new one with the old one's fields
    * except for the findings which are copied from the fresh result.
    *
@@ -89,6 +101,8 @@ class CheckResult {
   }
 
   /**
+   * Returns the parent Check.
+   *
    * @return \Drupal\security_review\Check
    *   The Check that created this result.
    */
@@ -97,6 +111,8 @@ class CheckResult {
   }
 
   /**
+   * Returns the outcome of the check.
+   *
    * @return int
    *   The result integer.
    */
@@ -105,6 +121,8 @@ class CheckResult {
   }
 
   /**
+   * Returns the findings.
+   *
    * @return array
    *   The findings. Contents of this depends on the actual check.
    */
@@ -113,14 +131,18 @@ class CheckResult {
   }
 
   /**
+   * Returns the timestamp.
+   *
    * @return int
-   *   The time the result was generated.
+   *   The timestamp the result was created on.
    */
   public function time() {
     return $this->time;
   }
 
   /**
+   * Returns the result message.
+   *
    * @return string
    *   The result message for this result.
    */

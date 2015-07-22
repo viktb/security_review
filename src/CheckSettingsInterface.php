@@ -8,8 +8,7 @@
 namespace Drupal\security_review;
 
 /**
- * Defines an interface for accessing check-specific settings and creating forms
- * that can alter these settings.
+ * Interface for check-specific settings and forms for altering them.
  */
 interface CheckSettingsInterface {
 
@@ -18,13 +17,13 @@ interface CheckSettingsInterface {
    *
    * @param string $key
    *   The key.
-   * @param mixed $defaultValue
+   * @param mixed $default_value
    *   Default value to return in case $key does not exist.
    *
    * @return mixed
    *   The value of the stored setting.
    */
-  public function get($key, $defaultValue);
+  public function get($key, $default_value);
 
   /**
    * Sets a check-specific setting value identified by $key.
@@ -55,7 +54,7 @@ interface CheckSettingsInterface {
    * @param array $values
    *   The current values of the form.
    */
-  public function validateForm(array &$form, $values);
+  public function validateForm(array &$form, array $values);
 
   /**
    * Form submission handler.
@@ -65,6 +64,6 @@ interface CheckSettingsInterface {
    * @param array $values
    *   The current values of the form.
    */
-  public function submitForm(array &$form, $values);
+  public function submitForm(array &$form, array $values);
 
 }

@@ -13,6 +13,9 @@ use Drupal\security_review\CheckResult;
 use Drupal\security_review\Security;
 use Drupal\user\Entity\Role;
 
+/**
+ * Checks whether untrusted roles have restricted permissions.
+ */
 class AdminPermissions extends Check {
 
   /**
@@ -74,7 +77,7 @@ class AdminPermissions extends Check {
     return array(
       '#theme' => 'check_help',
       '#title' => 'Admin and trusted Drupal permissions',
-      '#paragraphs' => $paragraphs
+      '#paragraphs' => $paragraphs,
     );
   }
 
@@ -97,14 +100,14 @@ class AdminPermissions extends Check {
               'entity.user_role.edit_permissions_form',
               array('user_role' => $role->id())
             )
-          )
+          ),
         )
       );
 
       $output[] = array(
         '#theme' => 'check_evaluation',
         '#paragraphs' => $paragraphs,
-        '#items' => $permissions
+        '#items' => $permissions,
       );
     }
 
@@ -125,7 +128,7 @@ class AdminPermissions extends Check {
         '!role has !permissions',
         array(
           '!role' => $role->label(),
-          '!permissions' => implode(', ', $permissions)
+          '!permissions' => implode(', ', $permissions),
         )
       );
       $output .= "\n";
@@ -137,12 +140,14 @@ class AdminPermissions extends Check {
   /**
    * {@inheritdoc}
    */
-  public function getMessage($resultConst) {
-    switch ($resultConst) {
+  public function getMessage($result_const) {
+    switch ($result_const) {
       case CheckResult::SUCCESS:
         return 'Untrusted roles do not have administrative or trusted Drupal permissions.';
+
       case CheckResult::FAIL:
         return 'Untrusted roles have been granted administrative or trusted Drupal permissions.';
+
       default:
         return "Unexpected result.";
     }

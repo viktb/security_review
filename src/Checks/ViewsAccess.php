@@ -75,7 +75,7 @@ class ViewsAccess extends Check {
     return array(
       '#theme' => 'check_help',
       '#title' => 'Views access',
-      '#paragraphs' => $paragraphs
+      '#paragraphs' => $paragraphs,
     );
   }
 
@@ -101,7 +101,7 @@ class ViewsAccess extends Check {
             'entity.view.edit_display_form',
             array(
               'view' => $view_id,
-              'display_id' => $display
+              'display_id' => $display,
             )
           )
         );
@@ -111,7 +111,7 @@ class ViewsAccess extends Check {
     return array(
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => $items
+      '#items' => $items,
     );
   }
 
@@ -135,14 +135,17 @@ class ViewsAccess extends Check {
   /**
    * {@inheritdoc}
    */
-  public function getMessage($resultConst) {
-    switch ($resultConst) {
+  public function getMessage($result_const) {
+    switch ($result_const) {
       case CheckResult::SUCCESS:
         return 'Views are access controlled.';
+
       case CheckResult::FAIL:
         return 'There are Views that do not provide any access checks.';
+
       case CheckResult::INFO:
         return 'Module views is not enabled.';
+
       default:
         return 'Unexpected result.';
     }

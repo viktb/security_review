@@ -16,21 +16,21 @@ use Drupal\security_review\CheckResult;
 class Test extends Check {
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getNamespace() {
     return 'Security Review Test';
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getTitle() {
     return 'Test';
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function run() {
     $findings = array();
@@ -42,16 +42,16 @@ class Test extends Check {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function help() {
     return array();
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
-  public function getMessage($resultConst) {
+  public function getMessage($result_const) {
     return 'The test ran.';
   }
 

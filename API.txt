@@ -155,12 +155,11 @@ https://www.drupal.org/node/2508415
   An example:
 
   <?php
-  //...
+  // ...
   /**
    * Implements hook_security_review_unsafe_extensions_alter().
    */
-  function my_module_security_review_unsafe_extensions_alter(array &$variable)
-  {
+  function my_module_security_review_unsafe_extensions_alter(array &$variable) {
     // Add the .reg file extension to the list of unsafe extensions.
     $variable[] = 'reg';
   }

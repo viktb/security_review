@@ -13,7 +13,7 @@ use Drupal\security_review\CheckSettings\BaseUrlSettings;
 use Drupal\security_review\Security;
 
 /**
- * Defines the Drupal Base URL check.
+ * Checks whether $base_url is set in settings.php.
  */
 class BaseUrl extends Check {
 
@@ -98,7 +98,7 @@ class BaseUrl extends Check {
     return array(
       '#theme' => 'check_help',
       '#title' => 'Drupal base URL',
-      '#paragraphs' => $paragraphs
+      '#paragraphs' => $paragraphs,
     );
   }
 
@@ -126,19 +126,21 @@ class BaseUrl extends Check {
     return array(
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => array()
+      '#items' => array(),
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getMessage($resultConst) {
-    switch ($resultConst) {
+  public function getMessage($result_const) {
+    switch ($result_const) {
       case CheckResult::SUCCESS:
         return t('Base URL is set in settings.php.');
+
       case CheckResult::FAIL:
         return t('Base URL is not set in settings.php.');
+
       default:
         return "Unexpected result.";
     }

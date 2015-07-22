@@ -12,8 +12,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\user\Entity\Role;
 
 /**
- * A class containing static methods regarding frequently used security-related
- * data.
+ * Provides frequently used security-related data.
  */
 class Security {
 
@@ -60,7 +59,8 @@ class Security {
     // Check whether visitors can create accounts.
     $user_register = Drupal::config('user.settings')->get('register');
     if ($user_register !== USER_REGISTER_ADMINISTRATORS_ONLY) {
-      // If visitors are allowed to create accounts they are considered untrusted.
+      // If visitors are allowed to create accounts they are considered
+      // untrusted.
       $roles[] = AccountInterface::AUTHENTICATED_ROLE;
     }
 
@@ -71,9 +71,9 @@ class Security {
   /**
    * Returns the permission strings that a group of roles have.
    *
-   * @param string[] $roleIDs
+   * @param string[] $role_ids
    *   The array of roleIDs to check.
-   * @param bool $groupByRoleId
+   * @param bool $group_by_role_id
    *   Choose whether to group permissions by role ID.
    *
    * @return array
@@ -81,27 +81,27 @@ class Security {
    *   true, the array key is the role ID, the value is the array of permissions
    *   the role has.
    */
-  public static function rolePermissions(array $roleIDs, $groupByRoleId = FALSE) {
+  public static function rolePermissions(array $role_ids, $group_by_role_id = FALSE) {
     // Get the permissions the given roles have, grouped by roles.
-    $permissions_grouped = user_role_permissions($roleIDs);
+    $permissions_grouped = user_role_permissions($role_ids);
 
     // Fill up the administrative roles' permissions too.
-    foreach ($roleIDs as $roleID) {
-      $role = Role::load($roleID);
+    foreach ($role_ids as $role_id) {
+      $role = Role::load($role_id);
       /** @var Role $role */
       if ($role->isAdmin()) {
-        $permissions_grouped[$roleID] = static::permissions();
+        $permissions_grouped[$role_id] = static::permissions();
       }
     }
 
-    if ($groupByRoleId) {
+    if ($group_by_role_id) {
       // If the result should be grouped, we have nothing else to do.
       return $permissions_grouped;
     }
     else {
       // Merge the grouped permissions into $untrusted_permissions.
       $untrusted_permissions = array();
-      foreach ($permissions_grouped as $rid => $permissions) {
+      foreach ($permissions_grouped as $permissions) {
         $untrusted_permissions = array_merge($untrusted_permissions, $permissions);
       }
 
@@ -114,7 +114,7 @@ class Security {
   /**
    * Returns the permission strings that untrusted roles have.
    *
-   * @param bool $groupByRoleId
+   * @param bool $group_by_role_id
    *   Choose whether to group permissions by role ID.
    *
    * @return array
@@ -122,8 +122,8 @@ class Security {
    *   true, the array key is the role ID, the value is the array of permissions
    *   the role has.
    */
-  public static function untrustedPermissions($groupByRoleId = FALSE) {
-    return static::rolePermissions(static::untrustedRoles(), $groupByRoleId);
+  public static function untrustedPermissions($group_by_role_id = FALSE) {
+    return static::rolePermissions(static::untrustedRoles(), $group_by_role_id);
   }
 
   /**
@@ -151,7 +151,7 @@ class Security {
   /**
    * Returns the permission strings that trusted roles have.
    *
-   * @param bool $groupByRoleId
+   * @param bool $group_by_role_id
    *   Choose whether to group permissions by role ID.
    *
    * @return array
@@ -159,8 +159,8 @@ class Security {
    *   true, the array key is the role ID, the value is the array of permissions
    *   the role has.
    */
-  public static function trustedPermissions($groupByRoleId = FALSE) {
-    return static::rolePermissions(static::trustedRoles(), $groupByRoleId);
+  public static function trustedPermissions($group_by_role_id = FALSE) {
+    return static::rolePermissions(static::trustedRoles(), $group_by_role_id);
   }
 
 
@@ -274,20 +274,19 @@ class Security {
   }
 
   /**
-   * Iterates through files and determines which are writable by the web
-   * server's user.
+   * Finds files and directories that are writable by the web server.
    *
    * @param string[] $files
    *   The files to iterate through.
-   * @param bool $CLI
+   * @param bool $cli
    *   Whether it is being invoked in CLI context.
    *
    * @return string[]
    *   The files that are writable.
    */
-  public static function findWritableFiles(array $files, $CLI = FALSE) {
+  public static function findWritableFiles(array $files, $cli = FALSE) {
     $writable = array();
-    if (!$CLI) {
+    if (!$cli) {
       foreach ($files as $file) {
         if (is_writable($file)) {
           $writable[] = $file;
@@ -295,25 +294,28 @@ class Security {
       }
     }
     else {
-      $UID = SecurityReview::getServerUID();
-      $GIDs = SecurityReview::getServerGIDs();
+      $uid = SecurityReview::getServerUid();
+      $gids = SecurityReview::getServerGids();
 
       foreach ($files as $file) {
         $perms = 0777 & fileperms($file);
+        // Write permissions for others.
         $ow = ($perms >> 1) & 1;
         if ($ow === 1) {
           $writable[] = $file;
           continue;
         }
 
+        // Write permissions for owner.
         $uw = ($perms >> 7) & 1;
-        if ($uw === 1 && fileowner($file) == $UID) {
+        if ($uw === 1 && fileowner($file) == $uid) {
           $writable[] = $file;
           continue;
         }
 
+        // Write permissions for group.
         $gw = ($perms >> 4) & 1;
-        if ($gw === 1 && in_array(filegroup($file), $GIDs)) {
+        if ($gw === 1 && in_array(filegroup($file), $gids)) {
           $writable[] = $file;
         }
       }

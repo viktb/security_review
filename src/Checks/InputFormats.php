@@ -14,7 +14,9 @@ use Drupal\security_review\CheckResult;
 use Drupal\security_review\Security;
 
 /**
- * Check for formats that either do not have HTML filter that can be used by
+ * Checks for vulnerabilities related to input formats.
+ *
+ * Checks for formats that either do not have HTML filter that can be used by
  * untrusted users, or if they do check if unsafe tags are allowed.
  */
 class InputFormats extends Check {
@@ -63,7 +65,6 @@ class InputFormats extends Check {
       if (!empty($intersect)) {
         // Untrusted users can use this format.
         // Check format for enabled HTML filter.
-
         $filter_html_enabled = FALSE;
         if ($format->filters()->has('filter_html')) {
           $filter_html_enabled = $format->filters('filter_html')->getConfiguration()['status'];
@@ -84,7 +85,8 @@ class InputFormats extends Check {
           }
         }
         elseif (!$filter_html_escape_enabled) {
-          // Format is usable by untrusted users but does not contain the HTML Filter or the HTML escape.
+          // Format is usable by untrusted users but does not contain the HTML
+          // Filter or the HTML escape.
           $findings['formats'][$format->id()] = $format->label();
         }
       }
@@ -110,7 +112,7 @@ class InputFormats extends Check {
     return array(
       '#theme' => 'check_help',
       '#title' => 'Allowed HTML tags in text formats',
-      '#paragraphs' => $paragraphs
+      '#paragraphs' => $paragraphs,
     );
   }
 
@@ -130,7 +132,7 @@ class InputFormats extends Check {
       $output[] = array(
         '#theme' => 'check_evaluation',
         '#paragraphs' => $paragraphs,
-        '#items' => $result->findings()['tags']
+        '#items' => $result->findings()['tags'],
       );
     }
 
@@ -140,7 +142,7 @@ class InputFormats extends Check {
       $output[] = array(
         '#theme' => 'check_evaluation',
         '#paragraphs' => $paragraphs,
-        '#items' => $result->findings()['formats']
+        '#items' => $result->findings()['formats'],
       );
     }
 
@@ -173,14 +175,17 @@ class InputFormats extends Check {
   /**
    * {@inheritdoc}
    */
-  public function getMessage($resultConst) {
-    switch ($resultConst) {
+  public function getMessage($result_const) {
+    switch ($result_const) {
       case CheckResult::SUCCESS:
         return 'Untrusted users are not allowed to input dangerous HTML tags.';
+
       case CheckResult::FAIL:
         return 'Untrusted users are allowed to input dangerous HTML tags.';
+
       case CheckResult::INFO:
         return 'Module filter is not enabled.';
+
       default:
         return 'Unexpected result.';
     }

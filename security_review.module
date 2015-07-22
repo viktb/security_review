@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Site security review and reporting Drupal module.
+ */
+
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\security_review\Check;
 use Drupal\security_review\Checklist;
@@ -64,29 +69,29 @@ function security_review_theme($existing, $type, $theme, $path) {
       'template' => 'check_evaluation',
       'variables' => array(
         'paragraphs' => array(),
-        'items' => array()
-      )
+        'items' => array(),
+      ),
     ),
     'check_help' => array(
       'template' => 'check_help',
       'variables' => array(
         'title' => array(),
-        'paragraphs' => array()
-      )
+        'paragraphs' => array(),
+      ),
     ),
     'general_help' => array(
       'template' => 'general_help',
       'variables' => array(
         'paragraphs' => array(),
-        'checks' => array()
-      )
+        'checks' => array(),
+      ),
     ),
     'run_and_review' => array(
       'template' => 'run_and_review',
       'variables' => array(
         'date' => array(),
-        'checks' => array()
-      )
+        'checks' => array(),
+      ),
     ),
   );
 }
@@ -101,7 +106,7 @@ function template_preprocess_run_and_review(&$variables) {
   $variables['icons'] = array(
     'success' => $icons_root . '73b355/check.svg',
     'warning' => $icons_root . 'e29700/warning.svg',
-    'fail' => $icons_root . 'ea2800/error.svg'
+    'fail' => $icons_root . 'ea2800/error.svg',
   );
 
   // Format date.
@@ -113,12 +118,15 @@ function template_preprocess_run_and_review(&$variables) {
       case CheckResult::SUCCESS:
         $check['result'] = 'success';
         break;
+
       case CheckResult::FAIL:
         $check['result'] = 'fail';
         break;
+
       case CheckResult::WARN:
         $check['result'] = 'warning';
         break;
+
       case CheckResult::INFO:
         $check['result'] = 'info';
         break;
@@ -134,13 +142,31 @@ function security_review_cron() {
   SecurityReview::setServerData();
 }
 
-function _security_review_batch_run_op(Check $check, &$context) {
+/**
+ * Batch operation: runs a single check.
+ *
+ * @param \Drupal\security_review\Check $check
+ *   The check to run.
+ * @param array $context
+ *   The Batch context.
+ */
+function _security_review_batch_run_op(Check $check, array &$context) {
   $context['message'] = $check->getTitle();
   $results = Checklist::runChecks(array($check));
   $context['results'] = array_merge($context['results'], $results);
 }
 
-function _security_review_batch_run_finished($success, $results, $operations) {
+/**
+ * Callback for finishing the batch job of running the checklist.
+ *
+ * @param bool $success
+ *   Whether the batch job was successful.
+ * @param \Drupal\security_review\CheckResult[] $results
+ *   The results of the batch job.
+ * @param array $operations
+ *   The array of batch operations.
+ */
+function _security_review_batch_run_finished($success, array $results, array $operations) {
   SecurityReview::setLastRun(time());
   if ($success) {
     if (!empty($results)) {
@@ -150,7 +176,13 @@ function _security_review_batch_run_finished($success, $results, $operations) {
   }
   else {
     $error_operation = reset($operations);
-    $message = 'An error occurred while processing ' . $error_operation[0] . ' with arguments :' . print_r($error_operation[0], TRUE);
+    $message = t(
+      'An error occurred while processing %error_operation with arguments: @arguments',
+      array(
+        '%error_operation' => $error_operation[0],
+        '@arguments' => print_r($error_operation[1], TRUE),
+      )
+    );
     SecurityReview::log(NULL, $message, array(), RfcLogLevel::ERROR);
     drupal_set_message(t('The review did not store all results, please run again or check the logs for details.'));
   }
