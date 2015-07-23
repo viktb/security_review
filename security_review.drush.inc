@@ -24,7 +24,7 @@ function security_review_drush_command() {
       'log' => 'Log results of each check to watchdog, defaults to off',
       'lastrun' => 'Do not run the checklist, just print last results',
       'check' => 'Comma-separated list of specified checks to run. See README.txt for list of options',
-      'skip' => 'Invert behavior of --check. Run all checks except specified checks',
+      'skip' => 'Comma-separated list of specified checks not to run. This takes precedence over --check.',
       'short' => "Short result messages instead of full description (e.g. 'Text formats')",
       'results' => 'Show the incorrect settings for failed checks',
     ),
