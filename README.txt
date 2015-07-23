@@ -85,16 +85,7 @@ Please use the issue queue at http://drupal.org/project/security_review for all
 module support. You can read more about securely configuring your site at
 http://drupal.org/security/secure-configuration and http://drupalscout.com
 
-Acquia, the provider of this module, offers detailed,
-targeted security review and support for Drupal websites and can be contacted at
-http://wwww.acquia.com or via email at sales@acquia.com.
-
-You can read more about our Drupal security review service at
-http://www.acquia.com/products-services/professional-services/offerings#security_audit
-
-
 -- CREDIT --
 
-Security Review module written by Benjamin Jeavons, drupal.org user coltrane,
-with thanks to Greg Knaddison, drupal.org user greggles, for the idea and
-mentorship.
+Drupal 8 port by Viktor Bán. Security Review module originally written by
+Benjamin Jeavons, drupal.org user coltrane.
