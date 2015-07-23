@@ -87,5 +87,5 @@ http://drupal.org/security/secure-configuration and http://drupalscout.com
 
 -- CREDIT --
 
-Drupal 8 port by Viktor Bán. Security Review module originally written by
-Benjamin Jeavons, drupal.org user coltrane.
+Security Review module originally written by Benjamin Jeavons, drupal.org user
+coltrane. Ported to Drupal 8 by Viktor Bán.
