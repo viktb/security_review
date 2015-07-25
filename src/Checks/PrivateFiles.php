@@ -75,9 +75,9 @@ class PrivateFiles extends Check {
     }
 
     $paragraphs = array();
-    $paragraphs[] = t('Your files directory is not outside of the server root.');
-    $paragraphs[] = Drupal::l(
-      t('Edit the files directory path.'),
+    $paragraphs[] = $this->t('Your files directory is not outside of the server root.');
+    $paragraphs[] = $this->l(
+      $this->t('Edit the files directory path.'),
       Url::fromRoute('system.file_system_settings')
     );
 
@@ -96,7 +96,7 @@ class PrivateFiles extends Check {
       return '';
     }
 
-    return t('Private files directory: !path', array('!path' => $result->findings()['path']));
+    return $this->t('Private files directory: !path', array('!path' => $result->findings()['path']));
   }
 
   /**

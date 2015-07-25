@@ -95,7 +95,7 @@ class ViewsAccess extends Check {
     foreach ($findings as $view_id => $displays) {
       $view = entity_load('view', $view_id);
       foreach ($displays as $display) {
-        $items[] = Drupal::l(
+        $items[] = $this->l(
           $view->label() . ': ' . $display,
           Url::fromRoute(
             'entity.view.edit_display_form',
@@ -124,7 +124,7 @@ class ViewsAccess extends Check {
       return '';
     }
 
-    $output = t('Views without access check:') . ":\n";
+    $output = $this->t('Views without access check:') . ":\n";
     foreach ($findings as $view_id => $displays) {
       $output .= "\t" . $view_id . ": " . implode(', ', $displays) . "\n";
     }

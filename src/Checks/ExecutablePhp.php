@@ -126,10 +126,10 @@ class ExecutablePhp extends Check {
   public function help() {
     $paragraphs = array();
     $paragraphs[] = "The Drupal files directory is for user-uploaded files and by default provides some protection against a malicious user executing arbitrary PHP code against your site.";
-    $paragraphs[] = t(
+    $paragraphs[] = $this->t(
       'Read more about the !risks.',
       array(
-        '!risks' => Drupal::l(
+        '!risks' => $this->l(
           'risk of PHP code execution on Drupal.org',
           Url::fromUri('https://drupal.org/node/615888')
         ),
@@ -151,21 +151,21 @@ class ExecutablePhp extends Check {
     foreach ($result->findings() as $label) {
       switch ($label) {
         case 'executable_php':
-          $paragraphs[] = t('Security Review was able to execute a PHP file written to your files directory.');
+          $paragraphs[] = $this->t('Security Review was able to execute a PHP file written to your files directory.');
           break;
 
         case 'missing_htaccess':
           $directory = PublicStream::basePath();
-          $paragraphs[] = t("The .htaccess file is missing from the files directory at !path", array('!path' => $directory));
-          $paragraphs[] = t("Note, if you are using a webserver other than Apache you should consult your server's documentation on how to limit the execution of PHP scripts in this directory.");
+          $paragraphs[] = $this->t("The .htaccess file is missing from the files directory at !path", array('!path' => $directory));
+          $paragraphs[] = $this->t("Note, if you are using a webserver other than Apache you should consult your server's documentation on how to limit the execution of PHP scripts in this directory.");
           break;
 
         case 'incorrect_htaccess':
-          $paragraphs[] = t("The .htaccess file exists but does not contain the correct content. It is possible it's been maliciously altered.");
+          $paragraphs[] = $this->t("The .htaccess file exists but does not contain the correct content. It is possible it's been maliciously altered.");
           break;
 
         case 'writable_htaccess':
-          $paragraphs[] = t("The .htaccess file is writable which poses a risk should a malicious user find a way to execute PHP code they could alter the .htaccess file to allow further PHP code execution.");
+          $paragraphs[] = $this->t("The .htaccess file is writable which poses a risk should a malicious user find a way to execute PHP code they could alter the .htaccess file to allow further PHP code execution.");
           break;
       }
     }
@@ -186,19 +186,19 @@ class ExecutablePhp extends Check {
     foreach ($result->findings() as $label) {
       switch ($label) {
         case 'executable_php':
-          $paragraphs[] = t('PHP file executed in !path', array('!path' => $directory));
+          $paragraphs[] = $this->t('PHP file executed in !path', array('!path' => $directory));
           break;
 
         case 'missing_htaccess':
-          $paragraphs[] = t('.htaccess is missing from !path', array('!path' => $directory));
+          $paragraphs[] = $this->t('.htaccess is missing from !path', array('!path' => $directory));
           break;
 
         case 'incorrect_htaccess':
-          $paragraphs[] = t('.htaccess wrong content');
+          $paragraphs[] = $this->t('.htaccess wrong content');
           break;
 
         case 'writable_htaccess':
-          $paragraphs[] = t('.htaccess writable');
+          $paragraphs[] = $this->t('.htaccess writable');
           break;
       }
     }

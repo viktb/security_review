@@ -137,12 +137,12 @@ class Field extends Check {
           if ($url === NULL) {
             $url = $entity->urlInfo();
           }
-          $items[] = t(
+          $items[] = $this->t(
             '@vulnerabilities found in <em>@field</em> field of !link',
             array(
               '@vulnerabilities' => implode(' and ', $finding),
               '@field' => $field,
-              '!link' => Drupal::l(
+              '!link' => $this->l(
                 $entity->label(),
                 $url
               ),
@@ -177,7 +177,7 @@ class Field extends Check {
           if ($url === NULL) {
             $url = $entity->url();
           }
-          $output .= "\t" . t(
+          $output .= "\t" . $this->t(
               '@vulnerabilities in @field of !link',
               array(
                 '@vulnerabilities' => implode(' and ', $finding),

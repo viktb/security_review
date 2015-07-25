@@ -90,10 +90,10 @@ class AdminPermissions extends Check {
       $role = Role::load($rid);
       /** @var Role $role */
       $paragraphs = array();
-      $paragraphs[] = t(
+      $paragraphs[] =$this->t(
         "!role has the following restricted permissions:",
         array(
-          '!role' => \Drupal::l(
+          '!role' => $this->l(
             $role->label(),
             Url::fromRoute(
               'entity.user_role.edit_permissions_form',
@@ -123,7 +123,7 @@ class AdminPermissions extends Check {
       $role = Role::load($rid);
       /** @var Role $role */
 
-      $output .= t(
+      $output .=$this->t(
         '!role has !permissions',
         array(
           '!role' => $role->label(),

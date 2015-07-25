@@ -105,8 +105,8 @@ class InputFormats extends Check {
   public function help() {
     $paragraphs = array();
     $paragraphs[] = "Certain HTML tags can allow an attacker to take control of your site. Drupal's input format system makes use of a set filters to run on incoming text. The 'HTML Filter' strips out harmful tags and Javascript events and should be used on all formats accessible by untrusted users.";
-    $paragraphs[] = Drupal::l(
-      t("Read more about Drupal's input formats in the handbooks."),
+      $paragraphs[] = $this->l(
+      $this->t("Read more about Drupal's input formats in the handbooks."),
       Url::fromUri('http://drupal.org/node/224921')
     );
 
@@ -125,11 +125,11 @@ class InputFormats extends Check {
 
     if (!empty($result->findings()['tags'])) {
       $paragraphs = array();
-      $paragraphs[] = Drupal::l(
-        t('Review your text formats.'),
+      $paragraphs[] = $this->l(
+        $this->t('Review your text formats.'),
         Url::fromRoute('filter.admin_overview')
       );
-      $paragraphs[] = t('It is recommended you remove the following tags from roles accessible by untrusted users.');
+      $paragraphs[] = $this->t('It is recommended you remove the following tags from roles accessible by untrusted users.');
       $output[] = array(
         '#theme' => 'check_evaluation',
         '#paragraphs' => $paragraphs,
@@ -139,7 +139,7 @@ class InputFormats extends Check {
 
     if (!empty($result->findings()['formats'])) {
       $paragraphs = array();
-      $paragraphs[] = t('The following formats are usable by untrusted roles and do not filter or escape allowed HTML tags.');
+      $paragraphs[] = $this->t('The following formats are usable by untrusted roles and do not filter or escape allowed HTML tags.');
       $output[] = array(
         '#theme' => 'check_evaluation',
         '#paragraphs' => $paragraphs,
@@ -157,14 +157,14 @@ class InputFormats extends Check {
     $output = '';
 
     if (!empty($result->findings()['tags'])) {
-      $output .= t('Tags') . "\n";
+      $output .= $this->t('Tags') . "\n";
       foreach ($result->findings()['tags'] as $tag) {
         $output .= "\t$tag\n";
       }
     }
 
     if (!empty($result->findings()['formats'])) {
-      $output .= t('Formats') . "\n";
+      $output .= $this->t('Formats') . "\n";
       foreach ($result->findings()['formats'] as $format) {
         $output .= "\t$format\n";
       }

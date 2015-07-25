@@ -72,9 +72,9 @@ class ErrorReporting extends Check {
     }
 
     $paragraphs = array();
-    $paragraphs[] = t('You have error reporting set to both the screen and the log.');
-    $paragraphs[] = Drupal::l(
-      'Alter error reporting settings.',
+    $paragraphs[] = $this->t('You have error reporting set to both the screen and the log.');
+    $paragraphs[] = $this->l(
+      $this->t('Alter error reporting settings.'),
       Url::fromRoute('system.logging_settings')
     );
 
@@ -94,7 +94,7 @@ class ErrorReporting extends Check {
     }
 
     if (isset($result->findings()['level'])) {
-      return t('Error level: !level', array(
+      return $this->t('Error level: !level', array(
         '!level' => $result->findings()['level'],
       ));
     }

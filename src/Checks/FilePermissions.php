@@ -62,7 +62,7 @@ class FilePermissions extends Check {
     $append_status = FALSE;
 
     if (!$cli) {
-      $append_message = t("Your web server should not be able to write to your modules directory. This is a security vulnerable. Consult the Security Review file permissions check help for mitigation steps.");
+      $append_message = $this->t("Your web server should not be able to write to your modules directory. This is a security vulnerable. Consult the Security Review file permissions check help for mitigation steps.");
       $directory = Drupal::moduleHandler()
         ->getModule('security_review')
         ->getPath();
@@ -107,7 +107,7 @@ class FilePermissions extends Check {
     $paragraphs = array();
     $paragraphs[] = "It is dangerous to allow the web server to write to files inside the document root of your server. Doing so could allow Drupal to write files that could then be executed. An attacker might use such a vulnerability to take control of your site. An exception is the Drupal files, private files, and temporary directories which Drupal needs permission to write to in order to provide features like file attachments.";
     $paragraphs[] = "In addition to inspecting existing directories, this test attempts to create and write to your file system. Look in your security_review module directory on the server for files named file_write_test.YYYYMMDDHHMMSS and for a file called IGNOREME.txt which gets a timestamp appended to it if it is writeable.";
-    $paragraphs[] = Drupal::l(t('Read more about file system permissions in the handbooks.'), Url::fromUri('http://drupal.org/node/244924'));
+    $paragraphs[] = $this->l(t('Read more about file system permissions in the handbooks.'), Url::fromUri('http://drupal.org/node/244924'));
 
     return array(
       '#theme' => 'check_help',
@@ -125,9 +125,9 @@ class FilePermissions extends Check {
     }
 
     $paragraphs = array();
-    $paragraphs[] = t(
+    $paragraphs[] = $this->t(
       '<p>The following files and directories appear to be writeable by your web server. In most cases you can fix this by simply altering the file permissions or ownership. If you have command-line access to your host try running "chmod 644 [file path]" where [file path] is one of the following paths (relative to your webroot). For more information consult the !link.</p>',
-      array('!link' => Drupal::l(t('Drupal.org handbooks on file permissions'), Url::fromUri('http://drupal.org/node/244924')))
+      array('!link' => $this->l(t('Drupal.org handbooks on file permissions'), Url::fromUri('http://drupal.org/node/244924')))
     );
 
     return array(

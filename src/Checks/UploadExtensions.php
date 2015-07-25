@@ -80,10 +80,10 @@ class UploadExtensions extends Check {
    */
   public function help() {
     $paragraphs = array();
-    $paragraphs[] = t(
+    $paragraphs[] = $this->t(
       'File and image fields allow for uploaded files. Some extensions are considered dangerous because the files can be evaluated and then executed in the browser. A malicious user could use this opening to gain control of your site. Review !fields_report.',
       array(
-        '!fields_report' => Drupal::l(
+        '!fields_report' => $this->l(
           'all fields on your site',
           Url::fromRoute('entity.field_storage_config.collection')
         ),
@@ -115,7 +115,7 @@ class UploadExtensions extends Check {
       /** @var FieldConfig $entity */
 
       foreach ($unsafe_extensions as $extension) {
-        $item = t(
+        $item = $this->t(
           'Review @type in <em>@field</em> field on @bundle',
           array(
             '@type' => $extension,
@@ -134,7 +134,7 @@ class UploadExtensions extends Check {
             'entity.field_config.' . $entity->getTargetEntityTypeId() . '_field_edit_form',
             $url_params
           );
-          $items[] = Drupal::l($item, $url);
+          $items[] = $this->l($item, $url);
         } catch (RouteNotFoundException $e) {
           $items[] = $item;
         }
@@ -162,7 +162,7 @@ class UploadExtensions extends Check {
       $entity = entity_load('field_config', $entity_id);
       /** @var FieldConfig $entity */
 
-      $output .= t(
+      $output .= $this->t(
         '!bundle: field !field',
         array(
           '!bundle' => $entity->getTargetBundle(),

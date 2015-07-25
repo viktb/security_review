@@ -71,7 +71,7 @@ class QueryErrors extends Check {
         $message = $row->message;
       }
       else {
-        $message = t($row->message, unserialize($row->variables));
+        $message = $this->t($row->message, unserialize($row->variables));
       }
 
       // Get the IP.
@@ -148,7 +148,7 @@ class QueryErrors extends Check {
       return '';
     }
 
-    $output = t('Suspicious IP addresses:') . ":\n";
+    $output = $this->t('Suspicious IP addresses:') . ":\n";
     foreach ($findings as $ip) {
       $output .= "\t" . $ip . "\n";
     }

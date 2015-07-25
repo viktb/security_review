@@ -135,7 +135,7 @@ class FailedLogins extends Check {
       return '';
     }
 
-    $output = t('Suspicious IP addresses:') . ":\n";
+    $output = $this->t('Suspicious IP addresses:') . ":\n";
     foreach ($findings as $ip) {
       $output .= "\t" . $ip . "\n";
     }
