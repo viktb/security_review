@@ -13,7 +13,6 @@ use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
-use Drupal\security_review\Security;
 use GuzzleHttp\Exception\RequestException;
 
 /**
@@ -65,8 +64,7 @@ class ExecutablePhp extends Check {
         $result = CheckResult::FAIL;
         $findings[] = 'executable_php';
       }
-    }
-    catch (RequestException $e) {
+    } catch (RequestException $e) {
       // Access was denied to the file.
     }
 
@@ -100,7 +98,7 @@ class ExecutablePhp extends Check {
         $writable_htaccess = is_writable($htaccess_path);
       }
       else {
-        $writable = Security::findWritableFiles(array($htaccess_path), TRUE);
+        $writable = $this->security->findWritableFiles(array($htaccess_path), TRUE);
         $writable_htaccess = !empty($writable);
       }
 

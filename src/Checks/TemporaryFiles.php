@@ -10,7 +10,6 @@ namespace Drupal\security_review\Checks;
 use Drupal;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
-use Drupal\security_review\Security;
 
 /**
  * Check for sensitive temporary files like settings.php~.
@@ -40,7 +39,7 @@ class TemporaryFiles extends Check {
 
     // Get list of files from the site directory.
     $files = array();
-    $site_path = Security::sitePath() . '/';
+    $site_path = $this->security->sitePath() . '/';
     $dir = scandir($site_path);
     foreach ($dir as $file) {
       // Set full path to only files.

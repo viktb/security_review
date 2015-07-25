@@ -13,7 +13,6 @@ use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
-use Drupal\security_review\Security;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
@@ -61,7 +60,7 @@ class UploadExtensions extends Check {
       $extensions = $entity->getSetting('file_extensions');
       if ($extensions != NULL) {
         $extensions = explode(' ', $extensions);
-        $intersect = array_intersect($extensions, Security::unsafeExtensions());
+        $intersect = array_intersect($extensions, $this->security->unsafeExtensions());
         // $intersect holds the unsafe extensions this entity allows.
         foreach ($intersect as $unsafe_extension) {
           $findings[$entity->id()][] = $unsafe_extension;
@@ -136,8 +135,7 @@ class UploadExtensions extends Check {
             $url_params
           );
           $items[] = Drupal::l($item, $url);
-        }
-        catch (RouteNotFoundException $e) {
+        } catch (RouteNotFoundException $e) {
           $items[] = $item;
         }
       }

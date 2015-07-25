@@ -25,6 +25,13 @@ class ChecklistTest extends KernelTestBase {
   public static $modules = array('security_review', 'security_review_test');
 
   /**
+   * The security_review.checklist service.
+   *
+   * @var \Drupal\security_review\Checklist
+   */
+  protected $checklist;
+
+  /**
    * The security checks defined by Security Review and Security Review Test.
    *
    * @var \Drupal\security_review\Check[]
@@ -58,6 +65,8 @@ class ChecklistTest extends KernelTestBase {
   protected function setUp() {
     parent::setUp();
 
+    $this->checklist = \Drupal::getContainer()
+      ->get('security_review.checklist');
     $this->realChecks = security_review_security_review_checks();
     $this->testChecks = security_review_test_security_review_checks();
     $this->checks = array_merge($this->realChecks, $this->testChecks);
@@ -77,7 +86,7 @@ class ChecklistTest extends KernelTestBase {
    * security_review_test_security_review_checks() returns.
    */
   public function testChecksProvided() {
-    foreach (Checklist::getChecks() as $check) {
+    foreach ($this->checklist->getChecks() as $check) {
       $this->assertTrue(in_array($check->id(), $this->checkIDs), $check->getTitle() . ' found.');
     }
   }
@@ -86,14 +95,14 @@ class ChecklistTest extends KernelTestBase {
    * Tests whether checks returned by getEnabledChecks() are all enabled.
    */
   public function testEnabledChecks() {
-    foreach (Checklist::getEnabledChecks() as $check) {
+    foreach ($this->checklist->getEnabledChecks() as $check) {
       $this->assertFalse($check->isSkipped(), $check->getTitle() . ' is enabled.');
 
       // Disable check.
       $check->skip();
     }
     Checklist::clearCache();
-    $this->assertEqual(count(Checklist::getEnabledChecks()), 0, 'Disabled all checks.');
+    $this->assertEqual(count($this->checklist->getEnabledChecks()), 0, 'Disabled all checks.');
   }
 
   /**
@@ -104,14 +113,14 @@ class ChecklistTest extends KernelTestBase {
    *   getCheckById().
    */
   public function testCheckSearch() {
-    foreach (Checklist::getChecks() as $check) {
+    foreach ($this->checklist->getChecks() as $check) {
       // getCheck().
-      $found = Checklist::getCheck($check->getMachineNamespace(), $check->getMachineTitle());
+      $found = $this->checklist->getCheck($check->getMachineNamespace(), $check->getMachineTitle());
       $this->assertNotNull($found, 'Found a check.');
       $this->assertEqual($check->id(), $found->id(), 'Found ' . $check->getTitle() . '.');
 
       // getCheckById().
-      $found = Checklist::getCheckById($check->id());
+      $found = $this->checklist->getCheckById($check->id());
       $this->assertNotNull($found, 'Found a check.');
       $this->assertEqual($check->id(), $found->id(), 'Found ' . $check->getTitle() . '.');
     }

@@ -7,14 +7,49 @@
 
 namespace Drupal\security_review;
 
-use Drupal;
 use Drupal\Core\Logger\RfcLogLevel;
+use Drupal\Core\Routing\LinkGeneratorTrait;
+use Drupal\Core\Routing\UrlGeneratorTrait;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\Entity\User;
+
 
 /**
  * Defines a security check.
  */
 abstract class Check {
+
+  use LinkGeneratorTrait;
+  use UrlGeneratorTrait;
+  use StringTranslationTrait;
+
+  /**
+   * The configuration storage for this check.
+   *
+   * @var \Drupal\Core\Config\Config $config
+   */
+  protected $config;
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
+   * The security_review.security service.
+   *
+   * @var \Drupal\security_review\Security
+   */
+  protected $security;
+
+  /**
+   * The security_review service.
+   *
+   * @var \Drupal\security_review\SecurityReview
+   */
+  protected $securityReview;
 
   /**
    * Settings handler for this check.
@@ -24,11 +59,11 @@ abstract class Check {
   protected $settings;
 
   /**
-   * The configuration storage for this check.
+   * The state storage.
    *
-   * @var \Drupal\Core\Config\Config $config
+   * @var \Drupal\Core\State\StateInterface
    */
-  protected $config;
+  protected $state;
 
   /**
    * The check's prefix in the State system.
@@ -41,9 +76,22 @@ abstract class Check {
    * Initializes the configuration storage and the settings handler.
    */
   public function __construct() {
-    $this->config = Drupal::configFactory()
+    $container = \Drupal::getContainer();
+
+    // Not injected because of easier instantiation.
+    $config_factory = $container->get('config.factory');
+    $current_user = $container->get('current_user');
+    $security = $container->get('security_review.security');
+    $security_review = $container->get('security_review');
+    $state = $container->get('state');
+
+    $this->config = $config_factory
       ->getEditable('security_review.check.' . $this->id());
+    $this->currentUser = $current_user;
+    $this->security = $security;
+    $this->securityReview = $security_review;
     $this->settings = new CheckSettings($this, $this->config);
+    $this->state = $state;
     $this->statePrefix = 'security_review.check.' . $this->id() . '.';
 
     // Set check ID in config.
@@ -225,14 +273,14 @@ abstract class Check {
    */
   public function lastResult($get_findings = FALSE) {
     $state_prefix = $this->statePrefix . 'last_result.';
-    $result = Drupal::state()->get($state_prefix . 'result');
+    $result = $this->state->get($state_prefix . 'result');
     if ($get_findings) {
-      $findings = Drupal::state()->get($state_prefix . 'findings');
+      $findings = $this->state->get($state_prefix . 'findings');
     }
     else {
       $findings = array();
     }
-    $time = Drupal::state()->get($state_prefix . 'time');
+    $time = $this->state->get($state_prefix . 'time');
 
     $valid_result = is_int($result)
       && $result >= CheckResult::SUCCESS
@@ -258,7 +306,7 @@ abstract class Check {
       if ($fresh_result->result() != $last_result->result()) {
         // If the result is not the same store the new result and return it.
         $this->storeResult($fresh_result);
-        SecurityReview::logCheckResult($fresh_result);
+        $this->securityReview->logCheckResult($fresh_result);
         return $fresh_result;
       }
       else {
@@ -279,7 +327,7 @@ abstract class Check {
    *   The timestamp of the last stored result.
    */
   public function lastRun() {
-    $last_result_time = Drupal::state()
+    $last_result_time = $this->state
       ->get($this->statePrefix . 'last_result.time');
 
     if (!is_int($last_result_time)) {
@@ -348,7 +396,7 @@ abstract class Check {
 
       // Log.
       $context = array('!name' => $this->getTitle());
-      SecurityReview::log($this, '!name check no longer skipped', $context, RfcLogLevel::NOTICE);
+      $this->securityReview->log($this, '!name check no longer skipped', $context, RfcLogLevel::NOTICE);
     }
   }
 
@@ -361,13 +409,13 @@ abstract class Check {
   public function skip() {
     if (!$this->isSkipped()) {
       $this->config->set('skipped', TRUE);
-      $this->config->set('skipped_by', Drupal::currentUser()->id());
+      $this->config->set('skipped_by', $this->currentUser->id());
       $this->config->set('skipped_on', time());
       $this->config->save();
 
       // Log.
       $context = array('!name' => $this->getTitle());
-      SecurityReview::log($this, '!name check skipped', $context, RfcLogLevel::NOTICE);
+      $this->securityReview->log($this, '!name check skipped', $context, RfcLogLevel::NOTICE);
     }
   }
 
@@ -383,12 +431,12 @@ abstract class Check {
         '!reviewcheck' => $this->getTitle(),
         '!namespace' => $this->getNamespace(),
       );
-      SecurityReview::log($this, 'Unable to store check !reviewcheck for !namespace', $context, RfcLogLevel::CRITICAL);
+      $this->securityReview->log($this, 'Unable to store check !reviewcheck for !namespace', $context, RfcLogLevel::CRITICAL);
       return;
     }
 
     $findings = $this->storesFindings() ? $result->findings() : array();
-    Drupal::state()->setMultiple(array(
+    $this->state->setMultiple(array(
       $this->statePrefix . 'last_result.result' => $result->result(),
       $this->statePrefix . 'last_result.time' => $result->time(),
       $this->statePrefix . 'last_result.findings' => $findings,

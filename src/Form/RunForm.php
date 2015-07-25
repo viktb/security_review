@@ -10,11 +10,38 @@ namespace Drupal\security_review\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\security_review\Checklist;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides implementation for the Run form.
  */
 class RunForm extends FormBase {
+
+  /**
+   * The security_review.checklist service.
+   *
+   * @var \Drupal\security_review\Checklist
+   */
+  protected $checklist;
+
+  /**
+   * Constructs a RunForm.
+   *
+   * @param \Drupal\security_review\Checklist $checklist
+   *   The security_review.checklist service.
+   */
+  public function __construct(Checklist $checklist) {
+    $this->checklist = $checklist;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('security_review.checklist')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -60,7 +87,7 @@ class RunForm extends FormBase {
       'error_message' => $this->t('An error occurred. Rerun the process or consult the logs.'),
     );
 
-    foreach (Checklist::getEnabledChecks() as $check) {
+    foreach ($this->checklist->getEnabledChecks() as $check) {
       $batch['operations'][] = array(
         '_security_review_batch_run_op',
         array($check),

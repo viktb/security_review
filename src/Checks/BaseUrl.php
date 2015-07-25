@@ -10,7 +10,6 @@ namespace Drupal\security_review\Checks;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 use Drupal\security_review\CheckSettings\BaseUrlSettings;
-use Drupal\security_review\Security;
 
 /**
  * Checks whether $base_url is set in settings.php.
@@ -50,7 +49,7 @@ class BaseUrl extends Check {
    * {@inheritdoc}
    */
   public function run() {
-    $settings_php = Security::sitePath() . '/settings.php';
+    $settings_php = $this->security->sitePath() . '/settings.php';
     $result = CheckResult::FAIL;
     $findings = array();
 

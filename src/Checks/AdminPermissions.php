@@ -10,7 +10,6 @@ namespace Drupal\security_review\Checks;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
-use Drupal\security_review\Security;
 use Drupal\user\Entity\Role;
 
 /**
@@ -47,11 +46,11 @@ class AdminPermissions extends Check {
     $findings = array();
 
     // Get every permission.
-    $all_permissions = Security::permissions(TRUE);
+    $all_permissions = $this->security->permissions(TRUE);
     $all_permission_strings = array_keys($all_permissions);
 
     // Get permissions for untrusted roles.
-    $untrusted_permissions = Security::untrustedPermissions(TRUE);
+    $untrusted_permissions = $this->security->untrustedPermissions(TRUE);
     foreach ($untrusted_permissions as $rid => $permissions) {
       $intersect = array_intersect($all_permission_strings, $permissions);
       foreach ($intersect as $permission) {

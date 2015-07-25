@@ -13,8 +13,6 @@ use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
-use Drupal\security_review\Security;
-use Drupal\security_review\SecurityReview;
 
 /**
  * Check that files aren't writeable by the server.
@@ -56,7 +54,7 @@ class FilePermissions extends Check {
     $result = CheckResult::SUCCESS;
 
     $file_list = $this->getFileList('.');
-    $writable = Security::findWritableFiles($file_list, $cli);
+    $writable = $this->security->findWritableFiles($file_list, $cli);
 
     // Try creating or appending files.
     // Assume it doesn't work.
@@ -95,7 +93,7 @@ class FilePermissions extends Check {
    * {@inheritdoc}
    */
   public function runCli() {
-    if (!SecurityReview::isServerPosix()) {
+    if (!$this->securityReview->isServerPosix()) {
       return $this->createResult(CheckResult::INFO);
     }
 

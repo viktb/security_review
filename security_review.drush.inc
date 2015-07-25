@@ -5,9 +5,7 @@
  * Drush commands for Security Review module.
  */
 
-use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckResult;
-use Drupal\security_review\SecurityReview;
 
 /**
  * Implements hook_drush_command().
@@ -53,6 +51,12 @@ function security_review_drush_help($section) {
  * Runs a checklist and displays results.
  */
 function security_review_drush() {
+  /** @var \Drupal\security_review\SecurityReview $security_review */
+  $security_review = Drupal::service('security_review');
+
+  /** @var \Drupal\security_review\Checklist $checklist */
+  $checklist = Drupal::service('security_review.checklist');
+
   $store = drush_get_option('store');
   $log = drush_get_option('log');
   $last_run = drush_get_option('lastrun');
@@ -70,7 +74,7 @@ function security_review_drush() {
 
   // Set temporary logging.
   if ($log) {
-    SecurityReview::setLogging(TRUE, TRUE);
+    $security_review->setLogging(TRUE, TRUE);
   }
 
   if (!empty($short_titles)) {
@@ -95,7 +99,7 @@ function security_review_drush() {
     }
     else {
       // Get the whole checklist.
-      $checks = Checklist::getChecks();
+      $checks = $checklist->getChecks();
     }
 
     // Remove checks listed after --skip.
@@ -128,15 +132,15 @@ function security_review_drush() {
     }
 
     // Run the checks.
-    $results = Checklist::runChecks($checks, TRUE);
+    $results = $checklist->runChecks($checks, TRUE);
 
     // Store the results.
     if ($store) {
-      Checklist::storeResults($results);
+      $checklist->storeResults($results);
     }
   }
   else {
-    foreach (Checklist::getChecks() as $check) {
+    foreach ($checklist->getChecks() as $check) {
       $last_result = $check->lastResult($show_findings);
       if ($last_result instanceof CheckResult) {
         $results[] = $last_result;
@@ -157,12 +161,15 @@ function security_review_drush() {
  *   The found Check.
  */
 function _security_review_drush_get_check($check_name) {
+  /** @var \Drupal\security_review\Checklist $checklist */
+  $checklist = Drupal::service('security_review.checklist');
+
   $namespace = 'security_review';
   $title = $check_name;
   if (strpos($check_name, ':') !== FALSE) {
     list($namespace, $title) = explode(':', $check_name);
   }
-  return Checklist::getCheck($namespace, $title);
+  return $checklist->getCheck($namespace, $title);
 }
 
 /**

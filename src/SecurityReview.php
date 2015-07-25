@@ -7,31 +7,80 @@
 
 namespace Drupal\security_review;
 
-use Drupal;
-use Drupal\Core\Access\AccessException;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Logger\RfcLogLevel;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\State\StateInterface;
 
 /**
  * A class containing static methods regarding the module's configuration.
  */
 class SecurityReview {
 
-  private static $temporaryLogging = NULL;
+  use DependencySerializationTrait;
 
   /**
-   * Private constructor for disabling instantiation of the static class.
-   */
-  private function __construct() {
-  }
-
-  /**
-   * Returns the configuration storage for the module's settings.
+   * Temporary logging setting.
    *
-   * @return \Drupal\Core\Config\Config
-   *   The configuration storage for the module's settings.
+   * @var null|bool
    */
-  private static function config() {
-    return Drupal::configFactory()->getEditable('security_review.settings');
+  protected static $temporaryLogging = NULL;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * The config storage.
+   *
+   * @var \Drupal\Core\Config\Config
+   */
+  protected $config;
+
+  /**
+   * The state storage.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
+   * Constructs a SecurityReview.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The state storage.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, ModuleHandlerInterface $module_handler, AccountProxyInterface $current_user) {
+    $this->configFactory = $config_factory;
+    $this->config = $config_factory->getEditable('security_review.settings');
+    $this->state = $state;
+    $this->moduleHandler = $module_handler;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -43,8 +92,8 @@ class SecurityReview {
    * @return bool
    *   A boolean indicating whether the module has been configured.
    */
-  public static function isConfigured() {
-    return static::config()->get('configured') === TRUE;
+  public function isConfigured() {
+    return $this->config->get('configured') === TRUE;
   }
 
   /**
@@ -53,12 +102,12 @@ class SecurityReview {
    * @return bool
    *   A boolean indicating whether logging is enabled.
    */
-  public static function isLogging() {
+  public function isLogging() {
     if (static::$temporaryLogging !== NULL) {
       return static::$temporaryLogging;
     }
 
-    return static::config()->get('log') === TRUE;
+    return $this->config->get('log') === TRUE;
   }
 
   /**
@@ -67,8 +116,8 @@ class SecurityReview {
    * @return int
    *   The last time Security Review has been run.
    */
-  public static function getLastRun() {
-    return static::config()->get('last_run');
+  public function getLastRun() {
+    return $this->config->get('last_run');
   }
 
   /**
@@ -77,8 +126,8 @@ class SecurityReview {
    * @return string[]
    *   Stored untrusted roles' IDs.
    */
-  public static function getUntrustedRoles() {
-    return static::config()->get('untrusted_roles');
+  public function getUntrustedRoles() {
+    return $this->config->get('untrusted_roles');
   }
 
   /**
@@ -87,10 +136,9 @@ class SecurityReview {
    * @param bool $configured
    *   The new value of the 'configured' setting.
    */
-  public static function setConfigured($configured) {
-    $config = static::config();
-    $config->set('configured', $configured);
-    $config->save();
+  public function setConfigured($configured) {
+    $this->config->set('configured', $configured);
+    $this->config->save();
   }
 
   /**
@@ -101,11 +149,10 @@ class SecurityReview {
    * @param bool $temporary
    *   Whether to set only temporarily.
    */
-  public static function setLogging($logging, $temporary = FALSE) {
+  public function setLogging($logging, $temporary = FALSE) {
     if (!$temporary) {
-      $config = static::config();
-      $config->set('log', $logging);
-      $config->save();
+      $this->config->set('log', $logging);
+      $this->config->save();
     }
     else {
       static::$temporaryLogging = ($logging == TRUE);
@@ -118,10 +165,9 @@ class SecurityReview {
    * @param int $last_run
    *   The new value for 'last_run'.
    */
-  public static function setLastRun($last_run) {
-    $config = static::config();
-    $config->set('last_run', $last_run);
-    $config->save();
+  public function setLastRun($last_run) {
+    $this->config->set('last_run', $last_run);
+    $this->config->save();
   }
 
   /**
@@ -130,25 +176,9 @@ class SecurityReview {
    * @param string[] $untrusted_roles
    *   The new untrusted roles' IDs.
    */
-  public static function setUntrustedRoles(array $untrusted_roles) {
-    $config = static::config();
-    $config->set('untrusted_roles', $untrusted_roles);
-    $config->save();
-  }
-
-  /**
-   * Runs enabled checks and stores their results.
-   */
-  public static function runChecklist() {
-    if (Drupal::currentUser()->hasPermission('run security checks')) {
-      $checks = Checklist::getEnabledChecks();
-      $results = Checklist::runChecks($checks);
-      Checklist::storeResults($results);
-      SecurityReview::setLastRun(time());
-    }
-    else {
-      throw new AccessException();
-    }
+  public function setUntrustedRoles(array $untrusted_roles) {
+    $this->config->set('untrusted_roles', $untrusted_roles);
+    $this->config->save();
   }
 
   /**
@@ -163,9 +193,9 @@ class SecurityReview {
    * @param int $level
    *   Severity (RfcLogLevel).
    */
-  public static function log(Check $check, $message, array $context, $level) {
+  public function log(Check $check, $message, array $context, $level) {
     if (static::isLogging()) {
-      Drupal::moduleHandler()->invokeAll(
+      $this->moduleHandler->invokeAll(
         'security_review_log',
         array(
           'check' => $check,
@@ -183,15 +213,15 @@ class SecurityReview {
    * @param \Drupal\security_review\CheckResult $result
    *   The result to log.
    */
-  public static function logCheckResult(CheckResult $result = NULL) {
-    if (SecurityReview::isLogging()) {
+  public function logCheckResult(CheckResult $result = NULL) {
+    if ($this->isLogging()) {
       if ($result == NULL) {
         $check = $result->check();
         $context = array(
-          '!reviewcheck' => $check->getTitle(),
+          '!check' => $check->getTitle(),
           '!namespace' => $check->getNamespace(),
         );
-        SecurityReview::log($check, '!reviewcheck of !namespace produced a null result', $context, RfcLogLevel::CRITICAL);
+        $this->log($check, '!check of !namespace produced a null result', $context, RfcLogLevel::CRITICAL);
         return;
       }
 
@@ -222,36 +252,14 @@ class SecurityReview {
       }
 
       $context = array('!name' => $check->getTitle());
-      static::log($check, $message, $context, $level);
-    }
-  }
-
-  /**
-   * Deletes orphaned check data.
-   */
-  public static function cleanStorage() {
-    // Get list of check configuration names.
-    $orphaned = Drupal::configFactory()->listAll('security_review.check.');
-
-    // Remove items that are used by the checks.
-    foreach (Checklist::getChecks() as $check) {
-      $key = array_search('security_review.check.' . $check->id(), $orphaned);
-      if ($key !== FALSE) {
-        unset($orphaned[$key]);
-      }
-    }
-
-    // Delete orphaned configuration data.
-    foreach ($orphaned as $config_name) {
-      $config = Drupal::configFactory()->getEditable($config_name);
-      $config->delete();
+      $this->log($check, $message, $context, $level);
     }
   }
 
   /**
    * Stores information about the server into the State system.
    */
-  public static function setServerData() {
+  public function setServerData() {
     if (!static::isServerPosix() || PHP_SAPI === 'cli') {
       return;
     }
@@ -259,8 +267,8 @@ class SecurityReview {
     $uid = posix_getuid();
     $groups = posix_getgroups();
 
-    Drupal::state()->set('security_review.server.uid', $uid);
-    Drupal::state()->set('security_review.server.groups', $groups);
+    $this->state->set('security_review.server.uid', $uid);
+    $this->state->set('security_review.server.groups', $groups);
   }
 
   /**
@@ -269,7 +277,7 @@ class SecurityReview {
    * @return bool
    *   Whether the web server is POSIX based.
    */
-  public static function isServerPosix() {
+  public function isServerPosix() {
     return function_exists('posix_getuid');
   }
 
@@ -279,8 +287,8 @@ class SecurityReview {
    * @return int
    *   UID of the web server's user.
    */
-  public static function getServerUid() {
-    return Drupal::state()->get('security_review.server.uid');
+  public function getServerUid() {
+    return $this->state->get('security_review.server.uid');
   }
 
   /**
@@ -289,8 +297,8 @@ class SecurityReview {
    * @return int[]
    *   GIDs of the web server's user.
    */
-  public static function getServerGids() {
-    return Drupal::state()->get('security_review.server.groups');
+  public function getServerGids() {
+    return $this->state->get('security_review.server.groups');
   }
 
 }

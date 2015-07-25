@@ -7,17 +7,51 @@
 
 namespace Drupal\security_review;
 
-use Drupal;
+use Drupal\Core\Access\AccessException;
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 
 /**
  * Contains static functions for handling checks throughout every module.
  */
 class Checklist {
 
+  use DependencySerializationTrait;
+
   /**
-   * Private constructor for disabling instantiation of the static class.
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  private function __construct() {
+  protected $currentUser;
+
+  /**
+   * The security_review service.
+   *
+   * @var \Drupal\security_review\SecurityReview
+   */
+  protected $securityReview;
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * @param \Drupal\security_review\SecurityReview $securityReview
+   *   The SecurityReview service.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The module handler.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user.
+   */
+  public function __construct(SecurityReview $securityReview, ModuleHandlerInterface $moduleHandler, AccountProxyInterface $current_user) {
+    $this->securityReview = $securityReview;
+    $this->moduleHandler = $moduleHandler;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -40,14 +74,14 @@ class Checklist {
    * @return \Drupal\security_review\Check[]
    *   Array of Checks.
    */
-  public static function getChecks() {
+  public function getChecks() {
     $checks = &static::$cachedChecks;
     if (!empty($checks)) {
       return $checks;
     }
 
     // Get checks.
-    $raw_checks = Drupal::moduleHandler()->invokeAll('security_review_checks');
+    $raw_checks = $this->moduleHandler->invokeAll('security_review_checks');
 
     // Filter invalid checks.
     $checks = array();
@@ -58,7 +92,7 @@ class Checklist {
     }
 
     // Sort the checks.
-    usort($checks, "static::compareChecks");
+    usort($checks, array($this, 'compareChecks'));
 
     return $checks;
   }
@@ -69,7 +103,7 @@ class Checklist {
    * @return \Drupal\security_review\Check[]
    *   Array of enabled Checks.
    */
-  public static function getEnabledChecks() {
+  public function getEnabledChecks() {
     $enabled = array();
 
     foreach (static::getChecks() as $check) {
@@ -90,7 +124,7 @@ class Checklist {
    * @return array
    *   Array containing Checks grouped by their namespaces.
    */
-  public static function groupChecksByNamespace(array $checks) {
+  public function groupChecksByNamespace(array $checks) {
     $output = array();
 
     foreach ($checks as $check) {
@@ -98,6 +132,21 @@ class Checklist {
     }
 
     return $output;
+  }
+
+  /**
+   * Runs enabled checks and stores their results.
+   */
+  public function runChecklist() {
+    if ($this->currentUser->hasPermission('run security checks')) {
+      $checks = $this->getEnabledChecks();
+      $results = $this->runChecks($checks);
+      $this->storeResults($results);
+      $this->securityReview->setLastRun(time());
+    }
+    else {
+      throw new AccessException();
+    }
   }
 
   /**
@@ -111,7 +160,7 @@ class Checklist {
    * @return \Drupal\security_review\CheckResult[]
    *   The array of CheckResults generated.
    */
-  public static function runChecks(array $checks, $cli = FALSE) {
+  public function runChecks(array $checks, $cli = FALSE) {
     $results = array();
 
     foreach ($checks as $check) {
@@ -121,7 +170,7 @@ class Checklist {
       else {
         $result = $check->run();
       }
-      SecurityReview::logCheckResult($result);
+      $this->securityReview->logCheckResult($result);
       $results[] = $result;
     }
 
@@ -134,7 +183,7 @@ class Checklist {
    * @param \Drupal\security_review\CheckResult[] $results
    *   The CheckResults to store.
    */
-  public static function storeResults(array $results) {
+  public function storeResults(array $results) {
     foreach ($results as $result) {
       $result->check()->storeResult($result);
     }
@@ -151,7 +200,7 @@ class Checklist {
    * @return null|\Drupal\security_review\Check
    *   The Check or null if it doesn't exist.
    */
-  public static function getCheck($namespace, $title) {
+  public function getCheck($namespace, $title) {
     foreach (static::getChecks() as $check) {
       $same_namespace = $check->getMachineNamespace() == $namespace;
       $same_title = $check->getMachineTitle() == $title;
@@ -172,7 +221,7 @@ class Checklist {
    * @return null|\Drupal\security_review\Check
    *   The Check or null if it doesn't exist.
    */
-  public static function getCheckById($id) {
+  public function getCheckById($id) {
     foreach (static::getChecks() as $check) {
       if ($check->id() == $id) {
         return $check;
@@ -193,7 +242,7 @@ class Checklist {
    * @return int
    *   The comparison's result.
    */
-  public static function compareChecks(Check $a, Check $b) {
+  public function compareChecks(Check $a, Check $b) {
     // If one comes from security_review and the other doesn't, prefer the one
     // with the security_review namespace.
     $a_is_local = $a->getMachineNamespace() == 'security_review';

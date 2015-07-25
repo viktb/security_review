@@ -11,7 +11,6 @@ use Drupal;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
-use Drupal\security_review\Security;
 
 /**
  * Checks for vulnerabilities related to input formats.
@@ -55,8 +54,8 @@ class InputFormats extends Check {
     $findings = array();
 
     $formats = filter_formats();
-    $untrusted_roles = Security::untrustedRoles();
-    $unsafe_tags = Security::unsafeTags();
+    $untrusted_roles = $this->security->untrustedRoles();
+    $unsafe_tags = $this->security->unsafeTags();
 
     foreach ($formats as $format) {
       $format_roles = array_keys(filter_get_roles_by_format($format));
@@ -67,11 +66,13 @@ class InputFormats extends Check {
         // Check format for enabled HTML filter.
         $filter_html_enabled = FALSE;
         if ($format->filters()->has('filter_html')) {
-          $filter_html_enabled = $format->filters('filter_html')->getConfiguration()['status'];
+          $filter_html_enabled = $format->filters('filter_html')
+            ->getConfiguration()['status'];
         }
         $filter_html_escape_enabled = FALSE;
         if ($format->filters()->has('filter_html_escape')) {
-          $filter_html_escape_enabled = $format->filters('filter_html_escape')->getConfiguration()['status'];
+          $filter_html_escape_enabled = $format->filters('filter_html_escape')
+            ->getConfiguration()['status'];
         }
 
         if ($filter_html_enabled) {
