@@ -57,7 +57,7 @@ class HelpController extends ControllerBase {
       )
     );
     $paragraphs[] = $this->l(
-      t('Drupal.org Handbook: Introduction to security-related contrib modules'),
+      $this->t('Drupal.org Handbook: Introduction to security-related contrib modules'),
       Url::fromUri('http://drupal.org/node/382752')
     );
 
