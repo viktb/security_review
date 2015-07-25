@@ -7,16 +7,44 @@
 
 namespace Drupal\security_review\Controller;
 
-use Drupal;
+use Drupal\Core\Access\CsrfTokenGenerator;
+use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckResult;
 use Drupal\security_review\SecurityReview;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * The class of the 'Run & Review' page's controller.
  */
-class ChecklistController {
+class ChecklistController extends ControllerBase {
+
+  /**
+   * The CSRF Token generator.
+   *
+   * @var \Drupal\Core\Access\CsrfTokenGenerator $csrfToken
+   */
+  protected $csrfToken;
+
+  /**
+   * Constructs a ChecklistController.
+   *
+   * @param \Drupal\Core\Access\CsrfTokenGenerator $csrfToken
+   *   The CSRF Token generator.
+   */
+  public function __construct(CsrfTokenGenerator $csrfToken) {
+    $this->csrfToken = $csrfToken;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('csrf_token')
+    );
+  }
 
   /**
    * Creates the Run & Review page.
@@ -28,9 +56,9 @@ class ChecklistController {
     $run_form = array();
 
     // If the user has the required permissions, show the RunForm.
-    if (Drupal::currentUser()->hasPermission('run security checks')) {
+    if ($this->currentUser()->hasPermission('run security checks')) {
       // Get the Run form.
-      $run_form = Drupal::formBuilder()
+      $run_form = $this->formBuilder()
         ->getForm('Drupal\security_review\Form\RunForm');
 
       // Close the Run form if there are results.
@@ -43,8 +71,8 @@ class ChecklistController {
     if (SecurityReview::getLastRun() <= 0) {
       // If they haven't configured the site, prompt them to do so.
       if (!SecurityReview::isConfigured()) {
-        drupal_set_message(t('It appears this is your first time using the Security Review checklist. Before running the checklist please review the settings page at !link to set which roles are untrusted.',
-          array('!link' => Drupal::l('admin/reports/security-review/settings', Url::fromRoute('security_review.settings')))
+        drupal_set_message($this->t('It appears this is your first time using the Security Review checklist. Before running the checklist please review the settings page at !link to set which roles are untrusted.',
+          array('!link' => $this->l('admin/reports/security-review/settings', Url::fromRoute('security_review.settings')))
         ), 'warning');
       }
     }
@@ -69,7 +97,7 @@ class ChecklistController {
       // Initialize with defaults.
       $check_info = array(
         'result' => CheckResult::SKIPPED,
-        'message' => t(
+        'message' => $this->t(
           'The check "!name" hasn\'t been run yet.',
           array('!name' => $check->getTitle())
         ),
@@ -87,7 +115,7 @@ class ChecklistController {
       }
 
       // Determine help link.
-      $check_info['help_link'] = Drupal::l(
+      $check_info['help_link'] = $this->l(
         'Details',
         Url::fromRoute(
           'security_review.help',
@@ -100,12 +128,12 @@ class ChecklistController {
 
       // Add toggle button.
       $toggle_text = $check->isSkipped() ? 'Enable' : 'Skip';
-      $check_info['toggle_link'] = Drupal::l($toggle_text,
+      $check_info['toggle_link'] = $this->l($toggle_text,
         Url::fromRoute(
           'security_review.toggle',
           array('check_id' => $check->id()),
           array(
-            'query' => array('token' => Drupal::csrfToken()->get($check->id())),
+            'query' => array('token' => $this->csrfToken->get($check->id())),
           )
         )
       );

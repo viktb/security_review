@@ -7,7 +7,7 @@
 
 namespace Drupal\security_review\Controller;
 
-use Drupal;
+use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckResult;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * The class of the Help pages' controller.
  */
-class HelpController {
+class HelpController extends ControllerBase {
 
   /**
    * Serves as an entry point for the help pages.
@@ -48,15 +48,15 @@ class HelpController {
   private function generalHelp() {
     $paragraphs = array();
 
-    $paragraphs[] = t('You should take the security of your site very seriously. Fortunately, Drupal is fairly secure by default. The Security Review module automates many of the easy-to-make mistakes that render your site insecure, however it does not automatically make your site impenetrable. You should give care to what modules you install and how you configure your site and server. Be mindful of who visits your site and what features you expose for their use.');
-    $paragraphs[] = t(
+    $paragraphs[] = $this->t('You should take the security of your site very seriously. Fortunately, Drupal is fairly secure by default. The Security Review module automates many of the easy-to-make mistakes that render your site insecure, however it does not automatically make your site impenetrable. You should give care to what modules you install and how you configure your site and server. Be mindful of who visits your site and what features you expose for their use.');
+    $paragraphs[] = $this->t(
       'You can read more about securing your site in the !drupal_org and on !cracking_drupal. There are also additional modules you can install to secure or protect your site. Be aware though that the more modules you have running on your site the greater (usually) attack area you expose.',
       array(
-        '!drupal_org' => Drupal::l('drupal.org handbooks', Url::fromUri('http://drupal.org/security/secure-configuration')),
-        '!cracking_drupal' => Drupal::l('CrackingDrupal.com', Url::fromUri('http://crackingdrupal.com')),
+        '!drupal_org' => $this->l('drupal.org handbooks', Url::fromUri('http://drupal.org/security/secure-configuration')),
+        '!cracking_drupal' => $this->l('CrackingDrupal.com', Url::fromUri('http://crackingdrupal.com')),
       )
     );
-    $paragraphs[] = Drupal::l(
+    $paragraphs[] = $this->l(
       t('Drupal.org Handbook: Introduction to security-related contrib modules'),
       Url::fromUri('http://drupal.org/node/382752')
     );
@@ -73,8 +73,8 @@ class HelpController {
       }
 
       // Add the link pointing to the check-specific help.
-      $check_namespace['check_links'][] = Drupal::l(
-        t('%title', array('%title' => $check->getTitle())),
+      $check_namespace['check_links'][] = $this->l(
+        $this->t('%title', array('%title' => $check->getTitle())),
         Url::fromRoute('security_review.help', array(
           'namespace' => $check->getMachineNamespace(),
           'title' => $check->getMachineTitle(),
@@ -121,7 +121,7 @@ class HelpController {
     if ($check->isSkipped()) {
 
       if ($check->skippedBy() != NULL) {
-        $user = Drupal::l(
+        $user = $this->l(
           $check->skippedBy()->getUsername(),
           $check->skippedBy()->urlInfo()
         );
@@ -130,7 +130,7 @@ class HelpController {
         $user = 'Anonymous';
       }
 
-      $skip_message = t(
+      $skip_message = $this->t(
         'Check marked for skipping on !date by !user',
         array(
           '!date' => format_date($check->skippedOn()),
