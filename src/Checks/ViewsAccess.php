@@ -37,7 +37,7 @@ class ViewsAccess extends Check {
    */
   public function run() {
     // If views is not enabled return with INFO.
-    if (!Drupal::moduleHandler()->moduleExists('views')) {
+    if (!$this->moduleHandler()->moduleExists('views')) {
       return $this->createResult(CheckResult::INFO);
     }
 

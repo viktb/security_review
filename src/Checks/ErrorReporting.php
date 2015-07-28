@@ -7,7 +7,6 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
@@ -36,7 +35,8 @@ class ErrorReporting extends Check {
    */
   public function run() {
     // Get the error level.
-    $error_level = Drupal::config('system.logging')->get('error_level');
+    $error_level = $this->configFactory()->get('system.logging')
+      ->get('error_level');
 
     // Determine the result.
     if (is_null($error_level) || $error_level != 'hide') {

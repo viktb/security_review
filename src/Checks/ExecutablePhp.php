@@ -7,7 +7,6 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal;
 use Drupal\Component\PhpStorage\FileStorage;
 use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\Core\Url;
@@ -19,6 +18,21 @@ use GuzzleHttp\Exception\RequestException;
  * Checks if PHP files written to the files directory can be executed.
  */
 class ExecutablePhp extends Check {
+
+  /**
+   * Drupal's HTTP Client.
+   *
+   * @var \Drupal\Core\Http\Client
+   */
+  protected $httpClient;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct() {
+    parent::__construct();
+    $this->httpClient = $this->container->get('http_client');
+  }
 
   /**
    * {@inheritdoc}
@@ -42,10 +56,6 @@ class ExecutablePhp extends Check {
     $result = CheckResult::SUCCESS;
     $findings = array();
 
-    // Get the HTTP client.
-    $http_client = \Drupal::service('http_client');
-    /** @var \Drupal\Core\Http\Client $http_client */
-
     // Set up test file data.
     $message = 'Security review test ' . date('Ymdhis');
     $content = "<?php\necho '" . $message . "';";
@@ -59,7 +69,7 @@ class ExecutablePhp extends Check {
 
     // Try to access the test file.
     try {
-      $response = $http_client->get($base_url . '/' . $file_path);
+      $response = $this->httpClient->get($base_url . '/' . $file_path);
       if ($response->getStatusCode() == 200 && $response->getBody() === $message) {
         $result = CheckResult::FAIL;
         $findings[] = 'executable_php';
@@ -98,7 +108,7 @@ class ExecutablePhp extends Check {
         $writable_htaccess = is_writable($htaccess_path);
       }
       else {
-        $writable = $this->security->findWritableFiles(array($htaccess_path), TRUE);
+        $writable = $this->security()->findWritableFiles(array($htaccess_path), TRUE);
         $writable_htaccess = !empty($writable);
       }
 

@@ -7,18 +7,19 @@
 
 namespace Drupal\security_review;
 
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\Routing\LinkGeneratorTrait;
 use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\Entity\User;
 
-
 /**
  * Defines a security check.
  */
 abstract class Check {
 
+  use DependencySerializationTrait;
   use LinkGeneratorTrait;
   use UrlGeneratorTrait;
   use StringTranslationTrait;
@@ -31,25 +32,11 @@ abstract class Check {
   protected $config;
 
   /**
-   * The current user.
+   * The service container.
    *
-   * @var \Drupal\Core\Session\AccountProxyInterface
+   * @var \Symfony\Component\DependencyInjection\ContainerInterface
    */
-  protected $currentUser;
-
-  /**
-   * The security_review.security service.
-   *
-   * @var \Drupal\security_review\Security
-   */
-  protected $security;
-
-  /**
-   * The security_review service.
-   *
-   * @var \Drupal\security_review\SecurityReview
-   */
-  protected $securityReview;
+  protected $container;
 
   /**
    * Settings handler for this check.
@@ -59,9 +46,9 @@ abstract class Check {
   protected $settings;
 
   /**
-   * The state storage.
+   * The State system.
    *
-   * @var \Drupal\Core\State\StateInterface
+   * @var \Drupal\Core\State\State
    */
   protected $state;
 
@@ -76,22 +63,12 @@ abstract class Check {
    * Initializes the configuration storage and the settings handler.
    */
   public function __construct() {
-    $container = \Drupal::getContainer();
+    $this->container = \Drupal::getContainer();
 
-    // Not injected because of easier instantiation.
-    $config_factory = $container->get('config.factory');
-    $current_user = $container->get('current_user');
-    $security = $container->get('security_review.security');
-    $security_review = $container->get('security_review');
-    $state = $container->get('state');
-
-    $this->config = $config_factory
+    $this->config = $this->configFactory()
       ->getEditable('security_review.check.' . $this->id());
-    $this->currentUser = $current_user;
-    $this->security = $security;
-    $this->securityReview = $security_review;
     $this->settings = new CheckSettings($this, $this->config);
-    $this->state = $state;
+    $this->state = $this->container->get('state');
     $this->statePrefix = 'security_review.check.' . $this->id() . '.';
 
     // Set check ID in config.
@@ -306,7 +283,7 @@ abstract class Check {
       if ($fresh_result->result() != $last_result->result()) {
         // If the result is not the same store the new result and return it.
         $this->storeResult($fresh_result);
-        $this->securityReview->logCheckResult($fresh_result);
+        $this->securityReview()->logCheckResult($fresh_result);
         return $fresh_result;
       }
       else {
@@ -396,7 +373,7 @@ abstract class Check {
 
       // Log.
       $context = array('!name' => $this->getTitle());
-      $this->securityReview->log($this, '!name check no longer skipped', $context, RfcLogLevel::NOTICE);
+      $this->securityReview()->log($this, '!name check no longer skipped', $context, RfcLogLevel::NOTICE);
     }
   }
 
@@ -409,13 +386,13 @@ abstract class Check {
   public function skip() {
     if (!$this->isSkipped()) {
       $this->config->set('skipped', TRUE);
-      $this->config->set('skipped_by', $this->currentUser->id());
+      $this->config->set('skipped_by', $this->currentUser()->id());
       $this->config->set('skipped_on', time());
       $this->config->save();
 
       // Log.
       $context = array('!name' => $this->getTitle());
-      $this->securityReview->log($this, '!name check skipped', $context, RfcLogLevel::NOTICE);
+      $this->securityReview()->log($this, '!name check skipped', $context, RfcLogLevel::NOTICE);
     }
   }
 
@@ -431,7 +408,7 @@ abstract class Check {
         '!reviewcheck' => $this->getTitle(),
         '!namespace' => $this->getNamespace(),
       );
-      $this->securityReview->log($this, 'Unable to store check !reviewcheck for !namespace', $context, RfcLogLevel::CRITICAL);
+      $this->securityReview()->log($this, 'Unable to store check !reviewcheck for !namespace', $context, RfcLogLevel::CRITICAL);
       return;
     }
 
@@ -458,6 +435,106 @@ abstract class Check {
    */
   public function createResult($result, array $findings = array(), $time = NULL) {
     return new CheckResult($this, $result, $findings, $time);
+  }
+
+  /**
+   * Returns the Security Review Checklist service.
+   *
+   * @return \Drupal\security_review\Checklist
+   *   Security Review's Checklist service.
+   */
+  protected function checklist() {
+    return $this->container->get('security_review.checklist');
+  }
+
+  /**
+   * Returns the Config factory.
+   *
+   * @return \Drupal\Core\Config\ConfigFactory
+   *   Config factory.
+   */
+  protected function configFactory() {
+    return $this->container->get('config.factory');
+  }
+
+  /**
+   * Returns the service container.
+   *
+   * @return \Symfony\Component\DependencyInjection\ContainerInterface
+   *   Service container.
+   */
+  protected function container() {
+    return $this->container;
+  }
+
+  /**
+   * Returns the current Drupal user.
+   *
+   * @return \Drupal\Core\Session\AccountProxy
+   *   Current Drupal user.
+   */
+  protected function currentUser() {
+    return $this->container->get('current_user');
+  }
+
+  /**
+   * Returns the database connection.
+   *
+   * @return \Drupal\Core\Database\Connection
+   *   Database connection.
+   */
+  protected function database() {
+    return $this->container->get('database');
+  }
+
+  /**
+   * Returns the entity manager.
+   *
+   * @return \Drupal\Core\Entity\EntityManagerInterface
+   *   Entity manager.
+   */
+  protected function entityManager() {
+    return $this->container->get('entity.manager');
+  }
+
+  /**
+   * Returns the Drupal Kernel.
+   *
+   * @return \Drupal\Core\DrupalKernel
+   *   Drupal Kernel.
+   */
+  protected function kernel() {
+    return $this->container->get('kernel');
+  }
+
+  /**
+   * Returns the module handler.
+   *
+   * @return \Drupal\Core\Extension\ModuleHandler
+   *   Module handler.
+   */
+  protected function moduleHandler() {
+    return $this->container->get('module_handler');
+  }
+
+  /**
+   * Returns the Security Review Security service.
+   *
+   * @return \Drupal\security_review\Security
+   *   Security Review's Security service.
+   */
+  protected function security() {
+    return $this->container->get('security_review.security');
+  }
+
+  /**
+   * Returns the Security Review service.
+   *
+   * @return \Drupal\security_review\SecurityReview
+   *   Security Review service.
+   */
+  protected function securityReview() {
+    return $this->container->get('security_review');
   }
 
 }

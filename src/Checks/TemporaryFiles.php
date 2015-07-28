@@ -39,7 +39,7 @@ class TemporaryFiles extends Check {
 
     // Get list of files from the site directory.
     $files = array();
-    $site_path = $this->security->sitePath() . '/';
+    $site_path = $this->security()->sitePath() . '/';
     $dir = scandir($site_path);
     foreach ($dir as $file) {
       // Set full path to only files.
@@ -47,7 +47,7 @@ class TemporaryFiles extends Check {
         $files[] = $site_path . $file;
       }
     }
-    Drupal::moduleHandler()->alter('security_review_temporary_files', $files);
+    $this->moduleHandler()->alter('security_review_temporary_files', $files);
 
     // Analyze the files' names.
     foreach ($files as $path) {

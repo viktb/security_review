@@ -7,7 +7,6 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
@@ -36,7 +35,7 @@ class FailedLogins extends Check {
    */
   public function run() {
     // If dblog is not enabled return with INFO.
-    if (!Drupal::moduleHandler()->moduleExists('dblog')) {
+    if (!$this->moduleHandler()->moduleExists('dblog')) {
       return $this->createResult(CheckResult::INFO);
     }
 
@@ -45,7 +44,7 @@ class FailedLogins extends Check {
     $last_result = $this->lastResult();
 
     // Prepare the query.
-    $query = Drupal::database()->select('watchdog', 'w');
+    $query = $this->database()->select('watchdog', 'w');
     $query->fields('w', array(
       'severity',
       'type',

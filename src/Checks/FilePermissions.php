@@ -7,7 +7,6 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal;
 use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\Core\Url;
@@ -54,7 +53,7 @@ class FilePermissions extends Check {
     $result = CheckResult::SUCCESS;
 
     $file_list = $this->getFileList('.');
-    $writable = $this->security->findWritableFiles($file_list, $cli);
+    $writable = $this->security()->findWritableFiles($file_list, $cli);
 
     // Try creating or appending files.
     // Assume it doesn't work.
@@ -63,7 +62,7 @@ class FilePermissions extends Check {
 
     if (!$cli) {
       $append_message = $this->t("Your web server should not be able to write to your modules directory. This is a security vulnerable. Consult the Security Review file permissions check help for mitigation steps.");
-      $directory = Drupal::moduleHandler()
+      $directory = $this->moduleHandler()
         ->getModule('security_review')
         ->getPath();
 
@@ -93,7 +92,7 @@ class FilePermissions extends Check {
    * {@inheritdoc}
    */
   public function runCli() {
-    if (!$this->securityReview->isServerPosix()) {
+    if (!$this->securityReview()->isServerPosix()) {
       return $this->createResult(CheckResult::INFO);
     }
 
@@ -240,7 +239,7 @@ class FilePermissions extends Check {
       $ignore[] = $private_files;
     }
 
-    Drupal::moduleHandler()->alter('security_review_file_ignore', $ignore);
+    $this->moduleHandler()->alter('security_review_file_ignore', $ignore);
     return $ignore;
   }
 

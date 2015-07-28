@@ -46,11 +46,11 @@ class AdminPermissions extends Check {
     $findings = array();
 
     // Get every permission.
-    $all_permissions = $this->security->permissions(TRUE);
+    $all_permissions = $this->security()->permissions(TRUE);
     $all_permission_strings = array_keys($all_permissions);
 
     // Get permissions for untrusted roles.
-    $untrusted_permissions = $this->security->untrustedPermissions(TRUE);
+    $untrusted_permissions = $this->security()->untrustedPermissions(TRUE);
     foreach ($untrusted_permissions as $rid => $permissions) {
       $intersect = array_intersect($all_permission_strings, $permissions);
       foreach ($intersect as $permission) {

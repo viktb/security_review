@@ -7,7 +7,6 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
@@ -46,7 +45,7 @@ class InputFormats extends Check {
    */
   public function run() {
     // If filter is not enabled return with INFO.
-    if (!Drupal::moduleHandler()->moduleExists('filter')) {
+    if (!$this->moduleHandler()->moduleExists('filter')) {
       return $this->createResult(CheckResult::INFO);
     }
 
@@ -54,8 +53,8 @@ class InputFormats extends Check {
     $findings = array();
 
     $formats = filter_formats();
-    $untrusted_roles = $this->security->untrustedRoles();
-    $unsafe_tags = $this->security->unsafeTags();
+    $untrusted_roles = $this->security()->untrustedRoles();
+    $unsafe_tags = $this->security()->unsafeTags();
 
     foreach ($formats as $format) {
       $format_roles = array_keys(filter_get_roles_by_format($format));

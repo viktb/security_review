@@ -257,6 +257,31 @@ class SecurityReview {
   }
 
   /**
+   * Deletes orphaned check data.
+   */
+  public function cleanStorage() {
+    /** @var \Drupal\security_review\Checklist $checklist */
+    $checklist = \Drupal::service('security_review.checklist');
+
+    // Get list of check configuration names.
+    $orphaned = $this->configFactory->listAll('security_review.check.');
+
+    // Remove items that are used by the checks.
+    foreach ($checklist->getChecks() as $check) {
+      $key = array_search('security_review.check.' . $check->id(), $orphaned);
+      if ($key !== FALSE) {
+        unset($orphaned[$key]);
+      }
+    }
+
+    // Delete orphaned configuration data.
+    foreach ($orphaned as $config_name) {
+      $config = $this->configFactory->getEditable($config_name);
+      $config->delete();
+    }
+  }
+
+  /**
    * Stores information about the server into the State system.
    */
   public function setServerData() {

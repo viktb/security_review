@@ -46,7 +46,7 @@ class UploadExtensions extends Check {
    */
   public function run() {
     // If field is not enabled return with INFO.
-    if (!Drupal::moduleHandler()->moduleExists('field')) {
+    if (!$this->moduleHandler()->moduleExists('field')) {
       return $this->createResult(CheckResult::INFO);
     }
 
@@ -60,7 +60,7 @@ class UploadExtensions extends Check {
       $extensions = $entity->getSetting('file_extensions');
       if ($extensions != NULL) {
         $extensions = explode(' ', $extensions);
-        $intersect = array_intersect($extensions, $this->security->unsafeExtensions());
+        $intersect = array_intersect($extensions, $this->security()->unsafeExtensions());
         // $intersect holds the unsafe extensions this entity allows.
         foreach ($intersect as $unsafe_extension) {
           $findings[$entity->id()][] = $unsafe_extension;

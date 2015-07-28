@@ -54,8 +54,11 @@ function security_review_security_review_log(Check $check, $message, array $cont
  * Implements hook_modules_uninstalled().
  */
 function security_review_modules_uninstalled($modules) {
-  // Delete any orphaned check data.
-  _security_review_clean_storage();
+  /** @var \Drupal\security_review\SecurityReview $security_review */
+  $security_review = Drupal::service('security_review');
+
+  // Clean orphaned checks.
+  $security_review->cleanStorage();
 }
 
 /**
@@ -69,7 +72,7 @@ function security_review_modules_installed($modules) {
     $security_review = Drupal::service('security_review');
 
     // Clean orphaned checks.
-    _security_review_clean_storage();
+    $security_review->cleanStorage();
 
     // Store the web server's user.
     $security_review->setServerData();
@@ -208,27 +211,5 @@ function _security_review_batch_run_finished($success, array $results, array $op
     );
     $security_review->log(NULL, $message, array(), RfcLogLevel::ERROR);
     drupal_set_message(t('The review did not store all results, please run again or check the logs for details.'));
-  }
-}
-
-function _security_review_clean_storage() {
-  /** @var \Drupal\security_review\Checklist $checklist */
-  $checklist = Drupal::service('security_review.checklist');
-
-  // Get list of check configuration names.
-  $orphaned = Drupal::configFactory()->listAll('security_review.check.');
-
-  // Remove items that are used by the checks.
-  foreach ($checklist->getChecks() as $check) {
-    $key = array_search('security_review.check.' . $check->id(), $orphaned);
-    if ($key !== FALSE) {
-      unset($orphaned[$key]);
-    }
-  }
-
-  // Delete orphaned configuration data.
-  foreach ($orphaned as $config_name) {
-    $config = Drupal::configFactory()->getEditable($config_name);
-    $config->delete();
   }
 }

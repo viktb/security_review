@@ -7,7 +7,6 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal;
 use Drupal\Core\Entity\Entity;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
@@ -55,7 +54,7 @@ class Field extends Check {
 
     // Load all of the entities.
     $entities = array();
-    $bundle_info = Drupal::entityManager()->getAllBundleInfo();
+    $bundle_info = $this->entityManager()->getAllBundleInfo();
     foreach ($bundle_info as $entity_type_id => $bundles) {
       $entities = array_merge($entities, entity_load_multiple($entity_type_id));
     }

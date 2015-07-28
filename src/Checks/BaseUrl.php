@@ -49,7 +49,7 @@ class BaseUrl extends Check {
    * {@inheritdoc}
    */
   public function run() {
-    $settings_php = $this->security->sitePath() . '/settings.php';
+    $settings_php = $this->security()->sitePath() . '/settings.php';
     $result = CheckResult::FAIL;
     $findings = array();
 
