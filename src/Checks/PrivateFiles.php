@@ -104,16 +104,16 @@ class PrivateFiles extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Private files directory is outside the web server root.';
+        return $this->t('Private files directory is outside the web server root.');
 
       case CheckResult::FAIL:
-        return 'Private files is enabled but the specified directory is not secure outside the web server root.';
+        return $this->t('Private files is enabled but the specified directory is not secure outside the web server root.');
 
       case CheckResult::INFO:
-        return 'Private files feature is not enabled.';
+        return $this->t('Private files feature is not enabled.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

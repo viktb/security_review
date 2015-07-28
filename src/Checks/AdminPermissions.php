@@ -90,7 +90,7 @@ class AdminPermissions extends Check {
       $role = Role::load($rid);
       /** @var Role $role */
       $paragraphs = array();
-      $paragraphs[] =$this->t(
+      $paragraphs[] = $this->t(
         "!role has the following restricted permissions:",
         array(
           '!role' => $this->l(
@@ -123,7 +123,7 @@ class AdminPermissions extends Check {
       $role = Role::load($rid);
       /** @var Role $role */
 
-      $output .=$this->t(
+      $output .= $this->t(
         '!role has !permissions',
         array(
           '!role' => $role->label(),
@@ -142,13 +142,13 @@ class AdminPermissions extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Untrusted roles do not have administrative or trusted Drupal permissions.';
+        return $this->t('Untrusted roles do not have administrative or trusted Drupal permissions.');
 
       case CheckResult::FAIL:
-        return 'Untrusted roles have been granted administrative or trusted Drupal permissions.';
+        return $this->t('Untrusted roles have been granted administrative or trusted Drupal permissions.');
 
       default:
-        return "Unexpected result.";
+        return $this->t("Unexpected result.");
     }
   }
 

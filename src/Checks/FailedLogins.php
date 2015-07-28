@@ -148,13 +148,13 @@ class FailedLogins extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::FAIL:
-        return 'Failed login attempts from the same IP. These may be a brute-force attack to gain access to your site.';
+        return $this->t('Failed login attempts from the same IP. These may be a brute-force attack to gain access to your site.');
 
       case CheckResult::INFO:
-        return 'Module dblog is not enabled.';
+        return $this->t('Module dblog is not enabled.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

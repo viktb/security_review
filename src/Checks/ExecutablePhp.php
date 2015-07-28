@@ -222,16 +222,16 @@ class ExecutablePhp extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'PHP files in the Drupal files directory cannot be executed.';
+        return $this->t('PHP files in the Drupal files directory cannot be executed.');
 
       case CheckResult::FAIL:
-        return 'PHP files in the Drupal files directory can be executed.';
+        return $this->t('PHP files in the Drupal files directory can be executed.');
 
       case CheckResult::WARN:
-        return 'The .htaccess file in the files directory is writable.';
+        return $this->t('The .htaccess file in the files directory is writable.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

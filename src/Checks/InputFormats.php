@@ -178,16 +178,16 @@ class InputFormats extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Untrusted users are not allowed to input dangerous HTML tags.';
+        return $this->t('Untrusted users are not allowed to input dangerous HTML tags.');
 
       case CheckResult::FAIL:
-        return 'Untrusted users are allowed to input dangerous HTML tags.';
+        return $this->t('Untrusted users are allowed to input dangerous HTML tags.');
 
       case CheckResult::INFO:
-        return 'Module filter is not enabled.';
+        return $this->t('Module filter is not enabled.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

@@ -158,16 +158,16 @@ class FilePermissions extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Drupal installation files and directories (except required) are not writable by the server.';
+        return $this->t('Drupal installation files and directories (except required) are not writable by the server.');
 
       case CheckResult::FAIL:
-        return 'Some files and directories in your install are writable by the server.';
+        return $this->t('Some files and directories in your install are writable by the server.');
 
       case CheckResult::INFO:
-        return 'The test cannot be run on this system.';
+        return $this->t('The test cannot be run on this system.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

@@ -121,13 +121,13 @@ class TemporaryFiles extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'No sensitive temporary files were found.';
+        return $this->t('No sensitive temporary files were found.');
 
       case CheckResult::FAIL:
-        return 'Sensitive temporary files were found on your files system.';
+        return $this->t('Sensitive temporary files were found on your files system.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

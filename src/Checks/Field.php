@@ -197,13 +197,13 @@ class Field extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Dangerous tags were not found in any submitted content (fields).';
+        return $this->t('Dangerous tags were not found in any submitted content (fields).');
 
       case CheckResult::FAIL:
-        return 'Dangerous tags were found in submitted content (fields).';
+        return $this->t('Dangerous tags were found in submitted content (fields).');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

@@ -181,16 +181,16 @@ class UploadExtensions extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Only safe extensions are allowed for uploaded files and images.';
+        return $this->t('Only safe extensions are allowed for uploaded files and images.');
 
       case CheckResult::FAIL:
-        return 'Unsafe file extensions are allowed in uploads.';
+        return $this->t('Unsafe file extensions are allowed in uploads.');
 
       case CheckResult::INFO:
-        return 'Module field is not enabled.';
+        return $this->t('Module field is not enabled.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

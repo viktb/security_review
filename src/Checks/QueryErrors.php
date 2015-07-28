@@ -162,13 +162,13 @@ class QueryErrors extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::FAIL:
-        return 'Query errors from the same IP. These may be a SQL injection attack or an attempt at information disclosure.';
+        return $this->t('Query errors from the same IP. These may be a SQL injection attack or an attempt at information disclosure.');
 
       case CheckResult::INFO:
-        return 'Module dblog is not enabled.';
+        return $this->t('Module dblog is not enabled.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

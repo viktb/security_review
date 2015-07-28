@@ -138,16 +138,16 @@ class ViewsAccess extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Views are access controlled.';
+        return $this->t('Views are access controlled.');
 
       case CheckResult::FAIL:
-        return 'There are Views that do not provide any access checks.';
+        return $this->t('There are Views that do not provide any access checks.');
 
       case CheckResult::INFO:
-        return 'Module views is not enabled.';
+        return $this->t('Module views is not enabled.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

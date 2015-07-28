@@ -107,13 +107,13 @@ class ErrorReporting extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Error reporting set to log only.';
+        return $this->t('Error reporting set to log only.');
 
       case CheckResult::FAIL:
-        return 'Errors are written to the screen.';
+        return $this->t('Errors are written to the screen.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 
