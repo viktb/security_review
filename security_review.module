@@ -5,6 +5,7 @@
  * Site security review and reporting Drupal module.
  */
 
+use Drupal\Core\Url;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
@@ -120,13 +121,18 @@ function security_review_theme($existing, $type, $theme, $path) {
  */
 function template_preprocess_run_and_review(&$variables) {
   // Get icon list.
-  global $base_url;
-  $icons_root = $base_url . '/core/misc/icons/';
+  $icons_root = '/core/misc/icons/';
   $variables['icons'] = array(
     'success' => $icons_root . '73b355/check.svg',
     'warning' => $icons_root . 'e29700/warning.svg',
     'fail' => $icons_root . 'ea2800/error.svg',
   );
+
+  // Generate full URLs.
+  foreach ($variables['icons'] as $icon => $path) {
+    $variables['icons'][$icon] = Url::fromUserInput($path)->setAbsolute()
+      ->toString();
+  }
 
   // Format date.
   $variables['date'] = format_date($variables['date']);
