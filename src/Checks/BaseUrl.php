@@ -10,10 +10,9 @@ namespace Drupal\security_review\Checks;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 use Drupal\security_review\CheckSettings\BaseUrlSettings;
-use Drupal\security_review\Security;
 
 /**
- * Checks whether $base_url is set in settings.php.
+ * Checks whether base_url is set in settings.php.
  */
 class BaseUrl extends Check {
 
@@ -50,7 +49,7 @@ class BaseUrl extends Check {
    * {@inheritdoc}
    */
   public function run() {
-    $settings_php = Security::sitePath() . '/settings.php';
+    $settings_php = $this->security()->sitePath() . '/settings.php';
     $result = CheckResult::FAIL;
     $findings = array();
 
@@ -112,14 +111,14 @@ class BaseUrl extends Check {
 
     $findings = $result->findings();
     $paragraphs = array();
-    $paragraphs[] = t(
+    $paragraphs[] = $this->t(
       'Your site is available at the following URL: !url.',
       array('!url' => $findings['base_url']));
-    $paragraphs[] = t(
+    $paragraphs[] = $this->t(
       "If your site should only be available at that URL it is recommended that you set it as the \$base_url variable in the settings.php file at !file",
       array('!file' => $findings['settings'])
     );
-    $paragraphs[] = t(
+    $paragraphs[] = $this->t(
       "Or, if you are using Drupal's multi-site functionality then you should set the \$base_url variable for the appropriate settings.php for your site."
     );
 
@@ -136,13 +135,13 @@ class BaseUrl extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return t('Base URL is set in settings.php.');
+        return $this->t('Base URL is set in settings.php.');
 
       case CheckResult::FAIL:
-        return t('Base URL is not set in settings.php.');
+        return $this->t('Base URL is not set in settings.php.');
 
       default:
-        return "Unexpected result.";
+        return $this->t("Unexpected result.");
     }
   }
 

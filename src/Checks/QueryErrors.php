@@ -36,7 +36,7 @@ class QueryErrors extends Check {
    */
   public function run() {
     // If dblog is not enabled return with INFO.
-    if (!Drupal::moduleHandler()->moduleExists('dblog')) {
+    if (!$this->moduleHandler()->moduleExists('dblog')) {
       return $this->createResult(CheckResult::INFO);
     }
 
@@ -45,7 +45,7 @@ class QueryErrors extends Check {
     $last_result = $this->lastResult();
 
     // Prepare the query.
-    $query = Drupal::database()->select('watchdog', 'w');
+    $query = $this->database()->select('watchdog', 'w');
     $query->fields('w', array(
       'severity',
       'type',
@@ -71,7 +71,7 @@ class QueryErrors extends Check {
         $message = $row->message;
       }
       else {
-        $message = t($row->message, unserialize($row->variables));
+        $message = $this->t($row->message, unserialize($row->variables));
       }
 
       // Get the IP.
@@ -148,7 +148,7 @@ class QueryErrors extends Check {
       return '';
     }
 
-    $output = t('Suspicious IP addresses:') . ":\n";
+    $output = $this->t('Suspicious IP addresses:') . ":\n";
     foreach ($findings as $ip) {
       $output .= "\t" . $ip . "\n";
     }
@@ -162,13 +162,13 @@ class QueryErrors extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::FAIL:
-        return 'Query errors from the same IP. These may be a SQL injection attack or an attempt at information disclosure.';
+        return $this->t('Query errors from the same IP. These may be a SQL injection attack or an attempt at information disclosure.');
 
       case CheckResult::INFO:
-        return 'Module dblog is not enabled.';
+        return $this->t('Module dblog is not enabled.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

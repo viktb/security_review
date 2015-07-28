@@ -7,7 +7,6 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
@@ -36,7 +35,7 @@ class FailedLogins extends Check {
    */
   public function run() {
     // If dblog is not enabled return with INFO.
-    if (!Drupal::moduleHandler()->moduleExists('dblog')) {
+    if (!$this->moduleHandler()->moduleExists('dblog')) {
       return $this->createResult(CheckResult::INFO);
     }
 
@@ -45,7 +44,7 @@ class FailedLogins extends Check {
     $last_result = $this->lastResult();
 
     // Prepare the query.
-    $query = Drupal::database()->select('watchdog', 'w');
+    $query = $this->database()->select('watchdog', 'w');
     $query->fields('w', array(
       'severity',
       'type',
@@ -135,7 +134,7 @@ class FailedLogins extends Check {
       return '';
     }
 
-    $output = t('Suspicious IP addresses:') . ":\n";
+    $output = $this->t('Suspicious IP addresses:') . ":\n";
     foreach ($findings as $ip) {
       $output .= "\t" . $ip . "\n";
     }
@@ -149,13 +148,13 @@ class FailedLogins extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::FAIL:
-        return 'Failed login attempts from the same IP. These may be a brute-force attack to gain access to your site.';
+        return $this->t('Failed login attempts from the same IP. These may be a brute-force attack to gain access to your site.');
 
       case CheckResult::INFO:
-        return 'Module dblog is not enabled.';
+        return $this->t('Module dblog is not enabled.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

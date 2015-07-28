@@ -2,13 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\security_review\Tests\SecurityReviewWebTest.
+ * Contains \Drupal\security_review\Tests\ChecklistWebTest.
  */
 
 namespace Drupal\security_review\Tests;
 
 use Drupal\security_review\Checklist;
-use Drupal\security_review\SecurityReview;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -16,7 +15,7 @@ use Drupal\simpletest\WebTestBase;
  *
  * @group security_review
  */
-class SecurityReviewWebTest extends WebTestBase {
+class ChecklistWebTest extends WebTestBase {
 
   /**
    * Modules to enable.
@@ -40,10 +39,20 @@ class SecurityReviewWebTest extends WebTestBase {
   protected $checks;
 
   /**
+   * The security_review.checklist service.
+   *
+   * @var \Drupal\security_review\Checklist
+   */
+  protected $checklist;
+
+  /**
    * Sets up the testing environment.
    */
   protected function setUp() {
     parent::setUp();
+
+    $this->checklist = \Drupal::getContainer()
+      ->get('security_review.checklist');
 
     // Login.
     $this->user = $this->drupalCreateUser(
@@ -73,7 +82,7 @@ class SecurityReviewWebTest extends WebTestBase {
     foreach ($this->checks as $check) {
       $this->assertEqual(0, $check->lastRun(), $check->getTitle() . ' has not been run yet.');
     }
-    SecurityReview::runChecklist();
+    $this->checklist->runChecklist();
     foreach ($this->checks as $check) {
       $this->assertNotEqual(0, $check->lastRun(), $check->getTitle() . ' has been run.');
     }
@@ -86,7 +95,7 @@ class SecurityReviewWebTest extends WebTestBase {
     foreach ($this->checks as $check) {
       $check->skip();
     }
-    SecurityReview::runChecklist();
+    $this->checklist->runChecklist();
     foreach ($this->checks as $check) {
       $this->assertEqual(0, $check->lastRun(), $check->getTitle() . ' has not been run.');
     }

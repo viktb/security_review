@@ -6,9 +6,7 @@
  */
 
 use Drupal\Core\Url;
-use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckResult;
-use Drupal\security_review\SecurityReview;
 
 /**
  * Implements hook_install().
@@ -21,12 +19,6 @@ function security_review_install() {
       array('!link' => Drupal::l('admin/people/permissions', Url::fromRoute('user.admin_permissions')))
     )
   );
-
-  // Clean orphaned checks.
-  SecurityReview::cleanStorage();
-
-  // Store the web server's user.
-  SecurityReview::setServerData();
 }
 
 /**
@@ -36,10 +28,13 @@ function security_review_requirements($phase) {
   $requirements = array();
 
   if ($phase == 'runtime') {
+    /** @var \Drupal\security_review\Checklist $checklist */
+    $checklist = Drupal::service('security_review.checklist');
+
     $failed_checks = FALSE;
     $no_results = TRUE;
 
-    foreach (Checklist::getEnabledChecks() as $check) {
+    foreach ($checklist->getEnabledChecks() as $check) {
       $result = $check->lastResult();
       if ($result instanceof CheckResult) {
         $no_results = FALSE;

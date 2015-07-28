@@ -5,9 +5,9 @@
  * Site security review and reporting Drupal module.
  */
 
+use Drupal\Core\Url;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\security_review\Check;
-use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckResult;
 use Drupal\security_review\Checks\AdminPermissions;
 use Drupal\security_review\Checks\BaseUrl;
@@ -22,7 +22,6 @@ use Drupal\security_review\Checks\QueryErrors;
 use Drupal\security_review\Checks\TemporaryFiles;
 use Drupal\security_review\Checks\UploadExtensions;
 use Drupal\security_review\Checks\ViewsAccess;
-use Drupal\security_review\SecurityReview;
 
 /**
  * Implements hook_security_review_checks().
@@ -56,8 +55,29 @@ function security_review_security_review_log(Check $check, $message, array $cont
  * Implements hook_modules_uninstalled().
  */
 function security_review_modules_uninstalled($modules) {
-  // Delete any orphaned check data.
-  SecurityReview::cleanStorage();
+  /** @var \Drupal\security_review\SecurityReview $security_review */
+  $security_review = Drupal::service('security_review');
+
+  // Clean orphaned checks.
+  $security_review->cleanStorage();
+}
+
+/**
+ * Implements hook_modules_installed().
+ */
+function security_review_modules_installed($modules) {
+  if (in_array('security_review', $modules)) {
+    // Post-install hook.
+
+    /** @var \Drupal\security_review\SecurityReview $security_review */
+    $security_review = Drupal::service('security_review');
+
+    // Clean orphaned checks.
+    $security_review->cleanStorage();
+
+    // Store the web server's user.
+    $security_review->setServerData();
+  }
 }
 
 /**
@@ -101,13 +121,18 @@ function security_review_theme($existing, $type, $theme, $path) {
  */
 function template_preprocess_run_and_review(&$variables) {
   // Get icon list.
-  global $base_url;
-  $icons_root = $base_url . '/core/misc/icons/';
+  $icons_root = '/core/misc/icons/';
   $variables['icons'] = array(
     'success' => $icons_root . '73b355/check.svg',
     'warning' => $icons_root . 'e29700/warning.svg',
     'fail' => $icons_root . 'ea2800/error.svg',
   );
+
+  // Generate full URLs.
+  foreach ($variables['icons'] as $icon => $path) {
+    $variables['icons'][$icon] = Url::fromUserInput($path)->setAbsolute()
+      ->toString();
+  }
 
   // Format date.
   $variables['date'] = format_date($variables['date']);
@@ -139,7 +164,7 @@ function template_preprocess_run_and_review(&$variables) {
  */
 function security_review_cron() {
   // Store the web server's user.
-  SecurityReview::setServerData();
+  Drupal::service('security_review')->setServerData();
 }
 
 /**
@@ -152,7 +177,8 @@ function security_review_cron() {
  */
 function _security_review_batch_run_op(Check $check, array &$context) {
   $context['message'] = $check->getTitle();
-  $results = Checklist::runChecks(array($check));
+  $results = Drupal::service('security_review.checklist')
+    ->runChecks(array($check));
   $context['results'] = array_merge($context['results'], $results);
 }
 
@@ -167,10 +193,16 @@ function _security_review_batch_run_op(Check $check, array &$context) {
  *   The array of batch operations.
  */
 function _security_review_batch_run_finished($success, array $results, array $operations) {
-  SecurityReview::setLastRun(time());
+  /** @var \Drupal\security_review\SecurityReview $security_review */
+  $security_review = Drupal::service('security_review');
+
+  /** @var \Drupal\security_review\Checklist $checklist */
+  $checklist = Drupal::service('security_review.checklist');
+
+  $security_review->setLastRun(time());
   if ($success) {
     if (!empty($results)) {
-      Checklist::storeResults($results);
+      $checklist->storeResults($results);
     }
     drupal_set_message(t('Review complete'));
   }
@@ -183,7 +215,7 @@ function _security_review_batch_run_finished($success, array $results, array $op
         '@arguments' => print_r($error_operation[1], TRUE),
       )
     );
-    SecurityReview::log(NULL, $message, array(), RfcLogLevel::ERROR);
+    $security_review->log(NULL, $message, array(), RfcLogLevel::ERROR);
     drupal_set_message(t('The review did not store all results, please run again or check the logs for details.'));
   }
 }

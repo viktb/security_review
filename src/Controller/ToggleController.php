@@ -21,6 +21,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class ToggleController extends ControllerBase {
 
   /**
+   * The security_review.checklist service.
+   *
+   * @var \Drupal\security_review\Checklist
+   */
+  protected $checklist;
+
+  /**
    * The CSRF Token generator.
    *
    * @var \Drupal\Core\Access\CsrfTokenGenerator $csrfToken
@@ -42,7 +49,8 @@ class ToggleController extends ControllerBase {
    * @param \Symfony\Component\HttpFoundation\RequestStack $request
    *   The request stack.
    */
-  public function __construct(CsrfTokenGenerator $csrfToken, RequestStack $request) {
+  public function __construct(CsrfTokenGenerator $csrfToken, RequestStack $request, Checklist $checklist) {
+    $this->checklist = $checklist;
     $this->csrfToken = $csrfToken;
     $this->request = $request->getCurrentRequest();
   }
@@ -53,7 +61,8 @@ class ToggleController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('csrf_token'),
-      $container->get('request_stack')
+      $container->get('request_stack'),
+      $container->get('security_review.checklist')
     );
   }
 
@@ -73,7 +82,7 @@ class ToggleController extends ControllerBase {
     // Validate token.
     $token = $this->request->query->get('token');
     if ($this->csrfToken->validate($token, $check_id)) {
-      $check = Checklist::getCheckById($check_id);
+      $check = $this->checklist->getCheckById($check_id);
       if ($check != NULL) {
         if ($check->isSkipped()) {
           $check->enable();

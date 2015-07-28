@@ -28,13 +28,30 @@ class ChecklistController extends ControllerBase {
   protected $csrfToken;
 
   /**
+   * @var \Drupal\security_review\Checklist
+   */
+  protected $checklist;
+
+  /**
+   * @var \Drupal\security_review\SecurityReview
+   */
+  protected $securityReview;
+
+
+  /**
    * Constructs a ChecklistController.
    *
    * @param \Drupal\Core\Access\CsrfTokenGenerator $csrfToken
    *   The CSRF Token generator.
+   * @param \Drupal\security_review\SecurityReview $securityReview
+   *   The security_review service.
+   * @param \Drupal\security_review\Checklist $checklist
+   *   The security_review.checklist service.
    */
-  public function __construct(CsrfTokenGenerator $csrfToken) {
+  public function __construct(CsrfTokenGenerator $csrfToken, SecurityReview $securityReview, Checklist $checklist) {
     $this->csrfToken = $csrfToken;
+    $this->checklist = $checklist;
+    $this->securityReview = $securityReview;
   }
 
   /**
@@ -42,7 +59,9 @@ class ChecklistController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('csrf_token')
+      $container->get('csrf_token'),
+      $container->get('security_review'),
+      $container->get('security_review.checklist')
     );
   }
 
@@ -62,15 +81,15 @@ class ChecklistController extends ControllerBase {
         ->getForm('Drupal\security_review\Form\RunForm');
 
       // Close the Run form if there are results.
-      if (SecurityReview::getLastRun() > 0) {
+      if ($this->securityReview->getLastRun() > 0) {
         $run_form['run_form']['#open'] = FALSE;
       }
     }
 
     // Print the results if any.
-    if (SecurityReview::getLastRun() <= 0) {
+    if ($this->securityReview->getLastRun() <= 0) {
       // If they haven't configured the site, prompt them to do so.
-      if (!SecurityReview::isConfigured()) {
+      if (!$this->securityReview->isConfigured()) {
         drupal_set_message($this->t('It appears this is your first time using the Security Review checklist. Before running the checklist please review the settings page at !link to set which roles are untrusted.',
           array('!link' => $this->l('admin/reports/security-review/settings', Url::fromRoute('security_review.settings')))
         ), 'warning');
@@ -88,12 +107,12 @@ class ChecklistController extends ControllerBase {
    */
   public function results() {
     // If there are no results return.
-    if (SecurityReview::getLastRun() <= 0) {
+    if ($this->securityReview->getLastRun() <= 0) {
       return array();
     }
 
     $checks = array();
-    foreach (Checklist::getChecks() as $check) {
+    foreach ($this->checklist->getChecks() as $check) {
       // Initialize with defaults.
       $check_info = array(
         'result' => CheckResult::SKIPPED,
@@ -144,7 +163,7 @@ class ChecklistController extends ControllerBase {
 
     return array(
       '#theme' => 'run_and_review',
-      '#date' => SecurityReview::getLastRun(),
+      '#date' => $this->securityReview->getLastRun(),
       '#checks' => $checks,
       '#attached' => array(
         'library' => array('security_review/run_and_review'),

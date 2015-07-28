@@ -11,12 +11,51 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 use Drupal\security_review\Checklist;
 use Drupal\security_review\CheckResult;
+use Drupal\security_review\SecurityReview;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * The class of the Help pages' controller.
  */
 class HelpController extends ControllerBase {
+
+  /**
+   * The security_review.checklist service.
+   *
+   * @var \Drupal\security_review\Checklist
+   */
+  protected $checklist;
+
+  /**
+   * The security_review service.
+   *
+   * @var \Drupal\security_review\SecurityReview
+   */
+  protected $securityReview;
+
+  /**
+   * Constructs a HelpController.
+   *
+   * @param \Drupal\security_review\SecurityReview $securityReview
+   *   The security_review service.
+   * @param \Drupal\security_review\Checklist $checklist
+   *   The security_review.checklist service.
+   */
+  public function __construct(SecurityReview $securityReview, Checklist $checklist) {
+    $this->checklist = $checklist;
+    $this->securityReview = $securityReview;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('security_review'),
+      $container->get('security_review.checklist')
+    );
+  }
 
   /**
    * Serves as an entry point for the help pages.
@@ -62,7 +101,7 @@ class HelpController extends ControllerBase {
     );
 
     $checks = array();
-    foreach (Checklist::getChecks() as $check) {
+    foreach ($this->checklist->getChecks() as $check) {
       // Get the namespace array's reference.
       $check_namespace = &$checks[$check->getMachineNamespace()];
 
@@ -105,7 +144,7 @@ class HelpController extends ControllerBase {
    */
   private function checkHelp($namespace, $title) {
     // Get the requested check.
-    $check = Checklist::getCheck($namespace, $title);
+    $check = $this->checklist->getCheck($namespace, $title);
 
     // If the check doesn't exist, throw 404.
     if ($check == NULL) {

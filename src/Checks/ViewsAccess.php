@@ -37,7 +37,7 @@ class ViewsAccess extends Check {
    */
   public function run() {
     // If views is not enabled return with INFO.
-    if (!Drupal::moduleHandler()->moduleExists('views')) {
+    if (!$this->moduleHandler()->moduleExists('views')) {
       return $this->createResult(CheckResult::INFO);
     }
 
@@ -95,7 +95,7 @@ class ViewsAccess extends Check {
     foreach ($findings as $view_id => $displays) {
       $view = entity_load('view', $view_id);
       foreach ($displays as $display) {
-        $items[] = Drupal::l(
+        $items[] = $this->l(
           $view->label() . ': ' . $display,
           Url::fromRoute(
             'entity.view.edit_display_form',
@@ -124,7 +124,7 @@ class ViewsAccess extends Check {
       return '';
     }
 
-    $output = t('Views without access check:') . ":\n";
+    $output = $this->t('Views without access check:') . ":\n";
     foreach ($findings as $view_id => $displays) {
       $output .= "\t" . $view_id . ": " . implode(', ', $displays) . "\n";
     }
@@ -138,16 +138,16 @@ class ViewsAccess extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Views are access controlled.';
+        return $this->t('Views are access controlled.');
 
       case CheckResult::FAIL:
-        return 'There are Views that do not provide any access checks.';
+        return $this->t('There are Views that do not provide any access checks.');
 
       case CheckResult::INFO:
-        return 'Module views is not enabled.';
+        return $this->t('Module views is not enabled.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

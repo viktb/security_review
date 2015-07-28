@@ -7,7 +7,6 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal;
 use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
@@ -75,9 +74,9 @@ class PrivateFiles extends Check {
     }
 
     $paragraphs = array();
-    $paragraphs[] = t('Your files directory is not outside of the server root.');
-    $paragraphs[] = Drupal::l(
-      t('Edit the files directory path.'),
+    $paragraphs[] = $this->t('Your files directory is not outside of the server root.');
+    $paragraphs[] = $this->l(
+      $this->t('Edit the files directory path.'),
       Url::fromRoute('system.file_system_settings')
     );
 
@@ -96,7 +95,7 @@ class PrivateFiles extends Check {
       return '';
     }
 
-    return t('Private files directory: !path', array('!path' => $result->findings()['path']));
+    return $this->t('Private files directory: !path', array('!path' => $result->findings()['path']));
   }
 
   /**
@@ -105,16 +104,16 @@ class PrivateFiles extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Private files directory is outside the web server root.';
+        return $this->t('Private files directory is outside the web server root.');
 
       case CheckResult::FAIL:
-        return 'Private files is enabled but the specified directory is not secure outside the web server root.';
+        return $this->t('Private files is enabled but the specified directory is not secure outside the web server root.');
 
       case CheckResult::INFO:
-        return 'Private files feature is not enabled.';
+        return $this->t('Private files feature is not enabled.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

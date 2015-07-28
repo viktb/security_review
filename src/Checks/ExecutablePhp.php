@@ -7,19 +7,32 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal;
 use Drupal\Component\PhpStorage\FileStorage;
 use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
-use Drupal\security_review\Security;
 use GuzzleHttp\Exception\RequestException;
 
 /**
  * Checks if PHP files written to the files directory can be executed.
  */
 class ExecutablePhp extends Check {
+
+  /**
+   * Drupal's HTTP Client.
+   *
+   * @var \Drupal\Core\Http\Client
+   */
+  protected $httpClient;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct() {
+    parent::__construct();
+    $this->httpClient = $this->container->get('http_client');
+  }
 
   /**
    * {@inheritdoc}
@@ -43,10 +56,6 @@ class ExecutablePhp extends Check {
     $result = CheckResult::SUCCESS;
     $findings = array();
 
-    // Get the HTTP client.
-    $http_client = \Drupal::service('http_client');
-    /** @var \Drupal\Core\Http\Client $http_client */
-
     // Set up test file data.
     $message = 'Security review test ' . date('Ymdhis');
     $content = "<?php\necho '" . $message . "';";
@@ -60,13 +69,12 @@ class ExecutablePhp extends Check {
 
     // Try to access the test file.
     try {
-      $response = $http_client->get($base_url . '/' . $file_path);
+      $response = $this->httpClient->get($base_url . '/' . $file_path);
       if ($response->getStatusCode() == 200 && $response->getBody() === $message) {
         $result = CheckResult::FAIL;
         $findings[] = 'executable_php';
       }
-    }
-    catch (RequestException $e) {
+    } catch (RequestException $e) {
       // Access was denied to the file.
     }
 
@@ -100,7 +108,7 @@ class ExecutablePhp extends Check {
         $writable_htaccess = is_writable($htaccess_path);
       }
       else {
-        $writable = Security::findWritableFiles(array($htaccess_path), TRUE);
+        $writable = $this->security()->findWritableFiles(array($htaccess_path), TRUE);
         $writable_htaccess = !empty($writable);
       }
 
@@ -128,10 +136,10 @@ class ExecutablePhp extends Check {
   public function help() {
     $paragraphs = array();
     $paragraphs[] = "The Drupal files directory is for user-uploaded files and by default provides some protection against a malicious user executing arbitrary PHP code against your site.";
-    $paragraphs[] = t(
+    $paragraphs[] = $this->t(
       'Read more about the !risks.',
       array(
-        '!risks' => Drupal::l(
+        '!risks' => $this->l(
           'risk of PHP code execution on Drupal.org',
           Url::fromUri('https://drupal.org/node/615888')
         ),
@@ -153,21 +161,21 @@ class ExecutablePhp extends Check {
     foreach ($result->findings() as $label) {
       switch ($label) {
         case 'executable_php':
-          $paragraphs[] = t('Security Review was able to execute a PHP file written to your files directory.');
+          $paragraphs[] = $this->t('Security Review was able to execute a PHP file written to your files directory.');
           break;
 
         case 'missing_htaccess':
           $directory = PublicStream::basePath();
-          $paragraphs[] = t("The .htaccess file is missing from the files directory at !path", array('!path' => $directory));
-          $paragraphs[] = t("Note, if you are using a webserver other than Apache you should consult your server's documentation on how to limit the execution of PHP scripts in this directory.");
+          $paragraphs[] = $this->t("The .htaccess file is missing from the files directory at !path", array('!path' => $directory));
+          $paragraphs[] = $this->t("Note, if you are using a webserver other than Apache you should consult your server's documentation on how to limit the execution of PHP scripts in this directory.");
           break;
 
         case 'incorrect_htaccess':
-          $paragraphs[] = t("The .htaccess file exists but does not contain the correct content. It is possible it's been maliciously altered.");
+          $paragraphs[] = $this->t("The .htaccess file exists but does not contain the correct content. It is possible it's been maliciously altered.");
           break;
 
         case 'writable_htaccess':
-          $paragraphs[] = t("The .htaccess file is writable which poses a risk should a malicious user find a way to execute PHP code they could alter the .htaccess file to allow further PHP code execution.");
+          $paragraphs[] = $this->t("The .htaccess file is writable which poses a risk should a malicious user find a way to execute PHP code they could alter the .htaccess file to allow further PHP code execution.");
           break;
       }
     }
@@ -188,19 +196,19 @@ class ExecutablePhp extends Check {
     foreach ($result->findings() as $label) {
       switch ($label) {
         case 'executable_php':
-          $paragraphs[] = t('PHP file executed in !path', array('!path' => $directory));
+          $paragraphs[] = $this->t('PHP file executed in !path', array('!path' => $directory));
           break;
 
         case 'missing_htaccess':
-          $paragraphs[] = t('.htaccess is missing from !path', array('!path' => $directory));
+          $paragraphs[] = $this->t('.htaccess is missing from !path', array('!path' => $directory));
           break;
 
         case 'incorrect_htaccess':
-          $paragraphs[] = t('.htaccess wrong content');
+          $paragraphs[] = $this->t('.htaccess wrong content');
           break;
 
         case 'writable_htaccess':
-          $paragraphs[] = t('.htaccess writable');
+          $paragraphs[] = $this->t('.htaccess writable');
           break;
       }
     }
@@ -214,16 +222,16 @@ class ExecutablePhp extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'PHP files in the Drupal files directory cannot be executed.';
+        return $this->t('PHP files in the Drupal files directory cannot be executed.');
 
       case CheckResult::FAIL:
-        return 'PHP files in the Drupal files directory can be executed.';
+        return $this->t('PHP files in the Drupal files directory can be executed.');
 
       case CheckResult::WARN:
-        return 'The .htaccess file in the files directory is writable.';
+        return $this->t('The .htaccess file in the files directory is writable.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

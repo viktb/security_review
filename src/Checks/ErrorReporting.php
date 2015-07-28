@@ -7,7 +7,6 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
@@ -36,7 +35,8 @@ class ErrorReporting extends Check {
    */
   public function run() {
     // Get the error level.
-    $error_level = Drupal::config('system.logging')->get('error_level');
+    $error_level = $this->configFactory()->get('system.logging')
+      ->get('error_level');
 
     // Determine the result.
     if (is_null($error_level) || $error_level != 'hide') {
@@ -72,9 +72,9 @@ class ErrorReporting extends Check {
     }
 
     $paragraphs = array();
-    $paragraphs[] = t('You have error reporting set to both the screen and the log.');
-    $paragraphs[] = Drupal::l(
-      'Alter error reporting settings.',
+    $paragraphs[] = $this->t('You have error reporting set to both the screen and the log.');
+    $paragraphs[] = $this->l(
+      $this->t('Alter error reporting settings.'),
       Url::fromRoute('system.logging_settings')
     );
 
@@ -94,7 +94,7 @@ class ErrorReporting extends Check {
     }
 
     if (isset($result->findings()['level'])) {
-      return t('Error level: !level', array(
+      return $this->t('Error level: !level', array(
         '!level' => $result->findings()['level'],
       ));
     }
@@ -107,13 +107,13 @@ class ErrorReporting extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Error reporting set to log only.';
+        return $this->t('Error reporting set to log only.');
 
       case CheckResult::FAIL:
-        return 'Errors are written to the screen.';
+        return $this->t('Errors are written to the screen.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

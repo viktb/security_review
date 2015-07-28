@@ -10,7 +10,6 @@ namespace Drupal\security_review\Checks;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
-use Drupal\security_review\Security;
 use Drupal\user\Entity\Role;
 
 /**
@@ -47,11 +46,11 @@ class AdminPermissions extends Check {
     $findings = array();
 
     // Get every permission.
-    $all_permissions = Security::permissions(TRUE);
+    $all_permissions = $this->security()->permissions(TRUE);
     $all_permission_strings = array_keys($all_permissions);
 
     // Get permissions for untrusted roles.
-    $untrusted_permissions = Security::untrustedPermissions(TRUE);
+    $untrusted_permissions = $this->security()->untrustedPermissions(TRUE);
     foreach ($untrusted_permissions as $rid => $permissions) {
       $intersect = array_intersect($all_permission_strings, $permissions);
       foreach ($intersect as $permission) {
@@ -91,10 +90,10 @@ class AdminPermissions extends Check {
       $role = Role::load($rid);
       /** @var Role $role */
       $paragraphs = array();
-      $paragraphs[] = t(
+      $paragraphs[] = $this->t(
         "!role has the following restricted permissions:",
         array(
-          '!role' => \Drupal::l(
+          '!role' => $this->l(
             $role->label(),
             Url::fromRoute(
               'entity.user_role.edit_permissions_form',
@@ -124,7 +123,7 @@ class AdminPermissions extends Check {
       $role = Role::load($rid);
       /** @var Role $role */
 
-      $output .= t(
+      $output .= $this->t(
         '!role has !permissions',
         array(
           '!role' => $role->label(),
@@ -143,13 +142,13 @@ class AdminPermissions extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Untrusted roles do not have administrative or trusted Drupal permissions.';
+        return $this->t('Untrusted roles do not have administrative or trusted Drupal permissions.');
 
       case CheckResult::FAIL:
-        return 'Untrusted roles have been granted administrative or trusted Drupal permissions.';
+        return $this->t('Untrusted roles have been granted administrative or trusted Drupal permissions.');
 
       default:
-        return "Unexpected result.";
+        return $this->t("Unexpected result.");
     }
   }
 

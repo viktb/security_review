@@ -7,14 +7,11 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal;
 use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
-use Drupal\security_review\Security;
-use Drupal\security_review\SecurityReview;
 
 /**
  * Check that files aren't writeable by the server.
@@ -56,7 +53,7 @@ class FilePermissions extends Check {
     $result = CheckResult::SUCCESS;
 
     $file_list = $this->getFileList('.');
-    $writable = Security::findWritableFiles($file_list, $cli);
+    $writable = $this->security()->findWritableFiles($file_list, $cli);
 
     // Try creating or appending files.
     // Assume it doesn't work.
@@ -64,8 +61,8 @@ class FilePermissions extends Check {
     $append_status = FALSE;
 
     if (!$cli) {
-      $append_message = t("Your web server should not be able to write to your modules directory. This is a security vulnerable. Consult the Security Review file permissions check help for mitigation steps.");
-      $directory = Drupal::moduleHandler()
+      $append_message = $this->t("Your web server should not be able to write to your modules directory. This is a security vulnerable. Consult the Security Review file permissions check help for mitigation steps.");
+      $directory = $this->moduleHandler()
         ->getModule('security_review')
         ->getPath();
 
@@ -95,7 +92,7 @@ class FilePermissions extends Check {
    * {@inheritdoc}
    */
   public function runCli() {
-    if (!SecurityReview::isServerPosix()) {
+    if (!$this->securityReview()->isServerPosix()) {
       return $this->createResult(CheckResult::INFO);
     }
 
@@ -109,7 +106,7 @@ class FilePermissions extends Check {
     $paragraphs = array();
     $paragraphs[] = "It is dangerous to allow the web server to write to files inside the document root of your server. Doing so could allow Drupal to write files that could then be executed. An attacker might use such a vulnerability to take control of your site. An exception is the Drupal files, private files, and temporary directories which Drupal needs permission to write to in order to provide features like file attachments.";
     $paragraphs[] = "In addition to inspecting existing directories, this test attempts to create and write to your file system. Look in your security_review module directory on the server for files named file_write_test.YYYYMMDDHHMMSS and for a file called IGNOREME.txt which gets a timestamp appended to it if it is writeable.";
-    $paragraphs[] = Drupal::l(t('Read more about file system permissions in the handbooks.'), Url::fromUri('http://drupal.org/node/244924'));
+    $paragraphs[] = $this->l(t('Read more about file system permissions in the handbooks.'), Url::fromUri('http://drupal.org/node/244924'));
 
     return array(
       '#theme' => 'check_help',
@@ -127,9 +124,9 @@ class FilePermissions extends Check {
     }
 
     $paragraphs = array();
-    $paragraphs[] = t(
+    $paragraphs[] = $this->t(
       '<p>The following files and directories appear to be writeable by your web server. In most cases you can fix this by simply altering the file permissions or ownership. If you have command-line access to your host try running "chmod 644 [file path]" where [file path] is one of the following paths (relative to your webroot). For more information consult the !link.</p>',
-      array('!link' => Drupal::l(t('Drupal.org handbooks on file permissions'), Url::fromUri('http://drupal.org/node/244924')))
+      array('!link' => $this->l(t('Drupal.org handbooks on file permissions'), Url::fromUri('http://drupal.org/node/244924')))
     );
 
     return array(
@@ -161,16 +158,16 @@ class FilePermissions extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Drupal installation files and directories (except required) are not writable by the server.';
+        return $this->t('Drupal installation files and directories (except required) are not writable by the server.');
 
       case CheckResult::FAIL:
-        return 'Some files and directories in your install are writable by the server.';
+        return $this->t('Some files and directories in your install are writable by the server.');
 
       case CheckResult::INFO:
-        return 'The test cannot be run on this system.';
+        return $this->t('The test cannot be run on this system.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 
@@ -242,7 +239,7 @@ class FilePermissions extends Check {
       $ignore[] = $private_files;
     }
 
-    Drupal::moduleHandler()->alter('security_review_file_ignore', $ignore);
+    $this->moduleHandler()->alter('security_review_file_ignore', $ignore);
     return $ignore;
   }
 
