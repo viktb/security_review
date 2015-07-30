@@ -66,8 +66,8 @@ function security_review_modules_uninstalled($modules) {
  * Implements hook_modules_installed().
  */
 function security_review_modules_installed($modules) {
+  // Post-install hook.
   if (in_array('security_review', $modules)) {
-    // Post-install hook.
 
     /** @var \Drupal\security_review\SecurityReview $security_review */
     $security_review = Drupal::service('security_review');

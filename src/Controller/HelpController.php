@@ -37,14 +37,14 @@ class HelpController extends ControllerBase {
   /**
    * Constructs a HelpController.
    *
-   * @param \Drupal\security_review\SecurityReview $securityReview
+   * @param \Drupal\security_review\SecurityReview $security_review
    *   The security_review service.
    * @param \Drupal\security_review\Checklist $checklist
    *   The security_review.checklist service.
    */
-  public function __construct(SecurityReview $securityReview, Checklist $checklist) {
+  public function __construct(SecurityReview $security_review, Checklist $checklist) {
     $this->checklist = $checklist;
-    $this->securityReview = $securityReview;
+    $this->securityReview = $security_review;
   }
 
   /**

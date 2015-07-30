@@ -28,11 +28,15 @@ class ChecklistController extends ControllerBase {
   protected $csrfToken;
 
   /**
+   * The security_review.checklist service.
+   *
    * @var \Drupal\security_review\Checklist
    */
   protected $checklist;
 
   /**
+   * The security_review service.
+   *
    * @var \Drupal\security_review\SecurityReview
    */
   protected $securityReview;
@@ -41,17 +45,17 @@ class ChecklistController extends ControllerBase {
   /**
    * Constructs a ChecklistController.
    *
-   * @param \Drupal\Core\Access\CsrfTokenGenerator $csrfToken
+   * @param \Drupal\Core\Access\CsrfTokenGenerator $csrf_token_generator
    *   The CSRF Token generator.
-   * @param \Drupal\security_review\SecurityReview $securityReview
+   * @param \Drupal\security_review\SecurityReview $security_review
    *   The security_review service.
    * @param \Drupal\security_review\Checklist $checklist
    *   The security_review.checklist service.
    */
-  public function __construct(CsrfTokenGenerator $csrfToken, SecurityReview $securityReview, Checklist $checklist) {
-    $this->csrfToken = $csrfToken;
+  public function __construct(CsrfTokenGenerator $csrf_token_generator, SecurityReview $security_review, Checklist $checklist) {
+    $this->csrfToken = $csrf_token_generator;
     $this->checklist = $checklist;
-    $this->securityReview = $securityReview;
+    $this->securityReview = $security_review;
   }
 
   /**

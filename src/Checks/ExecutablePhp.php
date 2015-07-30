@@ -74,7 +74,8 @@ class ExecutablePhp extends Check {
         $result = CheckResult::FAIL;
         $findings[] = 'executable_php';
       }
-    } catch (RequestException $e) {
+    }
+    catch (RequestException $e) {
       // Access was denied to the file.
     }
 

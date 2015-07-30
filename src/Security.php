@@ -50,19 +50,21 @@ class Security {
   protected $securityReview;
 
   /**
-   * @param \Drupal\security_review\SecurityReview $securityReview
+   * Constructs a Security instance.
+   *
+   * @param \Drupal\security_review\SecurityReview $security_review
    *   The SecurityReview service.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Drupal\Core\DrupalKernelInterface $kernel
    *   The Drupal kernel.
    */
-  public function __construct(SecurityReview $securityReview, ModuleHandlerInterface $moduleHandler, ConfigFactoryInterface $configFactory, DrupalKernelInterface $kernel) {
-    $this->securityReview = $securityReview;
-    $this->moduleHandler = $moduleHandler;
-    $this->configFactory = $configFactory;
+  public function __construct(SecurityReview $security_review, ModuleHandlerInterface $module_handler, ConfigFactoryInterface $config_factory, DrupalKernelInterface $kernel) {
+    $this->securityReview = $security_review;
+    $this->moduleHandler = $module_handler;
+    $this->configFactory = $config_factory;
     $this->kernel = $kernel;
   }
 

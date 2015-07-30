@@ -41,16 +41,16 @@ class Checklist {
   protected $moduleHandler;
 
   /**
-   * @param \Drupal\security_review\SecurityReview $securityReview
+   * @param \Drupal\security_review\SecurityReview $security_review
    *   The SecurityReview service.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user.
    */
-  public function __construct(SecurityReview $securityReview, ModuleHandlerInterface $moduleHandler, AccountProxyInterface $current_user) {
-    $this->securityReview = $securityReview;
-    $this->moduleHandler = $moduleHandler;
+  public function __construct(SecurityReview $security_review, ModuleHandlerInterface $module_handler, AccountProxyInterface $current_user) {
+    $this->securityReview = $security_review;
+    $this->moduleHandler = $module_handler;
     $this->currentUser = $current_user;
   }
 

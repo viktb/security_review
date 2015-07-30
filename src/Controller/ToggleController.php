@@ -44,14 +44,14 @@ class ToggleController extends ControllerBase {
   /**
    * Constructs a ToggleController.
    *
-   * @param \Drupal\Core\Access\CsrfTokenGenerator $csrfToken
+   * @param \Drupal\Core\Access\CsrfTokenGenerator $csrf_token_generator
    *   The CSRF Token generator.
    * @param \Symfony\Component\HttpFoundation\RequestStack $request
    *   The request stack.
    */
-  public function __construct(CsrfTokenGenerator $csrfToken, RequestStack $request, Checklist $checklist) {
+  public function __construct(CsrfTokenGenerator $csrf_token_generator, RequestStack $request, Checklist $checklist) {
     $this->checklist = $checklist;
-    $this->csrfToken = $csrfToken;
+    $this->csrfToken = $csrf_token_generator;
     $this->request = $request->getCurrentRequest();
   }
 

@@ -135,7 +135,8 @@ class UploadExtensions extends Check {
             $url_params
           );
           $items[] = $this->l($item, $url);
-        } catch (RouteNotFoundException $e) {
+        }
+        catch (RouteNotFoundException $e) {
           $items[] = $item;
         }
       }

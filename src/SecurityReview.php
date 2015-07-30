@@ -64,7 +64,7 @@ class SecurityReview {
   protected $currentUser;
 
   /**
-   * Constructs a SecurityReview.
+   * Constructs a SecurityReview instance.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
