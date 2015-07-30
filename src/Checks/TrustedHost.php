@@ -7,6 +7,7 @@
 
 namespace Drupal\security_review\Checks;
 
+use Drupal\Core\Url;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 use Drupal\security_review\CheckSettings\TrustedHostSettings;
@@ -118,9 +119,7 @@ class TrustedHost extends Check {
    */
   public function help() {
     $paragraphs = array();
-
-    // @todo Help text.
-    $paragraphs[] = '';
+    $paragraphs[] = 'Often Drupal needs to know the URL(s) it is responding from in order to build full links back to itself (e.g. password reset links sent via email). Until you explicitly tell Drupal what full or partial URL(s) it should respond for it must dynamically detect it based on the incoming request, something that can be malicously spoofed in order to trick someone into unknowningly visiting an attacker\'s site (known as a HTTP host header attack).';
 
     return array(
       '#theme' => 'check_help',
@@ -133,21 +132,23 @@ class TrustedHost extends Check {
    * {@inheritdoc}
    */
   public function evaluate(CheckResult $result) {
+    global $base_url;
     if ($result->result() !== CheckResult::FAIL) {
       return array();
     }
 
+    $settings_php = $this->security()->sitePath() . '/settings.php';
+
     $paragraphs = array();
-
-    // @todo Evaluation text.
-    $paragraphs[] = '';
-
-    $items = array();
+    $paragraphs[] = $this->t('This site is responding from the URL: !url.', array('!url' => $base_url));
+    $paragraphs[] = $this->t('If the site should be available only at that URL it is recommended that you set it as the $base_url variable in the settings.php file at !file.', array('!file' => $settings_php));
+    $paragraphs[] = 'If the site has multiple URLs it can respond from you should whitelist host patterns with trusted_host_patterns in settings.php.';
+    $paragraphs[] = $this->l(t('Read more about HTTP Host Header attacks and setting trusted_host_patterns.'), Url::fromUri('https://www.drupal.org/node/1992030'));
 
     return array(
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => $items,
+      '#items' => array(),
     );
   }
 
