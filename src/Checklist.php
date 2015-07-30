@@ -41,6 +41,8 @@ class Checklist {
   protected $moduleHandler;
 
   /**
+   * Constructs a Checklist instance.
+   *
    * @param \Drupal\security_review\SecurityReview $security_review
    *   The SecurityReview service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
