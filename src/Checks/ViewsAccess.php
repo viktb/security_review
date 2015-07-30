@@ -70,11 +70,11 @@ class ViewsAccess extends Check {
    */
   public function help() {
     $paragraphs = array();
-    $paragraphs[] = "Views can check if the user is allowed access to the content. It is recommended that all Views implement some amount of access control, at a minimum checking for the permission 'access content'.";
+    $paragraphs[] = $this->t("Views can check if the user is allowed access to the content. It is recommended that all Views implement some amount of access control, at a minimum checking for the permission 'access content'.");
 
     return array(
       '#theme' => 'check_help',
-      '#title' => 'Views access',
+      '#title' => $this->t('Views access'),
       '#paragraphs' => $paragraphs,
     );
   }
@@ -89,7 +89,7 @@ class ViewsAccess extends Check {
     }
 
     $paragraphs = array();
-    $paragraphs[] = "The following View displays do not check access.";
+    $paragraphs[] = $this->t('The following View displays do not check access.');
 
     $items = array();
     foreach ($findings as $view_id => $displays) {

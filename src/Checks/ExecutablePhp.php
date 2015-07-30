@@ -136,7 +136,7 @@ class ExecutablePhp extends Check {
    */
   public function help() {
     $paragraphs = array();
-    $paragraphs[] = "The Drupal files directory is for user-uploaded files and by default provides some protection against a malicious user executing arbitrary PHP code against your site.";
+    $paragraphs[] = $this->t('The Drupal files directory is for user-uploaded files and by default provides some protection against a malicious user executing arbitrary PHP code against your site.');
     $paragraphs[] = $this->t(
       'Read more about the !risks.',
       array(
@@ -149,7 +149,7 @@ class ExecutablePhp extends Check {
 
     return array(
       '#theme' => 'check_help',
-      '#title' => 'Executable PHP in files directory',
+      '#title' => $this->t('Executable PHP in files directory'),
       '#paragraphs' => $paragraphs,
     );
   }

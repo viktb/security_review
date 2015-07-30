@@ -120,11 +120,11 @@ class TrustedHost extends Check {
     $paragraphs = array();
 
     // @todo Help text.
-    $paragraphs[] = '';
+    $paragraphs[] = $this->t('');
 
     return array(
       '#theme' => 'check_help',
-      '#title' => 'Drupal trusted hosts',
+      '#title' => $this->t('Drupal trusted hosts'),
       '#paragraphs' => $paragraphs,
     );
   }
@@ -140,7 +140,7 @@ class TrustedHost extends Check {
     $paragraphs = array();
 
     // @todo Evaluation text.
-    $paragraphs[] = '';
+    $paragraphs[] = $this->t('');
 
     $items = array();
 
@@ -157,13 +157,13 @@ class TrustedHost extends Check {
   public function getMessage($result_const) {
     switch ($result_const) {
       case CheckResult::SUCCESS:
-        return 'Either $base_url or trusted_host_patterns is set.';
+        return $this->t('Either $base_url or trusted_host_patterns is set.');
 
       case CheckResult::FAIL:
-        return 'Neither $base_url nor trusted_host_patterns is set.';
+        return $this->t('Neither $base_url nor trusted_host_patterns is set.');
 
       default:
-        return 'Unexpected result.';
+        return $this->t('Unexpected result.');
     }
   }
 

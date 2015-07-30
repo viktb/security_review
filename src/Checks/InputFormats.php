@@ -103,7 +103,7 @@ class InputFormats extends Check {
    */
   public function help() {
     $paragraphs = array();
-    $paragraphs[] = "Certain HTML tags can allow an attacker to take control of your site. Drupal's input format system makes use of a set filters to run on incoming text. The 'HTML Filter' strips out harmful tags and Javascript events and should be used on all formats accessible by untrusted users.";
+    $paragraphs[] = $this->t("Certain HTML tags can allow an attacker to take control of your site. Drupal's input format system makes use of a set filters to run on incoming text. The 'HTML Filter' strips out harmful tags and Javascript events and should be used on all formats accessible by untrusted users.");
     $paragraphs[] = $this->l(
       $this->t("Read more about Drupal's input formats in the handbooks."),
       Url::fromUri('http://drupal.org/node/224921')
@@ -111,7 +111,7 @@ class InputFormats extends Check {
 
     return array(
       '#theme' => 'check_help',
-      '#title' => 'Allowed HTML tags in text formats',
+      '#title' => $this->t('Allowed HTML tags in text formats'),
       '#paragraphs' => $paragraphs,
     );
   }

@@ -107,7 +107,7 @@ class UploadExtensions extends Check {
     }
 
     $paragraphs = array();
-    $paragraphs[] = 'The following extensions are considered unsafe and should be removed or limited from use. Or, be sure you are not granting untrusted users the ability to upload files.';
+    $paragraphs[] = $this->t('The following extensions are considered unsafe and should be removed or limited from use. Or, be sure you are not granting untrusted users the ability to upload files.');
 
     $items = array();
     foreach ($findings as $entity_id => $unsafe_extensions) {

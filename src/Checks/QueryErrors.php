@@ -111,11 +111,11 @@ class QueryErrors extends Check {
    */
   public function help() {
     $paragraphs = array();
-    $paragraphs[] = "Database errors triggered from the same IP may be an artifact of a malicious user attempting to probe the system for weaknesses like SQL injection or information disclosure.";
+    $paragraphs[] = $this->t('Database errors triggered from the same IP may be an artifact of a malicious user attempting to probe the system for weaknesses like SQL injection or information disclosure.');
 
     return array(
       '#theme' => 'check_help',
-      '#title' => 'Abundant query errors from the same IP',
+      '#title' => $this->t('Abundant query errors from the same IP'),
       '#paragraphs' => $paragraphs,
     );
   }
@@ -130,7 +130,7 @@ class QueryErrors extends Check {
     }
 
     $paragraphs = array();
-    $paragraphs[] = "The following IPs were observed with an abundance of query errors.";
+    $paragraphs[] = $this->t('The following IPs were observed with an abundance of query errors.');
 
     return array(
       '#theme' => 'check_evaluation',

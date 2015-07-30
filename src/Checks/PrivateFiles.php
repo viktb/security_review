@@ -56,11 +56,11 @@ class PrivateFiles extends Check {
    */
   public function help() {
     $paragraphs = array();
-    $paragraphs[] = "If you have Drupal's private files feature enabled you should move the files directory outside of the web server's document root. Drupal will secure access to files that it renders the link to, but if a user knows the actual system path they can circumvent Drupal's private files feature. You can protect against this by specifying a files directory outside of the webserver root.";
+    $paragraphs[] = $this->t("If you have Drupal's private files feature enabled you should move the files directory outside of the web server's document root. Drupal will secure access to files that it renders the link to, but if a user knows the actual system path they can circumvent Drupal's private files feature. You can protect against this by specifying a files directory outside of the webserver root.");
 
     return array(
       '#theme' => 'check_help',
-      '#title' => 'Private files',
+      '#title' => $this->t('Private files'),
       '#paragraphs' => $paragraphs,
     );
   }

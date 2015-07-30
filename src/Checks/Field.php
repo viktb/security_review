@@ -106,11 +106,11 @@ class Field extends Check {
    */
   public function help() {
     $paragraphs = array();
-    $paragraphs[] = "Script and PHP code in content does not align with Drupal best practices and may be a vulnerability if an untrusted user is allowed to edit such content. It is recommended you remove such contents.";
+    $paragraphs[] = $this->t('Script and PHP code in content does not align with Drupal best practices and may be a vulnerability if an untrusted user is allowed to edit such content. It is recommended you remove such contents.');
 
     return array(
       '#theme' => 'check_help',
-      '#title' => 'Dangerous tags in content',
+      '#title' => $this->t('Dangerous tags in content'),
       '#paragraphs' => $paragraphs,
     );
   }
@@ -125,7 +125,7 @@ class Field extends Check {
     }
 
     $paragraphs = array();
-    $paragraphs[] = "The following items potentially have dangerous tags.";
+    $paragraphs[] = $this->t('The following items potentially have dangerous tags.');
 
     $items = array();
     foreach ($findings as $entity_type_id => $entities) {

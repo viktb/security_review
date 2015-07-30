@@ -72,10 +72,10 @@ class AdminPermissions extends Check {
    */
   public function help() {
     $paragraphs = array();
-    $paragraphs[] = "Drupal's permission system is extensive and allows for varying degrees of control. Certain permissions would allow a user total control, or the ability to escalate their control, over your site and should only be granted to trusted users.";
+    $paragraphs[] = $this->t("Drupal's permission system is extensive and allows for varying degrees of control. Certain permissions would allow a user total control, or the ability to escalate their control, over your site and should only be granted to trusted users.");
     return array(
       '#theme' => 'check_help',
-      '#title' => 'Admin and trusted Drupal permissions',
+      '#title' => $this->t('Admin and trusted Drupal permissions'),
       '#paragraphs' => $paragraphs,
     );
   }

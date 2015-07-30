@@ -104,13 +104,16 @@ class FilePermissions extends Check {
    */
   public function help() {
     $paragraphs = array();
-    $paragraphs[] = "It is dangerous to allow the web server to write to files inside the document root of your server. Doing so could allow Drupal to write files that could then be executed. An attacker might use such a vulnerability to take control of your site. An exception is the Drupal files, private files, and temporary directories which Drupal needs permission to write to in order to provide features like file attachments.";
-    $paragraphs[] = "In addition to inspecting existing directories, this test attempts to create and write to your file system. Look in your security_review module directory on the server for files named file_write_test.YYYYMMDDHHMMSS and for a file called IGNOREME.txt which gets a timestamp appended to it if it is writeable.";
-    $paragraphs[] = $this->l(t('Read more about file system permissions in the handbooks.'), Url::fromUri('http://drupal.org/node/244924'));
+    $paragraphs[] = $this->t('It is dangerous to allow the web server to write to files inside the document root of your server. Doing so could allow Drupal to write files that could then be executed. An attacker might use such a vulnerability to take control of your site. An exception is the Drupal files, private files, and temporary directories which Drupal needs permission to write to in order to provide features like file attachments.');
+    $paragraphs[] = $this->t('In addition to inspecting existing directories, this test attempts to create and write to your file system. Look in your security_review module directory on the server for files named file_write_test.YYYYMMDDHHMMSS and for a file called IGNOREME.txt which gets a timestamp appended to it if it is writeable.');
+    $paragraphs[] = $this->l(
+      $this->t('Read more about file system permissions in the handbooks.'),
+      Url::fromUri('http://drupal.org/node/244924')
+    );
 
     return array(
       '#theme' => 'check_help',
-      '#title' => 'Web server file system permissions',
+      '#title' => $this->t('Web server file system permissions'),
       '#paragraphs' => $paragraphs,
     );
   }
@@ -124,10 +127,10 @@ class FilePermissions extends Check {
     }
 
     $paragraphs = array();
-    $paragraphs[] = $this->t(
-      '<p>The following files and directories appear to be writeable by your web server. In most cases you can fix this by simply altering the file permissions or ownership. If you have command-line access to your host try running "chmod 644 [file path]" where [file path] is one of the following paths (relative to your webroot). For more information consult the !link.</p>',
+    $paragraphs[] = '<p>' . $this->t(
+      'The following files and directories appear to be writeable by your web server. In most cases you can fix this by simply altering the file permissions or ownership. If you have command-line access to your host try running "chmod 644 [file path]" where [file path] is one of the following paths (relative to your webroot). For more information consult the !link.',
       array('!link' => $this->l(t('Drupal.org handbooks on file permissions'), Url::fromUri('http://drupal.org/node/244924')))
-    );
+    ) . '</p>';
 
     return array(
       '#theme' => 'check_evaluation',
@@ -144,7 +147,7 @@ class FilePermissions extends Check {
       return '';
     }
 
-    $output = "Writable files:\n";
+    $output = $this->t('Writable files:') . "\n";
     foreach ($result->findings() as $file) {
       $output .= "\t" . $file . "\n";
     }

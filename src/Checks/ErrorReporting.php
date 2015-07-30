@@ -54,11 +54,11 @@ class ErrorReporting extends Check {
    */
   public function help() {
     $paragraphs = array();
-    $paragraphs[] = 'As a form of hardening your site you should avoid information disclosure. Drupal by default prints errors to the screen and writes them to the log. Error messages disclose the full path to the file where the error occurred.';
+    $paragraphs[] = $this->t('As a form of hardening your site you should avoid information disclosure. Drupal by default prints errors to the screen and writes them to the log. Error messages disclose the full path to the file where the error occurred.');
 
     return array(
       '#theme' => 'check_help',
-      '#title' => 'Error reporting',
+      '#title' => $this->t('Error reporting'),
       '#paragraphs' => $paragraphs,
     );
   }

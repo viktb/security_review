@@ -97,11 +97,11 @@ class FailedLogins extends Check {
    */
   public function help() {
     $paragraphs = array();
-    $paragraphs[] = "Failed login attempts from the same IP may be an artifact of a malicious user attempting to brute-force their way onto your site as an authenticated user to carry out nefarious deeds.";
+    $paragraphs[] = $this->t('Failed login attempts from the same IP may be an artifact of a malicious user attempting to brute-force their way onto your site as an authenticated user to carry out nefarious deeds.');
 
     return array(
       '#theme' => 'check_help',
-      '#title' => 'Abundant failed logins from the same IP',
+      '#title' => $this->t('Abundant failed logins from the same IP'),
       '#paragraphs' => $paragraphs,
     );
   }
@@ -116,7 +116,7 @@ class FailedLogins extends Check {
     }
 
     $paragraphs = array();
-    $paragraphs[] = "The following IPs were observed with an abundance of failed login attempts.";
+    $paragraphs[] = $this->t('The following IPs were observed with an abundance of failed login attempts.');
 
     return array(
       '#theme' => 'check_evaluation',
