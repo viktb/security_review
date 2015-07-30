@@ -38,7 +38,7 @@ class PrivateFiles extends Check {
     $file_directory_path = PrivateStream::basePath();
     if (empty($file_directory_path)) {
       // Private files feature is not enabled.
-      $result = CheckResult::INFO;
+      $result = CheckResult::HIDE;
     }
     elseif (strpos(realpath($file_directory_path), DRUPAL_ROOT) === 0) {
       // Path begins at root.
@@ -108,9 +108,6 @@ class PrivateFiles extends Check {
 
       case CheckResult::FAIL:
         return $this->t('Private files is enabled but the specified directory is not secure outside the web server root.');
-
-      case CheckResult::INFO:
-        return $this->t('Private files feature is not enabled.');
 
       default:
         return $this->t('Unexpected result.');

@@ -34,9 +34,9 @@ class FailedLogins extends Check {
    * {@inheritdoc}
    */
   public function run() {
-    // If dblog is not enabled return with INFO.
+    // If dblog is not enabled return with HIDE.
     if (!$this->moduleHandler()->moduleExists('dblog')) {
-      return $this->createResult(CheckResult::INFO);
+      return $this->createResult(CheckResult::HIDE);
     }
 
     $result = CheckResult::HIDE;
@@ -149,9 +149,6 @@ class FailedLogins extends Check {
     switch ($result_const) {
       case CheckResult::FAIL:
         return $this->t('Failed login attempts from the same IP. These may be a brute-force attack to gain access to your site.');
-
-      case CheckResult::INFO:
-        return $this->t('Module dblog is not enabled.');
 
       default:
         return $this->t('Unexpected result.');

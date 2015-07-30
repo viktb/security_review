@@ -37,7 +37,7 @@ class QueryErrors extends Check {
   public function run() {
     // If dblog is not enabled return with INFO.
     if (!$this->moduleHandler()->moduleExists('dblog')) {
-      return $this->createResult(CheckResult::INFO);
+      return $this->createResult(CheckResult::HIDE);
     }
 
     $result = CheckResult::HIDE;
