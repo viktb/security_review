@@ -10,7 +10,6 @@ use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\security_review\Check;
 use Drupal\security_review\CheckResult;
 use Drupal\security_review\Checks\AdminPermissions;
-use Drupal\security_review\Checks\BaseUrl;
 use Drupal\security_review\Checks\ErrorReporting;
 use Drupal\security_review\Checks\ExecutablePhp;
 use Drupal\security_review\Checks\FailedLogins;
@@ -20,6 +19,7 @@ use Drupal\security_review\Checks\InputFormats;
 use Drupal\security_review\Checks\PrivateFiles;
 use Drupal\security_review\Checks\QueryErrors;
 use Drupal\security_review\Checks\TemporaryFiles;
+use Drupal\security_review\Checks\TrustedHost;
 use Drupal\security_review\Checks\UploadExtensions;
 use Drupal\security_review\Checks\ViewsAccess;
 
@@ -29,7 +29,6 @@ use Drupal\security_review\Checks\ViewsAccess;
 function security_review_security_review_checks() {
   return array(
     new AdminPermissions(),
-    new BaseUrl(),
     new ErrorReporting(),
     new ExecutablePhp(),
     new FailedLogins(),
@@ -39,6 +38,7 @@ function security_review_security_review_checks() {
     new PrivateFiles(),
     new QueryErrors(),
     new TemporaryFiles(),
+    new TrustedHost(),
     new UploadExtensions(),
     new ViewsAccess(),
   );

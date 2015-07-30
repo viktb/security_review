@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\security_review\CheckSettings\BaseUrlSettings.
+ * Contains \Drupal\security_review\CheckSettings\TrustedHostSettings.
  */
 
 namespace Drupal\security_review\CheckSettings;
@@ -10,9 +10,9 @@ namespace Drupal\security_review\CheckSettings;
 use Drupal\security_review\CheckSettings;
 
 /**
- * Provides the settings form for Drupal Base URL check.
+ * Provides the settings form for the TrustedHost check.
  */
-class BaseUrlSettings extends CheckSettings {
+class TrustedHostSettings extends CheckSettings {
 
   /**
    * {@inheritdoc}
