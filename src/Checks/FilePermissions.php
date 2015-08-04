@@ -127,10 +127,10 @@ class FilePermissions extends Check {
     }
 
     $paragraphs = array();
-    $paragraphs[] = '<p>' . $this->t(
+    $paragraphs[] = $this->t(
       'The following files and directories appear to be writeable by your web server. In most cases you can fix this by simply altering the file permissions or ownership. If you have command-line access to your host try running "chmod 644 [file path]" where [file path] is one of the following paths (relative to your webroot). For more information consult the !link.',
       array('!link' => $this->l(t('Drupal.org handbooks on file permissions'), Url::fromUri('http://drupal.org/node/244924')))
-    ) . '</p>';
+    );
 
     return array(
       '#theme' => 'check_evaluation',
