@@ -6,6 +6,8 @@
  */
 
 use Drupal\security_review\Check;
+//use Drupal\mymodule\MyCheck;
+//use Drupal\mymodule\MyOtherCheck;
 
 /**
  * Returns the array of security checks the module defines.
@@ -18,8 +20,8 @@ use Drupal\security_review\Check;
 function hook_security_review_checks() {
   // Instances of the defined Checks.
   return array(/*
-    MyCheck::getInstance(),
-    MyOtherCheck::getInstance(),
+    new MyCheck(),
+    new MyOtherCheck(),
     */
   );
 }
