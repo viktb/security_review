@@ -68,8 +68,8 @@ Consult implementations of hook_security_checks() for exact list of available
 check options. Standard Security Review checks are:
 
 file_perms, input_formats, field, error_reporting, private_files, query_errors,
-failed_logins, upload_extensions, admin_permissions, untrusted_php,
-executable_php, base_url_set, temporary_files
+failed_logins, upload_extensions, admin_permissions, executable_php,
+trusted_hosts, temporary_files
 
 For custom checks you may prefix the check name with the module name and
 colon (:) character. For example:
