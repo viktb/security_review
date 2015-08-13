@@ -54,8 +54,7 @@ class UploadExtensions extends Check {
     $findings = [];
 
     // Check field configuration entities.
-    $entities = entity_load_multiple('field_config');
-    foreach ($entities as $entity) {
+    foreach (FieldConfig::loadMultiple() as $entity) {
       /** @var FieldConfig $entity */
       $extensions = $entity->getSetting('file_extensions');
       if ($extensions != NULL) {
@@ -111,7 +110,7 @@ class UploadExtensions extends Check {
 
     $items = [];
     foreach ($findings as $entity_id => $unsafe_extensions) {
-      $entity = entity_load('field_config', $entity_id);
+      $entity = FieldConfig::load($entity_id);
       /** @var FieldConfig $entity */
 
       foreach ($unsafe_extensions as $extension) {
@@ -160,7 +159,7 @@ class UploadExtensions extends Check {
 
     $output = '';
     foreach ($findings as $entity_id => $unsafe_extensions) {
-      $entity = entity_load('field_config', $entity_id);
+      $entity = FieldConfig::load($entity_id);
       /** @var FieldConfig $entity */
 
       $output .= $this->t(

@@ -56,7 +56,10 @@ class Field extends Check {
     $entities = [];
     $bundle_info = $this->entityManager()->getAllBundleInfo();
     foreach ($bundle_info as $entity_type_id => $bundles) {
-      $entities = array_merge($entities, entity_load_multiple($entity_type_id));
+      $current = $this->entityManager()
+        ->getStorage($entity_type_id)
+        ->loadMultiple();
+      $entities = array_merge($entities, $current);
     }
 
     // Search for text fields.
@@ -130,7 +133,10 @@ class Field extends Check {
     $items = [];
     foreach ($findings as $entity_type_id => $entities) {
       foreach ($entities as $entity_id => $fields) {
-        $entity = entity_load($entity_type_id, $entity_id);
+        $entity = $this->entityManager()
+          ->getStorage($entity_type_id)
+          ->load($entity_id);
+
         foreach ($fields as $field => $finding) {
           $url = $entity->urlInfo('edit-form');
           if ($url === NULL) {
@@ -170,7 +176,10 @@ class Field extends Check {
     $output = '';
     foreach ($findings as $entity_type_id => $entities) {
       foreach ($entities as $entity_id => $fields) {
-        $entity = entity_load($entity_type_id, $entity_id);
+        $entity = $this->entityManager()
+          ->getStorage($entity_type_id)
+          ->load($entity_id);
+
         foreach ($fields as $field => $finding) {
           $url = $entity->urlInfo('edit-form');
           if ($url === NULL) {

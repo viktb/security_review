@@ -44,7 +44,7 @@ class ViewsAccess extends Check {
     $result = CheckResult::SUCCESS;
     $findings = [];
 
-    $views = entity_load_multiple('view');
+    $views = View::loadMultiple();
     /** @var View[] $views */
 
     foreach ($views as $view) {
@@ -93,7 +93,9 @@ class ViewsAccess extends Check {
 
     $items = [];
     foreach ($findings as $view_id => $displays) {
-      $view = entity_load('view', $view_id);
+      $view = View::load($view_id);
+      /** @var View $view */
+
       foreach ($displays as $display) {
         $items[] = $this->l(
           $view->label() . ': ' . $display,
