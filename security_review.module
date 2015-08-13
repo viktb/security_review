@@ -27,7 +27,7 @@ use Drupal\security_review\Checks\ViewsAccess;
  * Implements hook_security_review_checks().
  */
 function security_review_security_review_checks() {
-  return array(
+  return [
     new AdminPermissions(),
     new ErrorReporting(),
     new ExecutablePhp(),
@@ -41,7 +41,7 @@ function security_review_security_review_checks() {
     new TrustedHost(),
     new UploadExtensions(),
     new ViewsAccess(),
-  );
+  ];
 }
 
 /**
@@ -84,36 +84,36 @@ function security_review_modules_installed($modules) {
  * Implements hook_theme().
  */
 function security_review_theme($existing, $type, $theme, $path) {
-  return array(
-    'check_evaluation' => array(
+  return [
+    'check_evaluation' => [
       'template' => 'check_evaluation',
-      'variables' => array(
-        'paragraphs' => array(),
-        'items' => array(),
-      ),
-    ),
-    'check_help' => array(
+      'variables' => [
+        'paragraphs' => [],
+        'items' => [],
+      ],
+    ],
+    'check_help' => [
       'template' => 'check_help',
-      'variables' => array(
-        'title' => array(),
-        'paragraphs' => array(),
-      ),
-    ),
-    'general_help' => array(
+      'variables' => [
+        'title' => [],
+        'paragraphs' => [],
+      ],
+    ],
+    'general_help' => [
       'template' => 'general_help',
-      'variables' => array(
-        'paragraphs' => array(),
-        'checks' => array(),
-      ),
-    ),
-    'run_and_review' => array(
+      'variables' => [
+        'paragraphs' => [],
+        'checks' => [],
+      ],
+    ],
+    'run_and_review' => [
       'template' => 'run_and_review',
-      'variables' => array(
-        'date' => array(),
-        'checks' => array(),
-      ),
-    ),
-  );
+      'variables' => [
+        'date' => [],
+        'checks' => [],
+      ],
+    ],
+  ];
 }
 
 /**
@@ -122,11 +122,11 @@ function security_review_theme($existing, $type, $theme, $path) {
 function template_preprocess_run_and_review(&$variables) {
   // Get icon list.
   $icons_root = '/core/misc/icons/';
-  $variables['icons'] = array(
+  $variables['icons'] = [
     'success' => $icons_root . '73b355/check.svg',
     'warning' => $icons_root . 'e29700/warning.svg',
     'fail' => $icons_root . 'ea2800/error.svg',
-  );
+  ];
 
   // Generate full URLs.
   foreach ($variables['icons'] as $icon => $path) {
@@ -178,7 +178,7 @@ function security_review_cron() {
 function _security_review_batch_run_op(Check $check, array &$context) {
   $context['message'] = $check->getTitle();
   $results = Drupal::service('security_review.checklist')
-    ->runChecks(array($check));
+    ->runChecks([$check]);
   $context['results'] = array_merge($context['results'], $results);
 }
 
@@ -210,12 +210,12 @@ function _security_review_batch_run_finished($success, array $results, array $op
     $error_operation = reset($operations);
     $message = t(
       'An error occurred while processing %error_operation with arguments: @arguments',
-      array(
+      [
         '%error_operation' => $error_operation[0],
         '@arguments' => print_r($error_operation[1], TRUE),
-      )
+      ]
     );
-    $security_review->log(NULL, $message, array(), RfcLogLevel::ERROR);
+    $security_review->log(NULL, $message, [], RfcLogLevel::ERROR);
     drupal_set_message(t('The review did not store all results, please run again or check the logs for details.'));
   }
 }

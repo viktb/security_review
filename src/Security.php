@@ -100,7 +100,7 @@ class Security {
    */
   public function defaultUntrustedRoles() {
     // Add the Anonymous role to the output array.
-    $roles = array(AccountInterface::ANONYMOUS_ROLE);
+    $roles = [AccountInterface::ANONYMOUS_ROLE];
 
     // Check whether visitors can create accounts.
     $user_register = $this->configFactory->get('user.settings')
@@ -147,7 +147,7 @@ class Security {
     }
     else {
       // Merge the grouped permissions into $untrusted_permissions.
-      $untrusted_permissions = array();
+      $untrusted_permissions = [];
       foreach ($permissions_grouped as $permissions) {
         $untrusted_permissions = array_merge($untrusted_permissions, $permissions);
       }
@@ -184,7 +184,7 @@ class Security {
     $untrusted_roles = $this->untrustedRoles();
 
     // Iterate through all the roles, and store which are not untrusted.
-    $trusted = array();
+    $trusted = [];
     foreach (user_roles() as $role) {
       if (!in_array($role->id(), $untrusted_roles)) {
         $trusted[] = $role->id();
@@ -239,7 +239,7 @@ class Security {
    *   List of unsafe tags.
    */
   public function unsafeTags() {
-    $unsafe_tags = array(
+    $unsafe_tags = [
       'applet',
       'area',
       'audio',
@@ -281,7 +281,7 @@ class Security {
       'title',
       'video',
       'vmlframe',
-    );
+    ];
     $this->moduleHandler->alter('security_review_unsafe_tags', $unsafe_tags);
     return $unsafe_tags;
   }
@@ -293,7 +293,7 @@ class Security {
    *   List of unsafe extensions.
    */
   public function unsafeExtensions() {
-    $unsafe_ext = array(
+    $unsafe_ext = [
       'swf',
       'exe',
       'html',
@@ -305,7 +305,7 @@ class Security {
       'vb',
       'vbe',
       'vbs',
-    );
+    ];
     $this->moduleHandler
       ->alter('security_review_unsafe_extensions', $unsafe_ext);
     return $unsafe_ext;
@@ -333,7 +333,7 @@ class Security {
    *   The files that are writable.
    */
   public function findWritableFiles(array $files, $cli = FALSE) {
-    $writable = array();
+    $writable = [];
     if (!$cli) {
       foreach ($files as $file) {
         if (is_writable($file)) {

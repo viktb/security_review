@@ -41,19 +41,19 @@ class QueryErrors extends Check {
     }
 
     $result = CheckResult::HIDE;
-    $findings = array();
+    $findings = [];
     $last_result = $this->lastResult();
 
     // Prepare the query.
     $query = $this->database()->select('watchdog', 'w');
-    $query->fields('w', array(
+    $query->fields('w', [
       'severity',
       'type',
       'timestamp',
       'message',
       'variables',
       'hostname',
-    ));
+    ]);
     $query->condition('type', 'php')->condition('severity', RfcLogLevel::ERROR);
     if ($last_result instanceof CheckResult) {
       // Only check entries that got recorded since the last run of the check.
@@ -64,7 +64,7 @@ class QueryErrors extends Check {
     $db_result = $query->execute();
 
     // Count the number of query errors per IP.
-    $entries = array();
+    $entries = [];
     foreach ($db_result as $row) {
       // Get the message.
       if ($row->variables === 'N;') {
@@ -110,14 +110,14 @@ class QueryErrors extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('Database errors triggered from the same IP may be an artifact of a malicious user attempting to probe the system for weaknesses like SQL injection or information disclosure.');
 
-    return array(
+    return [
       '#theme' => 'check_help',
       '#title' => $this->t('Abundant query errors from the same IP'),
       '#paragraphs' => $paragraphs,
-    );
+    ];
   }
 
   /**
@@ -126,17 +126,17 @@ class QueryErrors extends Check {
   public function evaluate(CheckResult $result) {
     $findings = $result->findings();
     if (empty($findings)) {
-      return array();
+      return [];
     }
 
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('The following IPs were observed with an abundance of query errors.');
 
-    return array(
+    return [
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
       '#items' => $result->findings(),
-    );
+    ];
   }
 
   /**

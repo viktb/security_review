@@ -210,7 +210,7 @@ abstract class Check {
    *   The render array of the evaluation page.
    */
   public function evaluate(CheckResult $result) {
-    return array();
+    return [];
   }
 
   /**
@@ -255,7 +255,7 @@ abstract class Check {
       $findings = $this->state->get($state_prefix . 'findings');
     }
     else {
-      $findings = array();
+      $findings = [];
     }
     $time = $this->state->get($state_prefix . 'time');
 
@@ -372,7 +372,7 @@ abstract class Check {
       $this->config->save();
 
       // Log.
-      $context = array('!name' => $this->getTitle());
+      $context = ['!name' => $this->getTitle()];
       $this->securityReview()->log($this, '!name check no longer skipped', $context, RfcLogLevel::NOTICE);
     }
   }
@@ -391,7 +391,7 @@ abstract class Check {
       $this->config->save();
 
       // Log.
-      $context = array('!name' => $this->getTitle());
+      $context = ['!name' => $this->getTitle()];
       $this->securityReview()->log($this, '!name check skipped', $context, RfcLogLevel::NOTICE);
     }
   }
@@ -404,20 +404,20 @@ abstract class Check {
    */
   public function storeResult(CheckResult $result = NULL) {
     if ($result == NULL) {
-      $context = array(
+      $context = [
         '!reviewcheck' => $this->getTitle(),
         '!namespace' => $this->getNamespace(),
-      );
+      ];
       $this->securityReview()->log($this, 'Unable to store check !reviewcheck for !namespace', $context, RfcLogLevel::CRITICAL);
       return;
     }
 
-    $findings = $this->storesFindings() ? $result->findings() : array();
-    $this->state->setMultiple(array(
+    $findings = $this->storesFindings() ? $result->findings() : [];
+    $this->state->setMultiple([
       $this->statePrefix . 'last_result.result' => $result->result(),
       $this->statePrefix . 'last_result.time' => $result->time(),
       $this->statePrefix . 'last_result.findings' => $findings,
-    ));
+    ]);
   }
 
   /**
@@ -433,7 +433,7 @@ abstract class Check {
    * @return \Drupal\security_review\CheckResult
    *   The created CheckResult.
    */
-  public function createResult($result, array $findings = array(), $time = NULL) {
+  public function createResult($result, array $findings = [], $time = NULL) {
     return new CheckResult($this, $result, $findings, $time);
   }
 

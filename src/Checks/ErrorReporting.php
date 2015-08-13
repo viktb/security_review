@@ -46,21 +46,21 @@ class ErrorReporting extends Check {
       $result = CheckResult::SUCCESS;
     }
 
-    return $this->createResult($result, array('level' => $error_level));
+    return $this->createResult($result, ['level' => $error_level]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function help() {
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('As a form of hardening your site you should avoid information disclosure. Drupal by default prints errors to the screen and writes them to the log. Error messages disclose the full path to the file where the error occurred.');
 
-    return array(
+    return [
       '#theme' => 'check_help',
       '#title' => $this->t('Error reporting'),
       '#paragraphs' => $paragraphs,
-    );
+    ];
   }
 
   /**
@@ -68,21 +68,21 @@ class ErrorReporting extends Check {
    */
   public function evaluate(CheckResult $result) {
     if ($result->result() == CheckResult::SUCCESS) {
-      return array();
+      return [];
     }
 
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('You have error reporting set to both the screen and the log.');
     $paragraphs[] = $this->l(
       $this->t('Alter error reporting settings.'),
       Url::fromRoute('system.logging_settings')
     );
 
-    return array(
+    return [
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => array(),
-    );
+      '#items' => [],
+    ];
   }
 
   /**
@@ -94,9 +94,9 @@ class ErrorReporting extends Check {
     }
 
     if (isset($result->findings()['level'])) {
-      return $this->t('Error level: !level', array(
+      return $this->t('Error level: !level', [
         '!level' => $result->findings()['level'],
-      ));
+      ]);
     }
     return '';
   }

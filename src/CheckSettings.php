@@ -66,7 +66,7 @@ class CheckSettings implements CheckSettingsInterface {
    * {@inheritdoc}
    */
   public function buildForm() {
-    return array();
+    return [];
   }
 
   /**

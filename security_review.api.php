@@ -19,11 +19,11 @@ use Drupal\security_review\Check;
  */
 function hook_security_review_checks() {
   // Instances of the defined Checks.
-  return array(/*
+  return [/*
     new MyCheck(),
     new MyOtherCheck(),
     */
-  );
+  ];
 }
 
 /**

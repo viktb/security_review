@@ -11,13 +11,13 @@ use Drupal\security_review\CheckResult;
  * Implements hook_drush_command().
  */
 function security_review_drush_command() {
-  $items = array();
+  $items = [];
 
-  $items['security-review'] = array(
-    'aliases' => array('secrev'),
+  $items['security-review'] = [
+    'aliases' => ['secrev'],
     'callback' => 'security_review_drush',
     'description' => "Run the Security Review checklist",
-    'options' => array(
+    'options' => [
       'store' => 'Write results to the database',
       'log' => 'Log results of each check to watchdog, defaults to off',
       'lastrun' => 'Do not run the checklist, just print last results',
@@ -25,14 +25,14 @@ function security_review_drush_command() {
       'skip' => 'Comma-separated list of specified checks not to run. This takes precedence over --check.',
       'short' => "Short result messages instead of full description (e.g. 'Text formats')",
       'results' => 'Show the incorrect settings for failed checks',
-    ),
-    'examples' => array(
+    ],
+    'examples' => [
       'secrev' => 'Run the checklist and output the results',
       'secrev --store' => 'Run the checklist, store, and output the results',
       'secrev --lastrun' => 'Output the stored results from the last run of the checklist',
-    ),
+    ],
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_FULL,
-  );
+  ];
 
   return $items;
 }
@@ -84,11 +84,11 @@ function security_review_drush() {
     $short_titles = FALSE;
   }
 
-  $results = array();
+  $results = [];
   if (!$last_run) {
     // Initialize the arrays.
-    $checks = array();
-    $skip = array();
+    $checks = [];
+    $skip = [];
 
     // Fill the $checks array.
     if (!empty($specific_checks)) {

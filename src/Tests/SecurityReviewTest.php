@@ -21,7 +21,7 @@ class SecurityReviewTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('security_review');
+  public static $modules = ['security_review'];
 
   /**
    * The security_review service.
@@ -61,9 +61,9 @@ class SecurityReviewTest extends KernelTestBase {
    * Tests the 'untrusted_roles' setting.
    */
   public function testConfigUntrustedRoles() {
-    $this->assertEqual($this->securityReview->getUntrustedRoles(), array(), 'untrusted_roles empty by default.');
+    $this->assertEqual($this->securityReview->getUntrustedRoles(), [], 'untrusted_roles empty by default.');
 
-    $roles = array(0, 1, 2, 3, 4);
+    $roles = [0, 1, 2, 3, 4];
     $this->securityReview->setUntrustedRoles($roles);
     $this->assertEqual($roles, $this->securityReview->getUntrustedRoles(), 'untrusted_roles set to test array.');
   }

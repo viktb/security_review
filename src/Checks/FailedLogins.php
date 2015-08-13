@@ -40,19 +40,19 @@ class FailedLogins extends Check {
     }
 
     $result = CheckResult::HIDE;
-    $findings = array();
+    $findings = [];
     $last_result = $this->lastResult();
 
     // Prepare the query.
     $query = $this->database()->select('watchdog', 'w');
-    $query->fields('w', array(
+    $query->fields('w', [
       'severity',
       'type',
       'timestamp',
       'message',
       'variables',
       'hostname',
-    ));
+    ]);
     $query->condition('type', 'user')
       ->condition('severity', RfcLogLevel::NOTICE)
       ->condition('message', 'Login attempt failed from %ip.');
@@ -65,7 +65,7 @@ class FailedLogins extends Check {
     $db_result = $query->execute();
 
     // Count the number of failed logins per IP.
-    $entries = array();
+    $entries = [];
     foreach ($db_result as $row) {
       $ip = unserialize($row->variables)['%ip'];
       $entry_for_ip = &$entries[$ip];
@@ -96,14 +96,14 @@ class FailedLogins extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('Failed login attempts from the same IP may be an artifact of a malicious user attempting to brute-force their way onto your site as an authenticated user to carry out nefarious deeds.');
 
-    return array(
+    return [
       '#theme' => 'check_help',
       '#title' => $this->t('Abundant failed logins from the same IP'),
       '#paragraphs' => $paragraphs,
-    );
+    ];
   }
 
   /**
@@ -112,17 +112,17 @@ class FailedLogins extends Check {
   public function evaluate(CheckResult $result) {
     $findings = $result->findings();
     if (empty($findings)) {
-      return array();
+      return [];
     }
 
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('The following IPs were observed with an abundance of failed login attempts.');
 
-    return array(
+    return [
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
       '#items' => $result->findings(),
-    );
+    ];
   }
 
   /**

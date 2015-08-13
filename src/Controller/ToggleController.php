@@ -93,33 +93,33 @@ class ToggleController extends ControllerBase {
       }
       // Output.
       if ($ajax) {
-        return new JsonResponse(array(
+        return new JsonResponse([
           'skipped' => $check->isSkipped(),
           'toggle_text' => $check->isSkipped() ? $this->t('Enable') : $this->t('Skip'),
           'toggle_href' => Url::fromRoute(
             'security_review.toggle',
-            array('check_id' => $check->id()),
-            array(
-              'query' => array(
+            ['check_id' => $check->id()],
+            [
+              'query' => [
                 'token' => $this->csrfToken->get($check->id()),
                 'js' => 1,
-              ),
-            )
+              ],
+            ]
           ),
-        ));
+        ]);
       }
       else {
         // Set message.
         if ($check->isSkipped()) {
           drupal_set_message($this->t(
             '%name check skipped.',
-            array('%name' => $check->getTitle())
+            ['%name' => $check->getTitle()]
           ));
         }
         else {
           drupal_set_message($this->t(
             '%name check no longer skipped.',
-            array('%name' => $check->getTitle())
+            ['%name' => $check->getTitle()]
           ));
         }
 

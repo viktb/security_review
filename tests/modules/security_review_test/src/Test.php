@@ -33,7 +33,7 @@ class Test extends Check {
    * {@inheritdoc}
    */
   public function run() {
-    $findings = array();
+    $findings = [];
     for ($i = 0; $i < 20; ++$i) {
       $findings[] = rand(0, 1) ? rand(0, 10) : 'string';
     }
@@ -45,7 +45,7 @@ class Test extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    return array();
+    return [];
   }
 
   /**

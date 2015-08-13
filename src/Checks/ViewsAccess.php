@@ -42,7 +42,7 @@ class ViewsAccess extends Check {
     }
 
     $result = CheckResult::SUCCESS;
-    $findings = array();
+    $findings = [];
 
     $views = entity_load_multiple('view');
     /** @var View[] $views */
@@ -69,14 +69,14 @@ class ViewsAccess extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t("Views can check if the user is allowed access to the content. It is recommended that all Views implement some amount of access control, at a minimum checking for the permission 'access content'.");
 
-    return array(
+    return [
       '#theme' => 'check_help',
       '#title' => $this->t('Views access'),
       '#paragraphs' => $paragraphs,
-    );
+    ];
   }
 
   /**
@@ -85,13 +85,13 @@ class ViewsAccess extends Check {
   public function evaluate(CheckResult $result) {
     $findings = $result->findings();
     if (empty($findings)) {
-      return array();
+      return [];
     }
 
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('The following View displays do not check access.');
 
-    $items = array();
+    $items = [];
     foreach ($findings as $view_id => $displays) {
       $view = entity_load('view', $view_id);
       foreach ($displays as $display) {
@@ -99,20 +99,20 @@ class ViewsAccess extends Check {
           $view->label() . ': ' . $display,
           Url::fromRoute(
             'entity.view.edit_display_form',
-            array(
+            [
               'view' => $view_id,
               'display_id' => $display,
-            )
+            ]
           )
         );
       }
     }
 
-    return array(
+    return [
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
       '#items' => $items,
-    );
+    ];
   }
 
   /**

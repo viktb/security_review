@@ -85,22 +85,22 @@ class HelpController extends ControllerBase {
    *   The general help page.
    */
   private function generalHelp() {
-    $paragraphs = array();
+    $paragraphs = [];
 
     $paragraphs[] = $this->t('You should take the security of your site very seriously. Fortunately, Drupal is fairly secure by default. The Security Review module automates many of the easy-to-make mistakes that render your site insecure, however it does not automatically make your site impenetrable. You should give care to what modules you install and how you configure your site and server. Be mindful of who visits your site and what features you expose for their use.');
     $paragraphs[] = $this->t(
       'You can read more about securing your site in the !drupal_org and on !cracking_drupal. There are also additional modules you can install to secure or protect your site. Be aware though that the more modules you have running on your site the greater (usually) attack area you expose.',
-      array(
+      [
         '!drupal_org' => $this->l('drupal.org handbooks', Url::fromUri('http://drupal.org/security/secure-configuration')),
         '!cracking_drupal' => $this->l('CrackingDrupal.com', Url::fromUri('http://crackingdrupal.com')),
-      )
+      ]
     );
     $paragraphs[] = $this->l(
       $this->t('Drupal.org Handbook: Introduction to security-related contrib modules'),
       Url::fromUri('http://drupal.org/node/382752')
     );
 
-    $checks = array();
+    $checks = [];
     foreach ($this->checklist->getChecks() as $check) {
       // Get the namespace array's reference.
       $check_namespace = &$checks[$check->getMachineNamespace()];
@@ -108,24 +108,24 @@ class HelpController extends ControllerBase {
       // Set up the namespace array if not set.
       if (!isset($check_namespace)) {
         $check_namespace['namespace'] = $check->getNamespace();
-        $check_namespace['check_links'] = array();
+        $check_namespace['check_links'] = [];
       }
 
       // Add the link pointing to the check-specific help.
       $check_namespace['check_links'][] = $this->l(
-        $this->t('%title', array('%title' => $check->getTitle())),
-        Url::fromRoute('security_review.help', array(
+        $this->t('%title', ['%title' => $check->getTitle()]),
+        Url::fromRoute('security_review.help', [
           'namespace' => $check->getMachineNamespace(),
           'title' => $check->getMachineTitle(),
-        ))
+        ])
       );
     }
 
-    return array(
+    return [
       '#theme' => 'general_help',
       '#paragraphs' => $paragraphs,
       '#checks' => $checks,
-    );
+    ];
   }
 
   /**
@@ -152,7 +152,7 @@ class HelpController extends ControllerBase {
     }
 
     // Print the help page.
-    $output = array();
+    $output = [];
     $output[] = $check->help();
 
     // If the check is skipped print the skip message, else print the
@@ -171,26 +171,26 @@ class HelpController extends ControllerBase {
 
       $skip_message = $this->t(
         'Check marked for skipping on !date by !user',
-        array(
+        [
           '!date' => format_date($check->skippedOn()),
           '!user' => $user,
-        )
+        ]
       );
 
-      $output[] = array(
+      $output[] = [
         '#type' => 'markup',
         '#markup' => "<p>$skip_message</p>",
-      );
+      ];
     }
     else {
       // Evaluate last result, if any.
       $last_result = $check->lastResult(TRUE);
       if ($last_result instanceof CheckResult) {
         // Separator.
-        $output[] = array(
+        $output[] = [
           '#type' => 'markup',
           '#markup' => '<div />',
-        );
+        ];
 
         // Evaluation page.
         $output[] = $check->evaluate($last_result);

@@ -50,7 +50,7 @@ class InputFormats extends Check {
     }
 
     $result = CheckResult::SUCCESS;
-    $findings = array();
+    $findings = [];
 
     $formats = filter_formats();
     $untrusted_roles = $this->security()->untrustedRoles();
@@ -102,48 +102,48 @@ class InputFormats extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t("Certain HTML tags can allow an attacker to take control of your site. Drupal's input format system makes use of a set filters to run on incoming text. The 'HTML Filter' strips out harmful tags and Javascript events and should be used on all formats accessible by untrusted users.");
     $paragraphs[] = $this->l(
       $this->t("Read more about Drupal's input formats in the handbooks."),
       Url::fromUri('http://drupal.org/node/224921')
     );
 
-    return array(
+    return [
       '#theme' => 'check_help',
       '#title' => $this->t('Allowed HTML tags in text formats'),
       '#paragraphs' => $paragraphs,
-    );
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function evaluate(CheckResult $result) {
-    $output = array();
+    $output = [];
 
     if (!empty($result->findings()['tags'])) {
-      $paragraphs = array();
+      $paragraphs = [];
       $paragraphs[] = $this->l(
         $this->t('Review your text formats.'),
         Url::fromRoute('filter.admin_overview')
       );
       $paragraphs[] = $this->t('It is recommended you remove the following tags from roles accessible by untrusted users.');
-      $output[] = array(
+      $output[] = [
         '#theme' => 'check_evaluation',
         '#paragraphs' => $paragraphs,
         '#items' => $result->findings()['tags'],
-      );
+      ];
     }
 
     if (!empty($result->findings()['formats'])) {
-      $paragraphs = array();
+      $paragraphs = [];
       $paragraphs[] = $this->t('The following formats are usable by untrusted roles and do not filter or escape allowed HTML tags.');
-      $output[] = array(
+      $output[] = [
         '#theme' => 'check_evaluation',
         '#paragraphs' => $paragraphs,
         '#items' => $result->findings()['formats'],
-      );
+      ];
     }
 
     return $output;

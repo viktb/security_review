@@ -103,7 +103,7 @@ class FilePermissions extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('It is dangerous to allow the web server to write to files inside the document root of your server. Doing so could allow Drupal to write files that could then be executed. An attacker might use such a vulnerability to take control of your site. An exception is the Drupal files, private files, and temporary directories which Drupal needs permission to write to in order to provide features like file attachments.');
     $paragraphs[] = $this->t('In addition to inspecting existing directories, this test attempts to create and write to your file system. Look in your security_review module directory on the server for files named file_write_test.YYYYMMDDHHMMSS and for a file called IGNOREME.txt which gets a timestamp appended to it if it is writeable.');
     $paragraphs[] = $this->l(
@@ -111,11 +111,11 @@ class FilePermissions extends Check {
       Url::fromUri('http://drupal.org/node/244924')
     );
 
-    return array(
+    return [
       '#theme' => 'check_help',
       '#title' => $this->t('Web server file system permissions'),
       '#paragraphs' => $paragraphs,
-    );
+    ];
   }
 
   /**
@@ -123,20 +123,20 @@ class FilePermissions extends Check {
    */
   public function evaluate(CheckResult $result) {
     if ($result->result() == CheckResult::SUCCESS) {
-      return array();
+      return [];
     }
 
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t(
       'The following files and directories appear to be writeable by your web server. In most cases you can fix this by simply altering the file permissions or ownership. If you have command-line access to your host try running "chmod 644 [file path]" where [file path] is one of the following paths (relative to your webroot). For more information consult the !link.',
-      array('!link' => $this->l(t('Drupal.org handbooks on file permissions'), Url::fromUri('http://drupal.org/node/244924')))
+      ['!link' => $this->l(t('Drupal.org handbooks on file permissions'), Url::fromUri('http://drupal.org/node/244924'))]
     );
 
-    return array(
+    return [
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
       '#items' => $result->findings(),
-    );
+    ];
   }
 
   /**
@@ -190,14 +190,14 @@ class FilePermissions extends Check {
   protected function getFileList($directory, array &$parsed = NULL, array &$ignore = NULL) {
     // Initialize $parsed and $ignore arrays.
     if ($parsed === NULL) {
-      $parsed = array(realpath($directory));
+      $parsed = [realpath($directory)];
     }
     if ($ignore === NULL) {
       $ignore = $this->getIgnoreList();
     }
 
     // Start scanning.
-    $items = array();
+    $items = [];
     if ($handle = opendir($directory)) {
       while (($file = readdir($handle)) !== FALSE) {
         // Don't check hidden files or ones we said to ignore.
@@ -224,7 +224,7 @@ class FilePermissions extends Check {
    */
   protected function getIgnoreList() {
     $file_path = PublicStream::basePath();
-    $ignore = array('..', 'CVS', '.git', '.svn', '.bzr', realpath($file_path));
+    $ignore = ['..', 'CVS', '.git', '.svn', '.bzr', realpath($file_path)];
 
     // Add temporary files directory if it's set.
     $temp_path = file_directory_temp();

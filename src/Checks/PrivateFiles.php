@@ -48,21 +48,21 @@ class PrivateFiles extends Check {
       // The private files directory is placed correctly.
       $result = CheckResult::SUCCESS;
     }
-    return $this->createResult($result, array('path' => $file_directory_path));
+    return $this->createResult($result, ['path' => $file_directory_path]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function help() {
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t("If you have Drupal's private files feature enabled you should move the files directory outside of the web server's document root. Drupal will secure access to files that it renders the link to, but if a user knows the actual system path they can circumvent Drupal's private files feature. You can protect against this by specifying a files directory outside of the webserver root.");
 
-    return array(
+    return [
       '#theme' => 'check_help',
       '#title' => $this->t('Private files'),
       '#paragraphs' => $paragraphs,
-    );
+    ];
   }
 
   /**
@@ -70,21 +70,21 @@ class PrivateFiles extends Check {
    */
   public function evaluate(CheckResult $result) {
     if ($result->result() != CheckResult::FAIL) {
-      return array();
+      return [];
     }
 
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('Your files directory is not outside of the server root.');
     $paragraphs[] = $this->l(
       $this->t('Edit the files directory path.'),
       Url::fromRoute('system.file_system_settings')
     );
 
-    return array(
+    return [
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => array(),
-    );
+      '#items' => [],
+    ];
   }
 
   /**
@@ -95,7 +95,7 @@ class PrivateFiles extends Check {
       return '';
     }
 
-    return $this->t('Private files directory: !path', array('!path' => $result->findings()['path']));
+    return $this->t('Private files directory: !path', ['!path' => $result->findings()['path']]);
   }
 
   /**

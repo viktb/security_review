@@ -22,7 +22,7 @@ class ChecklistWebTest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('security_review');
+  public static $modules = ['security_review'];
 
   /**
    * The test user.
@@ -56,12 +56,12 @@ class ChecklistWebTest extends WebTestBase {
 
     // Login.
     $this->user = $this->drupalCreateUser(
-      array(
+      [
         'run security checks',
         'access security review list',
         'access administration pages',
         'administer site configuration',
-      )
+      ]
     );
     $this->drupalLogin($this->user);
 

@@ -54,7 +54,7 @@ class ExecutablePhp extends Check {
   public function run($cli = FALSE) {
     global $base_url;
     $result = CheckResult::SUCCESS;
-    $findings = array();
+    $findings = [];
 
     // Set up test file data.
     $message = 'Security review test ' . date('Ymdhis');
@@ -109,7 +109,7 @@ class ExecutablePhp extends Check {
         $writable_htaccess = is_writable($htaccess_path);
       }
       else {
-        $writable = $this->security()->findWritableFiles(array($htaccess_path), TRUE);
+        $writable = $this->security()->findWritableFiles([$htaccess_path], TRUE);
         $writable_htaccess = !empty($writable);
       }
 
@@ -135,30 +135,30 @@ class ExecutablePhp extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('The Drupal files directory is for user-uploaded files and by default provides some protection against a malicious user executing arbitrary PHP code against your site.');
     $paragraphs[] = $this->t(
       'Read more about the !risks.',
-      array(
+      [
         '!risks' => $this->l(
           'risk of PHP code execution on Drupal.org',
           Url::fromUri('https://drupal.org/node/615888')
         ),
-      )
+      ]
     );
 
-    return array(
+    return [
       '#theme' => 'check_help',
       '#title' => $this->t('Executable PHP in files directory'),
       '#paragraphs' => $paragraphs,
-    );
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function evaluate(CheckResult $result) {
-    $paragraphs = array();
+    $paragraphs = [];
     foreach ($result->findings() as $label) {
       switch ($label) {
         case 'executable_php':
@@ -167,7 +167,7 @@ class ExecutablePhp extends Check {
 
         case 'missing_htaccess':
           $directory = PublicStream::basePath();
-          $paragraphs[] = $this->t("The .htaccess file is missing from the files directory at !path", array('!path' => $directory));
+          $paragraphs[] = $this->t("The .htaccess file is missing from the files directory at !path", ['!path' => $directory]);
           $paragraphs[] = $this->t("Note, if you are using a webserver other than Apache you should consult your server's documentation on how to limit the execution of PHP scripts in this directory.");
           break;
 
@@ -181,27 +181,27 @@ class ExecutablePhp extends Check {
       }
     }
 
-    return array(
+    return [
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => array(),
-    );
+      '#items' => [],
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function evaluatePlain(CheckResult $result) {
-    $paragraphs = array();
+    $paragraphs = [];
     $directory = PublicStream::basePath();
     foreach ($result->findings() as $label) {
       switch ($label) {
         case 'executable_php':
-          $paragraphs[] = $this->t('PHP file executed in !path', array('!path' => $directory));
+          $paragraphs[] = $this->t('PHP file executed in !path', ['!path' => $directory]);
           break;
 
         case 'missing_htaccess':
-          $paragraphs[] = $this->t('.htaccess is missing from !path', array('!path' => $directory));
+          $paragraphs[] = $this->t('.htaccess is missing from !path', ['!path' => $directory]);
           break;
 
         case 'incorrect_htaccess':

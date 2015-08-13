@@ -22,7 +22,7 @@ class CheckTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('security_review', 'security_review_test');
+  public static $modules = ['security_review', 'security_review_test'];
 
   /**
    * The security checks defined by Security Review and Security Review Test.
@@ -75,9 +75,9 @@ class CheckTest extends KernelTestBase {
    * Tests some check's results on a clean install of Drupal.
    */
   public function testDefaultResults() {
-    $defaults = array(
+    $defaults = [
       'security_review-field' => CheckResult::SUCCESS,
-    );
+    ];
 
     foreach ($this->checks as $check) {
       if (array_key_exists($check->id(), $defaults)) {
@@ -125,7 +125,7 @@ class CheckTest extends KernelTestBase {
         $new_result = new CheckResult(
           $check,
           $new_result_result,
-          array()
+          []
         );
 
         // Store it.

@@ -197,12 +197,12 @@ class SecurityReview {
     if (static::isLogging()) {
       $this->moduleHandler->invokeAll(
         'security_review_log',
-        array(
+        [
           'check' => $check,
           'message' => $message,
           'context' => $context,
           'level' => $level,
-        )
+        ]
       );
     }
   }
@@ -217,10 +217,10 @@ class SecurityReview {
     if ($this->isLogging()) {
       if ($result == NULL) {
         $check = $result->check();
-        $context = array(
+        $context = [
           '!check' => $check->getTitle(),
           '!namespace' => $check->getNamespace(),
-        );
+        ];
         $this->log($check, '!check of !namespace produced a null result', $context, RfcLogLevel::CRITICAL);
         return;
       }
@@ -251,7 +251,7 @@ class SecurityReview {
           break;
       }
 
-      $context = array('!name' => $check->getTitle());
+      $context = ['!name' => $check->getTitle()];
       $this->log($check, $message, $context, $level);
     }
   }

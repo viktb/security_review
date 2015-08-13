@@ -35,10 +35,10 @@ class TemporaryFiles extends Check {
    */
   public function run() {
     $result = CheckResult::SUCCESS;
-    $findings = array();
+    $findings = [];
 
     // Get list of files from the site directory.
-    $files = array();
+    $files = [];
     $site_path = $this->security()->sitePath() . '/';
     $dir = scandir($site_path);
     foreach ($dir as $file) {
@@ -51,7 +51,7 @@ class TemporaryFiles extends Check {
 
     // Analyze the files' names.
     foreach ($files as $path) {
-      $matches = array();
+      $matches = [];
       if (file_exists($path) && preg_match('/.*(~|\.sw[op]|\.bak|\.orig|\.save)$/', $path, $matches) !== FALSE && !empty($matches)) {
         // Found a temporary file.
         $findings[] = $path;
@@ -69,14 +69,14 @@ class TemporaryFiles extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t("Some file editors create temporary copies of a file that can be left on the file system. A copy of a sensitive file like Drupal's settings.php may be readable by a malicious user who could use that information to further attack a site.");
 
-    return array(
+    return [
       '#theme' => 'check_help',
       '#title' => $this->t('Sensitive temporary files'),
       '#paragraphs' => $paragraphs,
-    );
+    ];
   }
 
   /**
@@ -85,17 +85,17 @@ class TemporaryFiles extends Check {
   public function evaluate(CheckResult $result) {
     $findings = $result->findings();
     if (empty($findings)) {
-      return array();
+      return [];
     }
 
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t("The following are extraneous files in your Drupal installation that can probably be removed. You should confirm you have saved any of your work in the original files prior to removing these.");
 
-    return array(
+    return [
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
       '#items' => $findings,
-    );
+    ];
   }
 
   /**

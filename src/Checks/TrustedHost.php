@@ -46,7 +46,7 @@ class TrustedHost extends Check {
     $result = CheckResult::FAIL;
     $base_url_set = FALSE;
     $trusted_host_patterns_set = FALSE;
-    $findings = array();
+    $findings = [];
     $settings_php = $this->security()->sitePath() . '/settings.php';
 
     if (!file_exists($settings_php)) {
@@ -118,14 +118,14 @@ class TrustedHost extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('Often Drupal needs to know the URL(s) it is responding from in order to build full links back to itself (e.g. password reset links sent via email). Until you explicitly tell Drupal what full or partial URL(s) it should respond for it must dynamically detect it based on the incoming request, something that can be malicously spoofed in order to trick someone into unknowningly visiting an attacker\'s site (known as a HTTP host header attack).');
 
-    return array(
+    return [
       '#theme' => 'check_help',
       '#title' => $this->t('Drupal trusted hosts'),
       '#paragraphs' => $paragraphs,
-    );
+    ];
   }
 
   /**
@@ -134,22 +134,22 @@ class TrustedHost extends Check {
   public function evaluate(CheckResult $result) {
     global $base_url;
     if ($result->result() !== CheckResult::FAIL) {
-      return array();
+      return [];
     }
 
     $settings_php = $this->security()->sitePath() . '/settings.php';
 
-    $paragraphs = array();
-    $paragraphs[] = $this->t('This site is responding from the URL: !url.', array('!url' => $base_url));
-    $paragraphs[] = $this->t('If the site should be available only at that URL it is recommended that you set it as the $base_url variable in the settings.php file at !file.', array('!file' => $settings_php));
+    $paragraphs = [];
+    $paragraphs[] = $this->t('This site is responding from the URL: !url.', ['!url' => $base_url]);
+    $paragraphs[] = $this->t('If the site should be available only at that URL it is recommended that you set it as the $base_url variable in the settings.php file at !file.', ['!file' => $settings_php]);
     $paragraphs[] = $this->t('If the site has multiple URLs it can respond from you should whitelist host patterns with trusted_host_patterns in settings.php.');
     $paragraphs[] = $this->l($this->t('Read more about HTTP Host Header attacks and setting trusted_host_patterns.'), Url::fromUri('https://www.drupal.org/node/1992030'));
 
-    return array(
+    return [
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
-      '#items' => array(),
-    );
+      '#items' => [],
+    ];
   }
 
   /**

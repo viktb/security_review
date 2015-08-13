@@ -45,22 +45,22 @@ class Field extends Check {
    */
   public function run() {
     $result = CheckResult::SUCCESS;
-    $findings = array();
+    $findings = [];
 
-    $tags = array(
+    $tags = [
       'Javascript' => 'script',
       'PHP' => '?php',
-    );
+    ];
 
     // Load all of the entities.
-    $entities = array();
+    $entities = [];
     $bundle_info = $this->entityManager()->getAllBundleInfo();
     foreach ($bundle_info as $entity_type_id => $bundles) {
       $entities = array_merge($entities, entity_load_multiple($entity_type_id));
     }
 
     // Search for text fields.
-    $text_items = array();
+    $text_items = [];
     foreach ($entities as $entity) {
       if ($entity instanceof FieldableEntityInterface) {
         /** @var FieldableEntityInterface $entity */
@@ -105,14 +105,14 @@ class Field extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('Script and PHP code in content does not align with Drupal best practices and may be a vulnerability if an untrusted user is allowed to edit such content. It is recommended you remove such contents.');
 
-    return array(
+    return [
       '#theme' => 'check_help',
       '#title' => $this->t('Dangerous tags in content'),
       '#paragraphs' => $paragraphs,
-    );
+    ];
   }
 
   /**
@@ -121,13 +121,13 @@ class Field extends Check {
   public function evaluate(CheckResult $result) {
     $findings = $result->findings();
     if (empty($findings)) {
-      return array();
+      return [];
     }
 
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('The following items potentially have dangerous tags.');
 
-    $items = array();
+    $items = [];
     foreach ($findings as $entity_type_id => $entities) {
       foreach ($entities as $entity_id => $fields) {
         $entity = entity_load($entity_type_id, $entity_id);
@@ -138,24 +138,24 @@ class Field extends Check {
           }
           $items[] = $this->t(
             '@vulnerabilities found in <em>@field</em> field of !link',
-            array(
+            [
               '@vulnerabilities' => implode(' and ', $finding),
               '@field' => $field,
               '!link' => $this->l(
                 $entity->label(),
                 $url
               ),
-            )
+            ]
           );
         }
       }
     }
 
-    return array(
+    return [
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
       '#items' => $items,
-    );
+    ];
   }
 
   /**
@@ -178,11 +178,11 @@ class Field extends Check {
           }
           $output .= "\t" . $this->t(
               '@vulnerabilities in @field of !link',
-              array(
+              [
                 '@vulnerabilities' => implode(' and ', $finding),
                 '@field' => $field,
                 '!link' => $url->toString(),
-              )
+              ]
             ) . "\n";
         }
       }

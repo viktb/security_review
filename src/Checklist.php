@@ -61,13 +61,13 @@ class Checklist {
    *
    * @var \Drupal\security_review\Check[]
    */
-  private static $cachedChecks = array();
+  private static $cachedChecks = [];
 
   /**
    * Clears the cached checks.
    */
   public static function clearCache() {
-    static::$cachedChecks = array();
+    static::$cachedChecks = [];
   }
 
   /**
@@ -86,7 +86,7 @@ class Checklist {
     $raw_checks = $this->moduleHandler->invokeAll('security_review_checks');
 
     // Filter invalid checks.
-    $checks = array();
+    $checks = [];
     foreach ($raw_checks as $raw_check) {
       if ($raw_check instanceof Check) {
         $checks[] = $raw_check;
@@ -94,7 +94,7 @@ class Checklist {
     }
 
     // Sort the checks.
-    usort($checks, array($this, 'compareChecks'));
+    usort($checks, [$this, 'compareChecks']);
 
     return $checks;
   }
@@ -106,7 +106,7 @@ class Checklist {
    *   Array of enabled Checks.
    */
   public function getEnabledChecks() {
-    $enabled = array();
+    $enabled = [];
 
     foreach (static::getChecks() as $check) {
       if (!$check->isSkipped()) {
@@ -127,7 +127,7 @@ class Checklist {
    *   Array containing Checks grouped by their namespaces.
    */
   public function groupChecksByNamespace(array $checks) {
-    $output = array();
+    $output = [];
 
     foreach ($checks as $check) {
       $output[$check->getMachineNamespace()][] = $check;
@@ -163,7 +163,7 @@ class Checklist {
    *   The array of CheckResults generated.
    */
   public function runChecks(array $checks, $cli = FALSE) {
-    $results = array();
+    $results = [];
 
     foreach ($checks as $check) {
       if ($cli) {

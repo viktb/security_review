@@ -43,7 +43,7 @@ class AdminPermissions extends Check {
    */
   public function run() {
     $result = CheckResult::SUCCESS;
-    $findings = array();
+    $findings = [];
 
     // Get every permission.
     $all_permissions = $this->security()->permissions(TRUE);
@@ -71,43 +71,43 @@ class AdminPermissions extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t("Drupal's permission system is extensive and allows for varying degrees of control. Certain permissions would allow a user total control, or the ability to escalate their control, over your site and should only be granted to trusted users.");
-    return array(
+    return [
       '#theme' => 'check_help',
       '#title' => $this->t('Admin and trusted Drupal permissions'),
       '#paragraphs' => $paragraphs,
-    );
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function evaluate(CheckResult $result) {
-    $output = array();
+    $output = [];
 
     foreach ($result->findings() as $rid => $permissions) {
       $role = Role::load($rid);
       /** @var Role $role */
-      $paragraphs = array();
+      $paragraphs = [];
       $paragraphs[] = $this->t(
         "!role has the following restricted permissions:",
-        array(
+        [
           '!role' => $this->l(
             $role->label(),
             Url::fromRoute(
               'entity.user_role.edit_permissions_form',
-              array('user_role' => $role->id())
+              ['user_role' => $role->id()]
             )
           ),
-        )
+        ]
       );
 
-      $output[] = array(
+      $output[] = [
         '#theme' => 'check_evaluation',
         '#paragraphs' => $paragraphs,
         '#items' => $permissions,
-      );
+      ];
     }
 
     return $output;
@@ -125,10 +125,10 @@ class AdminPermissions extends Check {
 
       $output .= $this->t(
         '!role has !permissions',
-        array(
+        [
           '!role' => $role->label(),
           '!permissions' => implode(', ', $permissions),
-        )
+        ]
       );
       $output .= "\n";
     }

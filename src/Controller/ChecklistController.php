@@ -76,7 +76,7 @@ class ChecklistController extends ControllerBase {
    *   The 'Run & Review' page's render array.
    */
   public function index() {
-    $run_form = array();
+    $run_form = [];
 
     // If the user has the required permissions, show the RunForm.
     if ($this->currentUser()->hasPermission('run security checks')) {
@@ -95,12 +95,12 @@ class ChecklistController extends ControllerBase {
       // If they haven't configured the site, prompt them to do so.
       if (!$this->securityReview->isConfigured()) {
         drupal_set_message($this->t('It appears this is your first time using the Security Review checklist. Before running the checklist please review the settings page at !link to set which roles are untrusted.',
-          array('!link' => $this->l('admin/reports/security-review/settings', Url::fromRoute('security_review.settings')))
+          ['!link' => $this->l('admin/reports/security-review/settings', Url::fromRoute('security_review.settings'))]
         ), 'warning');
       }
     }
 
-    return array($run_form, $this->results());
+    return [$run_form, $this->results()];
   }
 
   /**
@@ -112,20 +112,20 @@ class ChecklistController extends ControllerBase {
   public function results() {
     // If there are no results return.
     if ($this->securityReview->getLastRun() <= 0) {
-      return array();
+      return [];
     }
 
-    $checks = array();
+    $checks = [];
     foreach ($this->checklist->getChecks() as $check) {
       // Initialize with defaults.
-      $check_info = array(
+      $check_info = [
         'result' => CheckResult::SKIPPED,
         'message' => $this->t(
           'The check "!name" hasn\'t been run yet.',
-          array('!name' => $check->getTitle())
+          ['!name' => $check->getTitle()]
         ),
         'skipped' => $check->isSkipped(),
-      );
+      ];
 
       // Get last result.
       $last_result = $check->lastResult();
@@ -142,10 +142,10 @@ class ChecklistController extends ControllerBase {
         'Details',
         Url::fromRoute(
           'security_review.help',
-          array(
+          [
             'namespace' => $check->getMachineNamespace(),
             'title' => $check->getMachineTitle(),
-          )
+          ]
         )
       );
 
@@ -154,10 +154,10 @@ class ChecklistController extends ControllerBase {
       $check_info['toggle_link'] = $this->l($toggle_text,
         Url::fromRoute(
           'security_review.toggle',
-          array('check_id' => $check->id()),
-          array(
-            'query' => array('token' => $this->csrfToken->get($check->id())),
-          )
+          ['check_id' => $check->id()],
+          [
+            'query' => ['token' => $this->csrfToken->get($check->id())],
+          ]
         )
       );
 
@@ -165,14 +165,14 @@ class ChecklistController extends ControllerBase {
       $checks[] = $check_info;
     }
 
-    return array(
+    return [
       '#theme' => 'run_and_review',
       '#date' => $this->securityReview->getLastRun(),
       '#checks' => $checks,
-      '#attached' => array(
-        'library' => array('security_review/run_and_review'),
-      ),
-    );
+      '#attached' => [
+        'library' => ['security_review/run_and_review'],
+      ],
+    ];
   }
 
 }

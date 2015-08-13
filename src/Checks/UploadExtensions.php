@@ -51,7 +51,7 @@ class UploadExtensions extends Check {
     }
 
     $result = CheckResult::SUCCESS;
-    $findings = array();
+    $findings = [];
 
     // Check field configuration entities.
     $entities = entity_load_multiple('field_config');
@@ -79,22 +79,22 @@ class UploadExtensions extends Check {
    * {@inheritdoc}
    */
   public function help() {
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t(
       'File and image fields allow for uploaded files. Some extensions are considered dangerous because the files can be evaluated and then executed in the browser. A malicious user could use this opening to gain control of your site. Review !fields_report.',
-      array(
+      [
         '!fields_report' => $this->l(
           'all fields on your site',
           Url::fromRoute('entity.field_storage_config.collection')
         ),
-      )
+      ]
     );
 
-    return array(
+    return [
       '#theme' => 'check_help',
       '#title' => 'Allowed upload extensions',
       '#paragraphs' => $paragraphs,
-    );
+    ];
   }
 
   /**
@@ -103,13 +103,13 @@ class UploadExtensions extends Check {
   public function evaluate(CheckResult $result) {
     $findings = $result->findings();
     if (empty($findings)) {
-      return array();
+      return [];
     }
 
-    $paragraphs = array();
+    $paragraphs = [];
     $paragraphs[] = $this->t('The following extensions are considered unsafe and should be removed or limited from use. Or, be sure you are not granting untrusted users the ability to upload files.');
 
-    $items = array();
+    $items = [];
     foreach ($findings as $entity_id => $unsafe_extensions) {
       $entity = entity_load('field_config', $entity_id);
       /** @var FieldConfig $entity */
@@ -117,16 +117,16 @@ class UploadExtensions extends Check {
       foreach ($unsafe_extensions as $extension) {
         $item = $this->t(
           'Review @type in <em>@field</em> field on @bundle',
-          array(
+          [
             '@type' => $extension,
             '@field' => $entity->label(),
             '@bundle' => $entity->getTargetBundle(),
-          )
+          ]
         );
 
         // Try to get an edit url.
         try {
-          $url_params = array('field_config' => $entity->id());
+          $url_params = ['field_config' => $entity->id()];
           if ($entity->getTargetEntityTypeId() == 'node') {
             $url_params['node_type'] = $entity->getTargetBundle();
           }
@@ -142,11 +142,11 @@ class UploadExtensions extends Check {
       }
     }
 
-    return array(
+    return [
       '#theme' => 'check_evaluation',
       '#paragraphs' => $paragraphs,
       '#items' => $items,
-    );
+    ];
   }
 
   /**
@@ -165,10 +165,10 @@ class UploadExtensions extends Check {
 
       $output .= $this->t(
         '!bundle: field !field',
-        array(
+        [
           '!bundle' => $entity->getTargetBundle(),
           '!field' => $entity->label(),
-        )
+        ]
       );
       $output .= "\n\t" . implode(', ', $unsafe_extensions) . "\n";
     }
