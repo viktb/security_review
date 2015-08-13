@@ -7,7 +7,6 @@
 
 namespace Drupal\security_review\Checks;
 
-use Drupal;
 use Drupal\Core\Entity\Entity;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
