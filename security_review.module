@@ -19,7 +19,7 @@ use Drupal\security_review\Checks\InputFormats;
 use Drupal\security_review\Checks\PrivateFiles;
 use Drupal\security_review\Checks\QueryErrors;
 use Drupal\security_review\Checks\TemporaryFiles;
-use Drupal\security_review\Checks\TrustedHost;
+use Drupal\security_review\Checks\TrustedHosts;
 use Drupal\security_review\Checks\UploadExtensions;
 use Drupal\security_review\Checks\ViewsAccess;
 
@@ -38,7 +38,7 @@ function security_review_security_review_checks() {
     new PrivateFiles(),
     new QueryErrors(),
     new TemporaryFiles(),
-    new TrustedHost(),
+    new TrustedHosts(),
     new UploadExtensions(),
     new ViewsAccess(),
   ];

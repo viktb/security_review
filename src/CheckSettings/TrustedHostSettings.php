@@ -10,7 +10,7 @@ namespace Drupal\security_review\CheckSettings;
 use Drupal\security_review\CheckSettings;
 
 /**
- * Provides the settings form for the TrustedHost check.
+ * Provides the settings form for the TrustedHosts check.
  */
 class TrustedHostSettings extends CheckSettings {
 

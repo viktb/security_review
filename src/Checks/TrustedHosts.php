@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\security_review\Checks\TrustedHost.
+ * Contains \Drupal\security_review\Checks\TrustedHosts.
  */
 
 namespace Drupal\security_review\Checks;
@@ -15,7 +15,7 @@ use Drupal\security_review\CheckSettings\TrustedHostSettings;
 /**
  * Checks for base_url and trusted_host_patterns settings in settings.php.
  */
-class TrustedHost extends Check {
+class TrustedHosts extends Check {
 
   /**
    * {@inheritdoc}
@@ -36,7 +36,7 @@ class TrustedHost extends Check {
    * {@inheritdoc}
    */
   public function getTitle() {
-    return 'Trusted host';
+    return 'Trusted hosts';
   }
 
   /**
