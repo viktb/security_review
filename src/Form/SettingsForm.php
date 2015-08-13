@@ -176,7 +176,7 @@ class SettingsForm extends ConfigFormBase {
         $title = $check->getTitle();
         // If it's an external check, tell the user its namespace.
         if ($check->getMachineNamespace() != 'security_review') {
-          $title .= $this->t('<em>%namespace</em>', [
+          $title .= $this->t('%namespace', [
             '%namespace' => $check->getNamespace(),
           ]);
         }

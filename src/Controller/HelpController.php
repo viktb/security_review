@@ -113,7 +113,7 @@ class HelpController extends ControllerBase {
 
       // Add the link pointing to the check-specific help.
       $check_namespace['check_links'][] = $this->l(
-        $this->t('%title', ['%title' => $check->getTitle()]),
+        $this->t('@title', ['@title' => $check->getTitle()]),
         Url::fromRoute('security_review.help', [
           'namespace' => $check->getMachineNamespace(),
           'title' => $check->getMachineTitle(),

@@ -112,14 +112,14 @@ class ToggleController extends ControllerBase {
         // Set message.
         if ($check->isSkipped()) {
           drupal_set_message($this->t(
-            '%name check skipped.',
-            ['%name' => $check->getTitle()]
+            '@name check skipped.',
+            ['@name' => $check->getTitle()]
           ));
         }
         else {
           drupal_set_message($this->t(
-            '%name check no longer skipped.',
-            ['%name' => $check->getTitle()]
+            '@name check no longer skipped.',
+            ['@name' => $check->getTitle()]
           ));
         }
 
