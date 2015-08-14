@@ -60,17 +60,10 @@ function security_review_drush() {
   $store = drush_get_option('store');
   $log = drush_get_option('log');
   $last_run = drush_get_option('lastrun');
-  $specific_checks = drush_get_option_list('check');
+  $run_checks = drush_get_option_list('check');
   $skip_checks = drush_get_option_list('skip');
   $short_titles = drush_get_option('short');
   $show_findings = drush_get_option('results');
-
-  if (!Drupal::moduleHandler()->moduleExists('security_review')) {
-    // Checklist is being executed when module is disabled. Deny these features.
-    $store = FALSE;
-    $log = FALSE;
-    $last_run = FALSE;
-  }
 
   // Set temporary logging.
   if ($log) {
@@ -86,15 +79,17 @@ function security_review_drush() {
 
   $results = [];
   if (!$last_run) {
-    // Initialize the arrays.
+    // Do a normal security review run.
+    /** @var \Drupal\security_review\Check[] $checks */
     $checks = [];
-    $skip = [];
+    /** @var \Drupal\security_review\Check[] $to_skip */
+    $to_skip = [];
 
     // Fill the $checks array.
-    if (!empty($specific_checks)) {
+    if (!empty($run_checks)) {
       // Get explicitly specified checks.
-      foreach ($specific_checks as $specific_check) {
-        $checks[] = _security_review_drush_get_check($specific_check);
+      foreach ($run_checks as $check) {
+        $checks[] = _security_review_drush_get_check($check);
       }
     }
     else {
@@ -102,24 +97,24 @@ function security_review_drush() {
       $checks = $checklist->getChecks();
     }
 
-    // Remove checks listed after --skip.
+    // Mark checks listed after --skip for removal.
     if (!empty($skip_checks)) {
       foreach ($skip_checks as $skip_check) {
-        $skip[] = _security_review_drush_get_check($skip_check);
+        $to_skip[] = _security_review_drush_get_check($skip_check);
       }
     }
 
-    // Remove checks that are being skipped if storing.
+    // If storing, mark skipped checks for removal.
     if ($store) {
       foreach ($checks as $check) {
         if ($check->isSkipped()) {
-          $skip[] = $check;
+          $to_skip[] = $check;
         }
       }
     }
 
-    // Remove the skipped checks.
-    foreach ($skip as $skip_check) {
+    // Remove the skipped checks from $checks.
+    foreach ($to_skip as $skip_check) {
       foreach ($checks as $key => $check) {
         if ($check->id() == $skip_check->id()) {
           unset($checks[$key]);
@@ -127,6 +122,7 @@ function security_review_drush() {
       }
     }
 
+    // If $checks is empty at this point, return with an error.
     if (empty($checks)) {
       return drush_set_error('EMPTY_CHECKLIST', dt("No checks to run. Run 'drush help secrev' for option use or consult the drush section of API.txt for further help."));
     }
@@ -140,6 +136,7 @@ function security_review_drush() {
     }
   }
   else {
+    // Show the latest stored results.
     foreach ($checklist->getChecks() as $check) {
       $last_result = $check->lastResult($show_findings);
       if ($last_result instanceof CheckResult) {
@@ -164,11 +161,16 @@ function _security_review_drush_get_check($check_name) {
   /** @var \Drupal\security_review\Checklist $checklist */
   $checklist = Drupal::service('security_review.checklist');
 
+  // Default namespace is Security Review.
   $namespace = 'security_review';
   $title = $check_name;
+
+  // Set namespace and title if explicitly defined.
   if (strpos($check_name, ':') !== FALSE) {
     list($namespace, $title) = explode(':', $check_name);
   }
+
+  // Return the found check if any.
   return $checklist->getCheck($namespace, $title);
 }
 
@@ -190,6 +192,7 @@ function _security_review_drush_print_results(array $results, $short_titles = FA
       $message = $short_titles ? $check->getTitle() : $result->resultMessage();
       $status = 'notice';
 
+      // Set log level according to check result.
       switch ($result->result()) {
         case CheckResult::SUCCESS:
           $status = 'success';
@@ -208,9 +211,11 @@ function _security_review_drush_print_results(array $results, $short_titles = FA
           break;
 
         case CheckResult::HIDE:
+          // Continue with the next check.
           continue 2;
       }
 
+      // Attach findings.
       if ($show_findings) {
         $findings = trim($result->check()->evaluatePlain($result));
         if ($findings != '') {

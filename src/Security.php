@@ -62,6 +62,7 @@ class Security {
    *   The Drupal kernel.
    */
   public function __construct(SecurityReview $security_review, ModuleHandlerInterface $module_handler, ConfigFactoryInterface $config_factory, DrupalKernelInterface $kernel) {
+    // Store the dependencies.
     $this->securityReview = $security_review;
     $this->moduleHandler = $module_handler;
     $this->configFactory = $config_factory;
@@ -282,7 +283,10 @@ class Security {
       'video',
       'vmlframe',
     ];
+
+    // Alter data.
     $this->moduleHandler->alter('security_review_unsafe_tags', $unsafe_tags);
+
     return $unsafe_tags;
   }
 
@@ -306,8 +310,11 @@ class Security {
       'vbe',
       'vbs',
     ];
+
+    // Alter data.
     $this->moduleHandler
       ->alter('security_review_unsafe_extensions', $unsafe_ext);
+
     return $unsafe_ext;
   }
 
@@ -335,6 +342,7 @@ class Security {
   public function findWritableFiles(array $files, $cli = FALSE) {
     $writable = [];
     if (!$cli) {
+      // Running from UI.
       foreach ($files as $file) {
         if (is_writable($file)) {
           $writable[] = $file;
@@ -342,26 +350,27 @@ class Security {
       }
     }
     else {
+      // Get the web server's user data.
       $uid = $this->securityReview->getServerUid();
       $gids = $this->securityReview->getServerGids();
 
       foreach ($files as $file) {
         $perms = 0777 & fileperms($file);
-        // Write permissions for others.
+        // Check write permissions for others.
         $ow = ($perms >> 1) & 1;
         if ($ow === 1) {
           $writable[] = $file;
           continue;
         }
 
-        // Write permissions for owner.
+        // Check write permissions for owner.
         $uw = ($perms >> 7) & 1;
         if ($uw === 1 && fileowner($file) == $uid) {
           $writable[] = $file;
           continue;
         }
 
-        // Write permissions for group.
+        // Check write permissions for group.
         $gw = ($perms >> 4) & 1;
         if ($gw === 1 && in_array(filegroup($file), $gids)) {
           $writable[] = $file;

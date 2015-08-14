@@ -9,6 +9,8 @@ namespace Drupal\security_review_test;
 
 /**
  * A test security check for testing extensibility.
+ *
+ * Same as Test, but doesn't store findings.
  */
 class TestNoStore extends Test {
 

@@ -43,6 +43,7 @@ class HelpController extends ControllerBase {
    *   The security_review.checklist service.
    */
   public function __construct(SecurityReview $security_review, Checklist $checklist) {
+    // Store the dependencies.
     $this->checklist = $checklist;
     $this->securityReview = $security_review;
   }
@@ -87,6 +88,7 @@ class HelpController extends ControllerBase {
   private function generalHelp() {
     $paragraphs = [];
 
+    // Print the general help.
     $paragraphs[] = $this->t('You should take the security of your site very seriously. Fortunately, Drupal is fairly secure by default. The Security Review module automates many of the easy-to-make mistakes that render your site insecure, however it does not automatically make your site impenetrable. You should give care to what modules you install and how you configure your site and server. Be mindful of who visits your site and what features you expose for their use.');
     $paragraphs[] = $this->t(
       'You can read more about securing your site in the !drupal_org and on !cracking_drupal. There are also additional modules you can install to secure or protect your site. Be aware though that the more modules you have running on your site the greater (usually) attack area you expose.',
@@ -100,6 +102,7 @@ class HelpController extends ControllerBase {
       Url::fromUri('http://drupal.org/node/382752')
     );
 
+    // Print the list of security checks with links to their help pages.
     $checks = [];
     foreach ($this->checklist->getChecks() as $check) {
       // Get the namespace array's reference.

@@ -134,11 +134,14 @@ class SettingsForm extends ConfigFormBase {
       // Determine if check is being skipped.
       if ($check->isSkipped()) {
         $values[] = $check->id();
-        $label = $this->t('!name <em>skipped by UID !uid on !date</em>', [
-          '!name' => $check->getTitle(),
-          '!uid' => $check->skippedBy()->id(),
-          '!date' => format_date($check->skippedOn()),
-        ]);
+        $label = $this->t(
+          '@name <em>skipped by UID @uid on @date</em>',
+          [
+            '@name' => $check->getTitle(),
+            '@uid' => $check->skippedBy()->id(),
+            '@date' => format_date($check->skippedOn()),
+          ]
+        );
       }
       else {
         $label = $check->getTitle();
@@ -174,7 +177,7 @@ class SettingsForm extends ConfigFormBase {
         $sub_form = &$form['advanced']['check_specific'][$check->id()];
 
         $title = $check->getTitle();
-        // If it's an external check, tell the user its namespace.
+        // If it's an external check, show its namespace.
         if ($check->getMachineNamespace() != 'security_review') {
           $title .= $this->t('%namespace', [
             '%namespace' => $check->getNamespace(),
@@ -198,6 +201,7 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
+    // Run validation for check-specific settings.
     if (isset($form['advanced']['check_specific'])) {
       $check_specific_values = $form_state->getValue('check_specific');
       foreach ($this->checklist->getChecks() as $check) {

@@ -155,9 +155,7 @@ class ChecklistController extends ControllerBase {
         Url::fromRoute(
           'security_review.toggle',
           ['check_id' => $check->id()],
-          [
-            'query' => ['token' => $this->csrfToken->get($check->id())],
-          ]
+          ['query' => ['token' => $this->csrfToken->get($check->id())]]
         )
       );
 

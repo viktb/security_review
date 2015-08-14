@@ -46,11 +46,13 @@ class ViewsAccess extends Check {
     $views = View::loadMultiple();
     /** @var View[] $views */
 
+    // Iterate through views and their displays.
     foreach ($views as $view) {
       if ($view->status()) {
         foreach ($view->get('display') as $display_name => $display) {
           $access = &$display['display_options']['access'];
           if (isset($access) && $access['type'] == 'none') {
+            // Access is not controlled for this display.
             $findings[$view->id()][] = $display_name;
           }
         }

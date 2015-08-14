@@ -76,6 +76,7 @@ class SecurityReview {
    *   The current user.
    */
   public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, ModuleHandlerInterface $module_handler, AccountProxyInterface $current_user) {
+    // Store the dependencies.
     $this->configFactory = $config_factory;
     $this->config = $config_factory->getEditable('security_review.settings');
     $this->state = $state;
@@ -103,6 +104,7 @@ class SecurityReview {
    *   A boolean indicating whether logging is enabled.
    */
   public function isLogging() {
+    // Check for temporary logging.
     if (static::$temporaryLogging !== NULL) {
       return static::$temporaryLogging;
     }
@@ -226,28 +228,35 @@ class SecurityReview {
       }
 
       $check = $result->check();
+
+      // Fallback log message.
       $level = RfcLogLevel::NOTICE;
       $message = '!name check invalid result';
 
+      // Set log message and level according to result.
       switch ($result->result()) {
         case CheckResult::SUCCESS:
           $level = RfcLogLevel::INFO;
-          $message = '!name check success';
+          $message = '!name check succeeded';
           break;
 
         case CheckResult::FAIL:
           $level = RfcLogLevel::ERROR;
-          $message = '!name check failure';
+          $message = '!name check failed';
           break;
 
         case CheckResult::WARN:
           $level = RfcLogLevel::WARNING;
-          $message = '!name check warning';
+          $message = '!name check raised a warning';
           break;
 
         case CheckResult::INFO:
           $level = RfcLogLevel::INFO;
-          $message = '!name check info';
+          $message = '!name check returned info';
+          break;
+
+        case CheckResult::HIDE:
+          $message = '!name check\'s result hidden';
           break;
       }
 
@@ -292,6 +301,7 @@ class SecurityReview {
     $uid = posix_getuid();
     $groups = posix_getgroups();
 
+    // Store the data in the State system.
     $this->state->set('security_review.server.uid', $uid);
     $this->state->set('security_review.server.groups', $groups);
   }

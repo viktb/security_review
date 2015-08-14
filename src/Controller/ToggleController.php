@@ -48,6 +48,8 @@ class ToggleController extends ControllerBase {
    *   The CSRF Token generator.
    * @param \Symfony\Component\HttpFoundation\RequestStack $request
    *   The request stack.
+   * @param \Drupal\security_review\Checklist $checklist
+   *   The security_review.checklist service.
    */
   public function __construct(CsrfTokenGenerator $csrf_token_generator, RequestStack $request, Checklist $checklist) {
     $this->checklist = $checklist;
@@ -82,6 +84,7 @@ class ToggleController extends ControllerBase {
     // Validate token.
     $token = $this->request->query->get('token');
     if ($this->csrfToken->validate($token, $check_id)) {
+      // Toggle.
       $check = $this->checklist->getCheckById($check_id);
       if ($check != NULL) {
         if ($check->isSkipped()) {
@@ -91,6 +94,7 @@ class ToggleController extends ControllerBase {
           $check->skip();
         }
       }
+
       // Output.
       if ($ajax) {
         return new JsonResponse([

@@ -249,6 +249,7 @@ abstract class Check {
    *   The last stored result (or null).
    */
   public function lastResult($get_findings = FALSE) {
+    // Get stored data from State system.
     $state_prefix = $this->statePrefix . 'last_result.';
     $result = $this->state->get($state_prefix . 'result');
     if ($get_findings) {
@@ -259,18 +260,22 @@ abstract class Check {
     }
     $time = $this->state->get($state_prefix . 'time');
 
+    // Check validity of stored data.
     $valid_result = is_int($result)
       && $result >= CheckResult::SUCCESS
       && $result <= CheckResult::HIDE;
     $valid_findings = is_array($findings);
     $valid_time = is_int($time) && $time > 0;
 
+    // If invalid, return NULL.
     if (!$valid_result || !$valid_findings || !$valid_time) {
       return NULL;
     }
 
+    // Construct the CheckResult.
     $last_result = new CheckResult($this, $result, $findings, $time);
 
+    // Do a check run for acquiring findings if required.
     if ($get_findings && !$this->storesFindings()) {
       // Run the check to get the findings.
       $fresh_result = $this->run();
@@ -385,6 +390,7 @@ abstract class Check {
    */
   public function skip() {
     if (!$this->isSkipped()) {
+      // Store skip data.
       $this->config->set('skipped', TRUE);
       $this->config->set('skipped_by', $this->currentUser()->id());
       $this->config->set('skipped_on', time());
@@ -402,7 +408,7 @@ abstract class Check {
    * @param \Drupal\security_review\CheckResult $result
    *   The result to store.
    */
-  public function storeResult(CheckResult $result = NULL) {
+  public function storeResult(CheckResult $result) {
     if ($result == NULL) {
       $context = [
         '!reviewcheck' => $this->getTitle(),

@@ -15,11 +15,12 @@ use Drupal\security_review\Check;
  * The checks must extend \Drupal\security_review\Check.
  *
  * @return array
- *   An array of checks.
+ *   An array of security checks.
  */
 function hook_security_review_checks() {
-  // Instances of the defined Checks.
-  return [/*
+  // Return instances of the defined Checks.
+  return [
+    /*
     new MyCheck(),
     new MyOtherCheck(),
     */
