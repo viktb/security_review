@@ -5,9 +5,11 @@
  * Defines the API for Security Review.
  */
 
+/*
+use Drupal\mymodule\MyCheck;
+use Drupal\mymodule\MyOtherCheck;
+ */
 use Drupal\security_review\Check;
-//use Drupal\mymodule\MyCheck;
-//use Drupal\mymodule\MyOtherCheck;
 
 /**
  * Returns the array of security checks the module defines.

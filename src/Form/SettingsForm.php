@@ -105,10 +105,10 @@ class SettingsForm extends ConfigFormBase {
     $form['untrusted_roles'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Untrusted roles'),
-      '#description' => $this->t('Define which roles are for less trusted users. The anonymous role defaults to untrusted. @message Most Security Review checks look for resources usable by untrusted roles.',
-        [
-          '@message' => $message,
-        ]),
+      '#description' => $this->t(
+        'Define which roles are for less trusted users. The anonymous role defaults to untrusted. @message Most Security Review checks look for resources usable by untrusted roles.',
+        ['@message' => $message]
+      ),
       '#options' => $options,
       '#default_value' => $this->security->untrustedRoles(),
     ];
