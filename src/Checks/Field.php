@@ -49,7 +49,7 @@ class Field extends Check {
 
     // Tags to search for indexed by the vulnerability's name.
     $unsafe_tags = [
-      'Javascript' => 'script',
+      'JavaScript' => 'script',
       'PHP' => '?php',
     ];
 
