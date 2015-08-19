@@ -47,7 +47,8 @@ class Field extends Check {
     $result = CheckResult::SUCCESS;
     $findings = [];
 
-    $tags = [
+    // Tags to search for indexed by the vulnerability's name.
+    $unsafe_tags = [
       'Javascript' => 'script',
       'PHP' => '?php',
     ];
@@ -87,7 +88,7 @@ class Field extends Check {
         $value = $property->getValue();
         if (is_string($value)) {
           $field_name = $property->getDataDefinition()->getLabel();
-          foreach ($tags as $vulnerability => $tag) {
+          foreach ($unsafe_tags as $vulnerability => $tag) {
             if (strpos($value, '<' . $tag) !== FALSE) {
               // Vulnerability found.
               $findings[$entity->getEntityTypeId()][$entity->id()][$field_name][] = $vulnerability;
