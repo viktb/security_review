@@ -54,8 +54,8 @@ class Field extends Check {
 
     // Load all of the entities.
     $entities = [];
-    $bundle_info = $this->entityManager()->getAllBundleInfo();
-    foreach ($bundle_info as $entity_type_id => $bundles) {
+    $definitions = $this->entityManager()->getDefinitions();
+    foreach ($definitions as $entity_type_id => $definition) {
       $current = $this->entityManager()
         ->getStorage($entity_type_id)
         ->loadMultiple();
